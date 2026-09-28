@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { signOutAndReturnToLogin } from "@/lib/auth-client";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 
 const items = [
   { to: "/admin", label: "Overview", icon: BarChart3 },
@@ -30,10 +31,9 @@ export function AdminShell({
       <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8">
           <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <span className="font-heading text-sm font-black">TLH</span>
-            </div>
-            <div>
+            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
+            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
+            <div className="hidden sm:block">
               <p className="font-heading text-sm font-bold">Tech Leader Hub</p>
               <p className="text-xs text-muted-foreground">Admin workspace</p>
             </div>
