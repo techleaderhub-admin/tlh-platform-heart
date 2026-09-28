@@ -2,282 +2,526 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  BarChart3,
-  BriefcaseBusiness,
   Check,
-  ChevronRight,
-  ClipboardCheck,
-  Compass,
-  FileQuestion,
-  Fingerprint,
+  ChevronDown,
+  Clock3,
+  Code2,
+  Layers3,
   Menu,
   Network,
-  Route as RouteIcon,
   ShieldCheck,
   Sparkles,
   Target,
   TrendingUp,
-  UserRound,
+  Users,
   X,
+  Zap,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { TLHLogo } from "@/components/brand/tlh-logo";
 
-const stages = [
-  { name: "Diagnose", detail: "Establish where you are and what is holding you back." },
-  { name: "Position", detail: "Clarify your direction, value, and professional narrative." },
-  { name: "Upgrade", detail: "Build the capabilities your target trajectory demands." },
-  { name: "Prove", detail: "Turn knowledge into credible evidence of impact." },
-  { name: "Prepare", detail: "Create a focused strategy for the opportunities ahead." },
-  { name: "Activate", detail: "Move from planning into consistent, visible action." },
-  { name: "Convert", detail: "Navigate selection processes with clarity and confidence." },
-  { name: "Negotiate", detail: "Approach the offer conversation with preparation." },
-  { name: "Advance", detail: "Keep growing toward greater scope and leadership." },
+const framework = [
+  ["01", "Diagnose", "Understand exactly what is keeping your career stuck."],
+  ["02", "Position", "Define the role, level and opportunity you are actually targeting."],
+  ["03", "Upgrade", "Close the technical gaps that senior interviews expose."],
+  ["04", "Prove", "Turn your experience into evidence recruiters can understand."],
+  ["05", "Prepare", "Build interview readiness across Android, Kotlin, HLD and LLD."],
+  ["06", "Activate", "Start executing a focused job-switch strategy."],
+  ["07", "Convert", "Handle interviews with stronger technical and communication depth."],
+  ["08", "Negotiate", "Approach compensation conversations with preparation."],
+  ["09", "Advance", "Build toward greater scope, ownership and leadership."],
 ];
 
-const capabilities = [
-  { icon: UserRound, title: "Career Profile", description: "Bring your experience, strengths, goals, and direction into one structured view." },
-  { icon: BarChart3, title: "Career Readiness", description: "Understand where you stand and identify the areas that need focused attention." },
-  { icon: RouteIcon, title: "Career Roadmap", description: "Translate career goals into a sequenced plan with practical milestones." },
-  { icon: BriefcaseBusiness, title: "Job & Interview Tracking", description: "Keep applications, interview activity, and next actions organized." },
-  { icon: FileQuestion, title: "Interview Questions & Answers", description: "Prepare, record, and improve responses across interview topics." },
+const audience = [
+  {
+    icon: Clock3,
+    title: "“I keep delaying my switch.”",
+    text: "You have been thinking about changing companies for months. You know you need to move, but preparation never seems to become a consistent system.",
+  },
+  {
+    icon: Target,
+    title: "“I interview, but I don't convert.”",
+    text: "You have real production experience, yet interviews expose gaps in architecture, system design, Kotlin depth or the way you communicate your decisions.",
+  },
+  {
+    icon: TrendingUp,
+    title: "“My experience is growing. My career isn't.”",
+    text: "Your years of experience keep increasing, while salary, role scope or the quality of opportunities do not move at the same pace.",
+  },
 ];
 
-const audiences = [
-  { title: "Ambitious technologists", text: "For professionals who want a more intentional career, not a collection of disconnected tactics.", icon: TrendingUp },
-  { title: "Career transitioners", text: "For people ready to reposition their experience and move toward stronger technology opportunities.", icon: Compass },
-  { title: "Emerging leaders", text: "For builders preparing to expand their influence, ownership, and leadership capability.", icon: Network },
+const takeaways = [
+  ["01", "Why experienced Android developers get stuck", "See the gap between doing Android work every day and being ready for the level the market expects next."],
+  ["02", "The Senior → Lead → Architect capability map", "Understand which technical depth, system thinking and ownership signals matter as your responsibility grows."],
+  ["03", "The interview readiness system", "Learn how to prepare Android, Kotlin, architecture, HLD, LLD and problem-solving as one connected system."],
+  ["04", "The career positioning framework", "Turn your existing experience into a sharper professional story instead of starting from zero again."],
+];
+
+const faqs = [
+  ["Is this really free?", "Yes. The masterclass is a free 90-minute live session. There is no requirement to purchase anything to attend."],
+  ["Who is this masterclass for?", "It is designed primarily for experienced Android developers who feel stuck, are considering a switch, are interviewing without enough conversions, or want to move toward Senior, Lead or Architect-level opportunities."],
+  ["Is this another Android coding course?", "No. The focus is career acceleration: technical depth, architecture thinking, interview readiness, positioning and execution. It is not a beginner syntax course."],
+  ["What will I get from the session?", "You will get a clearer view of the capability gaps to work on, a connected career framework and practical next steps for your current career stage."],
+  ["What if I cannot attend live?", "Register first so your details are captured. The live session schedule and next-step information can then be shared with you."],
 ];
 
 export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const closeMenu = () => setMenuOpen(false);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
-      <a href="#main-content" className="sr-only z-50 bg-accent px-4 py-3 text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+      <a
+        href="#main-content"
+        className="sr-only z-50 bg-accent px-4 py-3 text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+      >
         Skip to content
       </a>
 
-      <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
-          <Link to="/" className="flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Tech Leader Hub home">
-            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-2xl">
+        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+          <Link
+            to="/"
+            onClick={closeMenu}
+            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="Tech Leader Hub home"
+          >
+            <TLHLogo className="hidden h-10 w-auto max-w-[190px] object-contain sm:block" />
             <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
-            <span className="font-heading text-base font-bold sm:text-lg">Tech Leader Hub</span>
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
-            <Link to="/about" className="text-sm text-muted-foreground transition-colors hover:text-foreground">About</Link>
-            <Link to="/framework" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Framework</Link>
-            <Link to="/programs" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Programs</Link>
-            <Link to="/masterclass" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Masterclass</Link>
+          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
+            <a href="#why" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Why this class</a>
+            <a href="#inside" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Inside</a>
+            <a href="#framework" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Framework</a>
+            <a href="#faq" className="text-sm text-muted-foreground transition-colors hover:text-foreground">FAQ</a>
+            <Button asChild size="sm" className="rounded-full px-5">
+              <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
+            </Button>
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
-            <Button asChild variant="ghost"><Link to="/login">Sign in</Link></Button>
-            <Button asChild><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
-          </div>
-
-          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={() => setMenuOpen((value) => !value)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          >
             {menuOpen ? <X /> : <Menu />}
           </Button>
         </div>
 
         {menuOpen ? (
-          <div id="mobile-menu" className="border-t border-border bg-background px-5 py-5 lg:hidden">
+          <div id="mobile-menu" className="border-t border-border bg-background/95 px-5 py-5 backdrop-blur-2xl lg:hidden">
             <nav className="mx-auto flex max-w-7xl flex-col" aria-label="Mobile navigation">
-              {[["About", "/about"], ["Framework", "/framework"], ["Programs", "/programs"], ["Masterclass", "/masterclass"]].map(([label, href]) => (
-                <Link key={href} to={href} onClick={closeMenu} className="border-b border-border/60 py-4 text-sm font-medium text-foreground">{label}</Link>
+              {[
+                ["Why this class", "#why"],
+                ["Inside", "#inside"],
+                ["Framework", "#framework"],
+                ["FAQ", "#faq"],
+              ].map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={closeMenu}
+                  className="border-b border-border/60 py-4 text-sm font-medium"
+                >
+                  {label}
+                </a>
               ))}
-              <div className="mt-5 grid grid-cols-2 gap-3">
-                <Button asChild variant="outline"><Link to="/login" onClick={closeMenu}>Sign in</Link></Button>
-                <Button asChild><Link to="/masterclass" onClick={closeMenu}>Get Started</Link></Button>
-              </div>
+              <Button asChild className="mt-5 h-12 rounded-full">
+                <Link to="/masterclass" onClick={closeMenu}>Reserve My Free Seat <ArrowRight /></Link>
+              </Button>
             </nav>
           </div>
         ) : null}
       </header>
 
       <main id="main-content">
-        <section className="relative flex min-h-[calc(100svh-2rem)] items-center border-b border-border pt-28">
-          <div className="home-grid absolute inset-0 opacity-50" aria-hidden="true" />
-          <div className="home-glow absolute inset-0" aria-hidden="true" />
-          <div className="relative mx-auto grid w-full max-w-7xl gap-14 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-center lg:px-10 lg:pb-24 lg:pt-16">
-            <div className="home-reveal">
-              <div className="mb-7 inline-flex items-center gap-2 border border-accent/30 bg-accent/5 px-3 py-2 text-xs font-semibold uppercase text-accent">
+        {/* HERO */}
+        <section className="relative overflow-hidden border-b border-border pt-28 sm:pt-32">
+          <div className="hero-grid absolute inset-0 opacity-60" aria-hidden="true" />
+          <div className="absolute left-1/2 top-24 size-[420px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl sm:size-[650px]" aria-hidden="true" />
+          <div className="relative mx-auto grid min-h-[calc(100svh-7rem)] max-w-7xl items-center gap-14 px-5 pb-20 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-24">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-accent">
                 <Sparkles className="size-3.5" aria-hidden="true" />
-                Career acceleration for technology professionals
+                Free live masterclass · Sunday · 11:00 AM IST
               </div>
-              <h1 className="max-w-4xl font-heading text-5xl font-extrabold leading-[1.02] sm:text-6xl lg:text-7xl xl:text-8xl">
-                Build your path to <span className="text-accent">technology leadership.</span>
-              </h1>
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-                Tech Leader Hub brings career strategy, focused development, and practical execution into one clear progression—from where you are now to the leader you are ready to become.
+
+              <p className="mt-7 text-sm font-semibold text-muted-foreground sm:text-base">
+                For experienced Android developers who know they are capable of more.
               </p>
+
+              <h1 className="mt-4 font-heading text-[clamp(2.7rem,6vw,5.7rem)] font-extrabold leading-[0.98] tracking-[-0.045em]">
+                You don't need
+                <span className="block text-muted-foreground">another Android course.</span>
+                <span className="mt-1 block text-accent">You need a career system.</span>
+              </h1>
+
+              <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+                Learn how experienced Android developers can break out of career stagnation, build senior-level technical depth, prepare for architecture interviews and move toward stronger product-company opportunities.
+              </p>
+
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="h-12 px-6"><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
-                <Button asChild size="lg" variant="outline" className="h-12 px-6"><a href="#framework">Explore the framework <ChevronRight /></a></Button>
+                <Button asChild size="lg" className="h-13 rounded-full px-7 text-base shadow-lg shadow-primary/20">
+                  <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-13 rounded-full px-7 text-base">
+                  <a href="#inside">See what's inside <ChevronDown /></a>
+                </Button>
               </div>
-              <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-muted-foreground">
-                {['Structured progression', 'Practical direction', 'Leadership destination'].map((item) => (
-                  <span key={item} className="flex items-center gap-2"><Check className="size-4 text-accent" aria-hidden="true" />{item}</span>
-                ))}
+
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> 90 minutes</span>
+                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> Live on Zoom</span>
+                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> 100% free</span>
               </div>
             </div>
 
-            <div className="home-reveal home-delay relative mx-auto w-full max-w-lg lg:max-w-none" aria-label="The Tech Leader Hub career progression">
-              <div className="relative border border-border bg-card/75 p-5 shadow-2xl backdrop-blur-sm sm:p-7">
-                <div className="mb-8 flex items-center justify-between border-b border-border pb-5">
-                  <div>
-                    <p className="text-xs font-bold uppercase text-accent">TLH progression</p>
-                    <p className="mt-1 font-heading text-lg font-bold">Career → Leadership</p>
-                  </div>
-                  <Fingerprint className="size-8 text-primary" aria-hidden="true" />
-                </div>
-                <div className="space-y-3">
-                  {[
-                    ["01", "Clarity", "Know your present position"],
-                    ["02", "Capability", "Build what comes next"],
-                    ["03", "Credibility", "Prove your readiness"],
-                    ["04", "Leadership", "Expand your scope"],
-                  ].map(([number, title, text], index) => (
-                    <div key={number} className="group flex items-center gap-4 border border-border/80 bg-background/70 p-4 transition-colors hover:border-accent/50">
-                      <span className={`flex size-10 shrink-0 items-center justify-center rounded-md font-heading text-sm font-bold ${index === 3 ? "bg-primary text-primary-foreground" : "bg-secondary text-accent"}`}>{number}</span>
-                      <div className="min-w-0 flex-1"><p className="font-heading font-bold">{title}</p><p className="mt-0.5 text-sm text-muted-foreground">{text}</p></div>
-                      <ChevronRight className="size-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true" />
+            {/* Custom CSS visual: career architecture console */}
+            <div className="relative mx-auto w-full max-w-xl">
+              <div className="hero-orbit absolute -inset-8 rounded-full border border-accent/10" aria-hidden="true" />
+              <div className="relative overflow-hidden rounded-[28px] border border-border bg-card/75 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
+                <div className="rounded-[22px] border border-border bg-background/90 p-5 sm:p-6">
+                  <div className="flex items-center justify-between border-b border-border pb-5">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">Android career OS</p>
+                      <p className="mt-1 font-heading text-lg font-bold">Next-level readiness</p>
                     </div>
-                  ))}
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <Code2 className="size-5" />
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid gap-3">
+                    {[
+                      ["Technical Depth", "Kotlin · Android · Architecture", "84%"],
+                      ["System Design", "HLD · LLD · Trade-offs", "68%"],
+                      ["Interview Readiness", "Stories · Communication · Practice", "56%"],
+                    ].map(([label, detail, value], index) => (
+                      <div key={label} className="rounded-2xl border border-border bg-card p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="font-heading text-sm font-bold">{label}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
+                          </div>
+                          <span className="text-xs font-bold text-accent">{value}</span>
+                        </div>
+                        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-secondary">
+                          <div className="h-full rounded-full bg-accent" style={{ width: value }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
+                      <Network className="size-5 text-accent" />
+                      <p className="mt-5 text-xs text-muted-foreground">Current</p>
+                      <p className="mt-1 font-heading font-bold">Stuck / unsure</p>
+                    </div>
+                    <div className="rounded-2xl border border-achievement/25 bg-achievement/5 p-4">
+                      <Zap className="size-5 text-achievement" />
+                      <p className="mt-5 text-xs text-muted-foreground">Target</p>
+                      <p className="mt-1 font-heading font-bold">Ready / intentional</p>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-6 flex items-center gap-3 border-l-2 border-achievement bg-achievement/5 px-4 py-3">
-                  <Target className="size-5 text-achievement" aria-hidden="true" />
-                  <p className="text-sm text-muted-foreground">A deliberate system for the career you want to lead.</p>
-                </div>
+              </div>
+              <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border bg-card px-4 py-3 shadow-xl sm:block">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">The shift</p>
+                <p className="mt-1 font-heading text-sm font-bold">From experience → evidence</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="about" className="scroll-mt-20 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:gap-20 lg:px-10">
-            <div>
-              <SectionLabel>What is Tech Leader Hub?</SectionLabel>
-              <h2 className="mt-4 max-w-xl font-heading text-3xl font-bold sm:text-5xl">Career growth works better when every move connects.</h2>
-            </div>
-            <div className="space-y-6 text-base leading-8 text-muted-foreground sm:text-lg">
-              <p>Tech Leader Hub is a career acceleration platform built to help technology professionals move with greater clarity, intention, and readiness.</p>
-              <p>Instead of treating skills, positioning, interviews, and advancement as separate problems, TLH connects them into one structured path toward meaningful technology leadership.</p>
-              <div className="grid grid-cols-2 gap-4 pt-3">
-                <div className="border-t-2 border-primary pt-4"><p className="font-heading font-bold text-foreground">Career acceleration</p><p className="mt-1 text-sm">The product</p></div>
-                <div className="border-t-2 border-accent pt-4"><p className="font-heading font-bold text-foreground">Tech leadership</p><p className="mt-1 text-sm">The destination</p></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="border-b border-border bg-card/35 py-20 sm:py-28">
+        {/* PAIN / IDENTIFICATION */}
+        <section id="why" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <SectionHeading label="Who it is for" title="Built for people who want to move forward with purpose." description="TLH is for technology professionals who are ready to take ownership of what comes next." />
-            <div className="mt-12 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-3">
-              {audiences.map(({ title, text, icon: Icon }, index) => (
-                <article key={title} className="bg-background p-7 sm:p-9">
-                  <div className="mb-10 flex items-center justify-between"><Icon className="size-6 text-accent" aria-hidden="true" /><span className="font-heading text-sm text-muted-foreground">0{index + 1}</span></div>
-                  <h3 className="font-heading text-xl font-bold">{title}</h3>
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">This is probably you</p>
+              <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
+                Your problem may not be your experience.
+                <span className="block text-muted-foreground">It may be what your experience is not yet proving.</span>
+              </h2>
+            </div>
+
+            <div className="mt-12 grid gap-4 lg:grid-cols-3">
+              {audience.map(({ icon: Icon, title, text }, index) => (
+                <article key={title} className="group rounded-[24px] border border-border bg-card/50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-accent/40 hover:shadow-xl sm:p-8">
+                  <div className="flex items-center justify-between">
+                    <span className="flex size-11 items-center justify-center rounded-2xl bg-secondary text-accent">
+                      <Icon className="size-5" />
+                    </span>
+                    <span className="font-heading text-xs font-bold text-muted-foreground">0{index + 1}</span>
+                  </div>
+                  <h3 className="mt-9 font-heading text-xl font-bold">{title}</h3>
                   <p className="mt-3 leading-7 text-muted-foreground">{text}</p>
                 </article>
               ))}
             </div>
-          </div>
-        </section>
 
-        <section id="framework" className="scroll-mt-20 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <SectionHeading label="The TLH framework" title="Nine stages. One connected progression." description="A structured journey from understanding your position to advancing as a technology leader." />
-            <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {stages.map((stage, index) => (
-                <li key={stage.name} className="group relative min-h-52 overflow-hidden border border-border bg-card/60 p-6 transition-colors hover:border-primary/70">
-                  <span className="absolute right-4 top-1 font-heading text-7xl font-extrabold text-border/50 transition-colors group-hover:text-primary/15" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                  <div className="relative flex h-full flex-col justify-end">
-                    <div className="mb-5 h-1 w-9 bg-primary transition-all group-hover:w-16 group-hover:bg-accent" />
-                    <h3 className="font-heading text-xl font-bold">{stage.name}</h3>
-                    <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{stage.detail}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section id="platform" className="scroll-mt-20 border-b border-border bg-card/35 py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
-              <SectionHeading label="Platform capabilities" title="One workspace for the work behind career progress." description="The secure TLH platform foundation is available. The career tools below are planned and will be introduced in future phases." />
-              <div className="flex shrink-0 items-center gap-2 border border-border px-3 py-2 text-xs font-semibold uppercase text-muted-foreground"><span className="size-2 rounded-full bg-achievement" /> Career tools coming soon</div>
+            <div className="mt-10 rounded-[24px] border border-accent/20 bg-accent/5 p-6 sm:p-8">
+              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-heading text-lg font-bold">If you recognised yourself in even one of these, start here.</p>
+                  <p className="mt-1 text-sm text-muted-foreground">The masterclass is built around the next career move—not another pile of tutorials.</p>
+                </div>
+                <Button asChild className="shrink-0 rounded-full">
+                  <Link to="/masterclass">Save My Free Seat <ArrowRight /></Link>
+                </Button>
+              </div>
             </div>
-            <div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-              {capabilities.map(({ icon: Icon, title, description }, index) => (
-                <article key={title} className={`border border-border bg-background p-6 ${index < 2 ? "lg:col-span-3" : "lg:col-span-2"}`}>
-                  <div className="flex items-start justify-between gap-4"><span className="flex size-11 items-center justify-center rounded-md bg-secondary text-accent"><Icon className="size-5" aria-hidden="true" /></span><span className="border border-achievement/40 bg-achievement/5 px-2 py-1 text-xs font-semibold text-achievement">Coming soon</span></div>
-                  <h3 className="mt-8 font-heading text-xl font-bold">{title}</h3>
-                  <p className="mt-3 max-w-lg leading-7 text-muted-foreground">{description}</p>
+          </div>
+        </section>
+
+        {/* OUTCOMES */}
+        <section id="inside" className="scroll-mt-24 border-b border-border bg-card/30 py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+            <div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-20">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Inside the masterclass</p>
+                <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
+                  90 minutes to see your career differently.
+                </h2>
+                <p className="mt-5 text-lg leading-8 text-muted-foreground">
+                  This is a strategic session for developers who have already put in the years and now want a clearer way to turn that experience into the next level of opportunity.
+                </p>
+                <Button asChild size="lg" className="mt-8 rounded-full">
+                  <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
+                </Button>
+              </div>
+
+              <div className="divide-y divide-border border-y border-border">
+                {takeaways.map(([number, title, text]) => (
+                  <div key={number} className="grid gap-5 py-7 sm:grid-cols-[48px_1fr] sm:py-9">
+                    <span className="font-heading text-sm font-bold text-accent">{number}</span>
+                    <div>
+                      <h3 className="font-heading text-xl font-bold">{title}</h3>
+                      <p className="mt-2 max-w-2xl leading-7 text-muted-foreground">{text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* VISUAL FRAMEWORK */}
+        <section id="framework" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">The TLH career framework</p>
+                <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
+                  Stop preparing randomly. Start progressing deliberately.
+                </h2>
+              </div>
+              <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+                The same connected philosophy powers the Tech Leader Hub platform.
+              </p>
+            </div>
+
+            <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {framework.map(([number, title, text], index) => (
+                <article
+                  key={number}
+                  className="group relative min-h-48 overflow-hidden rounded-[22px] border border-border bg-card/40 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-card"
+                >
+                  <span className="absolute -right-2 -top-5 font-heading text-8xl font-extrabold tracking-[-0.06em] text-border/50 transition-colors group-hover:text-primary/10">
+                    {number}
+                  </span>
+                  <div className="relative flex h-full flex-col justify-end">
+                    <div className={`mb-5 h-1 w-8 transition-all duration-500 group-hover:w-14 ${index > 6 ? "bg-achievement" : "bg-primary"}`} />
+                    <h3 className="font-heading text-xl font-bold">{title}</h3>
+                    <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{text}</p>
+                  </div>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <section id="why-tlh" className="scroll-mt-20 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto grid max-w-7xl gap-14 px-5 sm:px-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:px-10">
-            <div>
-              <SectionLabel>Why TLH</SectionLabel>
-              <h2 className="mt-4 font-heading text-3xl font-bold sm:text-5xl">More than the next role.</h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">TLH is designed around the whole progression: becoming clearer, more capable, more credible, and ready for greater responsibility.</p>
-            </div>
-            <div className="divide-y divide-border border-y border-border">
-              {[
-                ["Direction before activity", "Start with the destination and make each action serve it."],
-                ["Evidence over intention", "Turn learning and experience into visible proof of readiness."],
-                ["Leadership as a trajectory", "Prepare not only to secure opportunities, but to grow into greater scope."],
-              ].map(([title, text], index) => (
-                <div key={title} className="grid gap-3 py-7 sm:grid-cols-[3rem_1fr] sm:gap-5">
-                  <span className="font-heading text-sm font-bold text-accent">0{index + 1}</span>
-                  <div><h3 className="font-heading text-xl font-bold">{title}</h3><p className="mt-2 leading-7 text-muted-foreground">{text}</p></div>
+        {/* MENTOR */}
+        <section className="border-b border-border bg-card/30 py-20 sm:py-28">
+          <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:gap-20 lg:px-10">
+            <div className="relative mx-auto w-full max-w-md">
+              <div className="absolute -inset-5 rounded-[32px] border border-accent/10" />
+              <div className="relative rounded-[28px] border border-border bg-background p-7 shadow-xl sm:p-9">
+                <div className="flex items-center gap-4">
+                  <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                    <Users className="size-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Your mentor</p>
+                    <p className="mt-1 font-heading text-lg font-bold">Nikhil Rai</p>
+                  </div>
                 </div>
-              ))}
+                <div className="mt-8 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-border p-4">
+                    <p className="font-heading text-2xl font-extrabold">12+</p>
+                    <p className="mt-1 text-xs text-muted-foreground">years in Android / tech</p>
+                  </div>
+                  <div className="rounded-2xl border border-border p-4">
+                    <p className="font-heading text-2xl font-extrabold">3</p>
+                    <p className="mt-1 text-xs text-muted-foreground">major product / tech environments</p>
+                  </div>
+                </div>
+                <div className="mt-3 rounded-2xl border border-border bg-card p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Experience across</p>
+                  <p className="mt-2 text-sm font-semibold">Ola · PayU · GamesKraft · Synchronoss · startups</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="max-w-2xl">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Learn from the other side of the interview table</p>
+              <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
+                Your years of Android experience deserve a stronger career narrative.
+              </h2>
+              <p className="mt-6 text-lg leading-8 text-muted-foreground">
+                Nikhil Rai has worked across Android engineering and product environments including Ola, PayU, GamesKraft and Synchronoss. The focus of this masterclass is practical: connect technical depth, architecture thinking, interview preparation and career direction.
+              </p>
+              <div className="mt-7 space-y-3">
+                {[
+                  "No beginner-level syntax marathon.",
+                  "No random collection of interview questions.",
+                  "No promise of an overnight career transformation.",
+                  "A structured way to understand what to work on next.",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <Check className="mt-0.5 size-4 shrink-0 text-accent" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <Button asChild size="lg" className="mt-9 rounded-full">
+                <Link to="/masterclass">Join the Free Masterclass <ArrowRight /></Link>
+              </Button>
             </div>
           </div>
         </section>
 
-        <section className="relative overflow-hidden py-20 sm:py-28">
-          <div className="home-grid absolute inset-0 opacity-30" aria-hidden="true" />
-          <div className="relative mx-auto max-w-5xl px-5 text-center sm:px-8">
+        {/* BONUSES / VALUE */}
+        <section className="border-b border-border py-20 sm:py-28">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+            <div className="rounded-[30px] border border-accent/20 bg-gradient-to-br from-accent/10 via-background to-achievement/5 p-7 sm:p-10 lg:p-14">
+              <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:gap-20">
+                <div>
+                  <div className="flex size-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                    <Layers3 className="size-6" />
+                  </div>
+                  <p className="mt-7 text-sm font-bold uppercase tracking-[0.16em] text-accent">Your free session pack</p>
+                  <h2 className="mt-3 font-heading text-3xl font-bold sm:text-4xl">Come for the class. Leave with a clearer next move.</h2>
+                  <p className="mt-4 leading-7 text-muted-foreground">The goal is not to give you more content to collect. It is to give you a framework you can use to decide what deserves your attention next.</p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {[
+                    "Android career roadmap",
+                    "Career-readiness thinking framework",
+                    "Interview preparation direction",
+                    "Technical depth checklist",
+                  ].map((item) => (
+                    <div key={item} className="flex items-center gap-3 rounded-2xl border border-border bg-background/70 p-5">
+                      <Check className="size-5 shrink-0 text-accent" />
+                      <span className="text-sm font-semibold">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="faq" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
+          <div className="mx-auto max-w-4xl px-5 sm:px-8">
+            <div className="text-center">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Questions</p>
+              <h2 className="mt-4 font-heading text-3xl font-bold sm:text-5xl">You probably have a few.</h2>
+            </div>
+
+            <div className="mt-12 divide-y divide-border border-y border-border">
+              {faqs.map(([question, answer], index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div key={question}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                      className="flex w-full items-center justify-between gap-6 py-6 text-left"
+                      aria-expanded={isOpen}
+                    >
+                      <span className="font-heading text-base font-bold sm:text-lg">{question}</span>
+                      <ChevronDown className={`size-5 shrink-0 transition-transform ${isOpen ? "rotate-180 text-accent" : "text-muted-foreground"}`} />
+                    </button>
+                    {isOpen ? <p className="max-w-3xl pb-6 pr-10 text-sm leading-7 text-muted-foreground">{answer}</p> : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* FINAL CTA */}
+        <section className="relative overflow-hidden py-24 sm:py-32">
+          <div className="hero-grid absolute inset-0 opacity-40" aria-hidden="true" />
+          <div className="absolute left-1/2 top-1/2 size-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
+          <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
             <ShieldCheck className="mx-auto size-9 text-accent" aria-hidden="true" />
-            <h2 className="mt-6 font-heading text-4xl font-extrabold sm:text-6xl">Your next chapter should be built on purpose.</h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Start with Tech Leader Hub and take a more structured path toward your technology career and leadership goals.</p>
-            <Button asChild size="lg" className="mt-9 h-12 px-7"><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
+            <p className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-accent">Your next move starts here</p>
+            <h2 className="mt-4 font-heading text-4xl font-extrabold tracking-tight sm:text-6xl">
+              Stop asking,
+              <span className="block text-muted-foreground">“When should I start?”</span>
+              <span className="block text-accent">Start with a clear plan.</span>
+            </h2>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+              Join the next free 90-minute live masterclass and understand what to work on next in your Android career.
+            </p>
+            <Button asChild size="lg" className="mt-9 h-14 rounded-full px-8 text-base shadow-xl shadow-primary/20">
+              <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
+            </Button>
+            <p className="mt-4 text-xs text-muted-foreground">Sunday · 11:00 AM IST · Live on Zoom · No credit card required</p>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-border bg-card/50">
+      {/* Mobile conversion bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 p-3 backdrop-blur-xl lg:hidden">
+        <Button asChild className="h-12 w-full rounded-full shadow-lg">
+          <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
+        </Button>
+      </div>
+
+      <footer className="border-t border-border bg-card/40 pb-20 lg:pb-0">
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <Link to="/" className="flex items-center gap-3"><TLHLogo className="h-9 w-auto max-w-[170px] object-contain" /></Link>
-            <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation"><Link to="/about" className="hover:text-foreground">About</Link><Link to="/framework" className="hover:text-foreground">Framework</Link><Link to="/programs" className="hover:text-foreground">Programs</Link><Link to="/masterclass" className="hover:text-foreground">Masterclass</Link><Link to="/contact" className="hover:text-foreground">Contact</Link><Link to="/privacy" className="hover:text-foreground">Privacy</Link><Link to="/terms" className="hover:text-foreground">Terms</Link><Link to="/login" className="hover:text-foreground">Sign in</Link></nav>
+            <Link to="/" aria-label="Tech Leader Hub home">
+              <TLHLogo className="h-9 w-auto max-w-[175px] object-contain" />
+            </Link>
+            <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation">
+              <Link to="/about" className="hover:text-foreground">About</Link>
+              <Link to="/framework" className="hover:text-foreground">Framework</Link>
+              <Link to="/programs" className="hover:text-foreground">Programs</Link>
+              <Link to="/masterclass" className="hover:text-foreground">Masterclass</Link>
+              <Link to="/contact" className="hover:text-foreground">Contact</Link>
+              <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
+              <Link to="/terms" className="hover:text-foreground">Terms</Link>
+            </nav>
           </div>
-          <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} Tech Leader Hub.</p><p>Career acceleration. Technology leadership.</p></div>
+          <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>© {new Date().getFullYear()} Tech Leader Hub.</p>
+            <p>Career acceleration for technology professionals.</p>
+          </div>
         </div>
       </footer>
     </div>
   );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-sm font-bold uppercase text-accent">{children}</p>;
-}
-
-function SectionHeading({ label, title, description }: { label: string; title: string; description: string }) {
-  return <div className="max-w-3xl"><SectionLabel>{label}</SectionLabel><h2 className="mt-4 font-heading text-3xl font-bold sm:text-5xl">{title}</h2><p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">{description}</p></div>;
 }
