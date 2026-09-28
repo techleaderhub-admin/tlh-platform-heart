@@ -112,13 +112,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/update-password': typeof UpdatePasswordRoute
   '/get-started': typeof GetStartedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
