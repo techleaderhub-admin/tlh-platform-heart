@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Download, Mail, Phone, RefreshCw, Search, Users, X } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -145,15 +146,26 @@ export function MasterclassRegistrationsPage() {
             </div>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => void loadRegistrations()}
-            disabled={loading}
-          >
-            <RefreshCw aria-hidden="true" className={loading ? "animate-spin" : ""} />
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin">Overview</Link>
+            </Button>
+            <Button variant="secondary" size="sm" asChild>
+              <Link to="/admin/masterclass">Masterclass</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/admin/students">Students</Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void loadRegistrations()}
+              disabled={loading}
+            >
+              <RefreshCw aria-hidden="true" className={loading ? "animate-spin" : ""} />
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
 
