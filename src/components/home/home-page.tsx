@@ -68,10 +68,10 @@ export function HomePage() {
           </Link>
 
           <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
-            <a href="#about" className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">About</a>
-            <a href="#framework" className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Framework</a>
-            <a href="#platform" className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Platform</a>
-            <a href="#why-tlh" className="text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Why TLH</a>
+            <Link to="/about" className="text-sm text-muted-foreground transition-colors hover:text-foreground">About</Link>
+            <Link to="/framework" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Framework</Link>
+            <Link to="/programs" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Programs</Link>
+            <Link to="/masterclass" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Masterclass</Link>
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
@@ -87,8 +87,8 @@ export function HomePage() {
         {menuOpen ? (
           <div id="mobile-menu" className="border-t border-border bg-background px-5 py-5 lg:hidden">
             <nav className="mx-auto flex max-w-7xl flex-col" aria-label="Mobile navigation">
-              {[["About", "#about"], ["Framework", "#framework"], ["Platform", "#platform"], ["Why TLH", "#why-tlh"]].map(([label, href]) => (
-                <a key={href} href={href} onClick={closeMenu} className="border-b border-border/60 py-4 text-sm font-medium text-foreground">{label}</a>
+              {[["About", "/about"], ["Framework", "/framework"], ["Programs", "/programs"], ["Masterclass", "/masterclass"]].map(([label, href]) => (
+                <Link key={href} to={href} onClick={closeMenu} className="border-b border-border/60 py-4 text-sm font-medium text-foreground">{label}</Link>
               ))}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <Button asChild variant="outline"><Link to="/login" onClick={closeMenu}>Sign in</Link></Button>
@@ -263,7 +263,7 @@ export function HomePage() {
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
             <Link to="/" className="flex items-center gap-3"><img src="/favicon.ico" alt="" className="size-8 rounded-md" /><span className="font-heading font-bold">Tech Leader Hub</span></Link>
-            <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation"><a href="#about" className="hover:text-foreground">About</a><a href="#framework" className="hover:text-foreground">Framework</a><a href="#platform" className="hover:text-foreground">Platform</a><Link to="/login" className="hover:text-foreground">Sign in</Link></nav>
+            <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation"><Link to="/about" className="hover:text-foreground">About</Link><Link to="/framework" className="hover:text-foreground">Framework</Link><Link to="/programs" className="hover:text-foreground">Programs</Link><Link to="/masterclass" className="hover:text-foreground">Masterclass</Link><Link to="/contact" className="hover:text-foreground">Contact</Link><Link to="/privacy" className="hover:text-foreground">Privacy</Link><Link to="/terms" className="hover:text-foreground">Terms</Link><Link to="/login" className="hover:text-foreground">Sign in</Link></nav>
           </div>
           <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} Tech Leader Hub.</p><p>Career acceleration. Technology leadership.</p></div>
         </div>
