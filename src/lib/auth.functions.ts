@@ -64,6 +64,41 @@ export const signInWithIdentifier = createServerFn({ method: "POST" })
     };
   });
 
+export const requestPasswordReset = createServerFn({ method: "POST" })
+  .validator((input: unknown) => z.object({ identifier: z.string().trim().min(1) }).parse(input))
+  .handler(async ({ data }) => {
+    const identifier = data.identifier.trim();
+    const parsedEmail = z.string().email().safeParse(identifier);
+    let email = parsedEmail.success ? parsedEmail.data.toLowerCase() : "";
+
+    if (!parsedEmail.success) {
+      const phone = normalizePhone(identifier);
+      if (!/^\+[1-9]\d{7,14}$/.test(phone)) return { accepted: true };
+
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const { data: profile } = await supabaseAdmin
+        .from("profiles")
+        .select("id")
+        .eq("phone", phone)
+        .maybeSingle();
+
+      if (!profile) return { accepted: true };
+
+      const { data: userData } = await supabaseAdmin.auth.admin.getUserById(profile.id);
+      if (!userData.user?.email) return { accepted: true };
+      email = userData.user.email;
+    }
+
+    const authClient = createAuthClient();
+    await authClient.auth.resetPasswordForEmail(email, {
+      redirectTo: process.env["APP_URL"]
+        ? `${process.env["APP_URL"].replace(/\/$/, "")}/update-password`
+        : "http://localhost:3000/update-password",
+    });
+
+    return { accepted: true };
+  });
+
 export const getMyIdentity = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
