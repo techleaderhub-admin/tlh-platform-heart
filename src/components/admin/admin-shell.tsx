@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { BarChart3, LogOut, Users, Video } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -16,7 +17,7 @@ export function AdminShell({
   title,
   subtitle,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
   subtitle: string;
 }) {
