@@ -22,7 +22,11 @@ export async function requireRole(role: AppRole) {
     throw redirect({ to: "/login" });
   }
   if (identity.role !== role) {
-    throw redirect({ to: identity.role === "admin" ? "/admin" : "/dashboard", replace: true });
+    throw redirect({
+      to: identity.role === "admin" ? "/admin" : "/dashboard",
+      replace: true,
+      reloadDocument: true,
+    });
   }
   return identity;
 }
