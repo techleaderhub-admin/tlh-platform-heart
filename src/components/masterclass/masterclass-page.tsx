@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, Check, Clock3, Laptop2, Sparkles, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 
 const SESSION_LABEL = "Sunday 11:00 AM IST";
 const SESSION_TIME = "11:00 AM IST";
@@ -88,7 +89,7 @@ export function MasterclassPage() {
     <main className="min-h-screen bg-[#0B0C10] text-white">
       <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0B0C10]/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Link to="/" className="font-heading font-bold">Tech Leader Hub</Link>
+          <Link to="/" aria-label="Tech Leader Hub home"><TLHLogo className="h-10 w-auto max-w-[190px] object-contain" /></Link>
           <Button onClick={start} className="bg-[#2563EB] text-white hover:bg-[#1d4ed8]">Save My Free Seat</Button>
         </div>
       </header>
@@ -122,7 +123,7 @@ export function MasterclassPage() {
 
       <section className="border-b border-white/10 bg-white/[.02] py-20 sm:py-28"><div className="mx-auto max-w-5xl px-5 text-center sm:px-8"><Users className="mx-auto size-8 text-[#F5B942]" /><h2 className="mt-5 font-heading text-3xl font-bold sm:text-5xl">Built for working Android developers.</h2><p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-white/60">Whether you're considering a switch, interviewing already, or trying to break through a career plateau, this session is designed around the decisions that come next.</p><Button size="lg" onClick={start} className="mt-8 bg-[#2563EB] text-white hover:bg-[#1d4ed8]">Register Free <ArrowRight /></Button></div></section>
 
-      <footer className="border-t border-white/10 py-8"><div className="mx-auto flex max-w-7xl justify-between px-5 text-sm text-white/45 sm:px-8"><Link to="/" className="text-white/70">Tech Leader Hub</Link><span>Career acceleration for technology professionals.</span></div></footer>
+      <footer className="border-t border-white/10 py-8"><div className="mx-auto flex max-w-7xl justify-between px-5 text-sm text-white/45 sm:px-8"><Link to="/" className="text-white/70" aria-label="Tech Leader Hub home"><TLHLogo className="h-8 w-auto max-w-[160px] object-contain" /></Link><span>Career acceleration for technology professionals.</span></div></footer>
 
       {open ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="registration-title"><div className="relative w-full max-w-lg border border-white/15 bg-[#0E1118] p-7 shadow-2xl sm:p-9"><button type="button" onClick={()=>setOpen(false)} aria-label="Close registration" className="absolute right-4 top-4 p-2 text-white/50 hover:text-white"><X className="size-5" /></button>
         {registered ? <div className="py-10 text-center">
