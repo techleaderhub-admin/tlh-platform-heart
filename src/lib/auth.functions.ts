@@ -120,16 +120,21 @@ export const getMyIdentity = createServerFn({ method: "GET" })
       context.supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", context.userId)
-        .maybeSingle(),
+        .eq("user_id", context.userId),
     ]);
 
-    if (profileResult.error || roleResult.error || !roleResult.data) {
+    if (profileResult.error || roleResult.error || !roleResult.data?.length) {
       throw new Error("Your account could not be loaded. Please sign in again.");
     }
 
+    // A user may hold multiple roles. Prefer admin when present so an admin
+    // account can also retain the default student role created at signup.
+    const role = (roleResult.data.some((entry) => entry.role === "admin")
+      ? "admin"
+      : roleResult.data[0].role) as AppRole;
+
     return {
       profile: profileResult.data,
-      role: roleResult.data.role as AppRole,
+      role,
     };
   });
