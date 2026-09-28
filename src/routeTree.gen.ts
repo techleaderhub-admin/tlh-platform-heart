@@ -15,6 +15,8 @@ import { Route as GetStartedRouteImport } from './routes/get-started'
 import { Route as MasterclassRouteImport } from './routes/masterclass'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
@@ -49,6 +51,16 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
+  id: '/update-password',
+  path: '/update-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -76,6 +88,8 @@ export interface FileRoutesByFullPath {
   '/masterclass': typeof MasterclassRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
@@ -87,6 +101,8 @@ export interface FileRoutesByTo {
   '/masterclass': typeof MasterclassRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
@@ -131,6 +147,8 @@ export interface RootRouteChildren {
   MasterclassRoute: typeof MasterclassRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  UpdatePasswordRoute: typeof UpdatePasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -241,6 +259,8 @@ const rootRouteChildren: RootRouteChildren = {
   MasterclassRoute: MasterclassRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  UpdatePasswordRoute: UpdatePasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
