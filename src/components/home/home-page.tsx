@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 
 const stages = [
   { name: "Diagnose", detail: "Establish where you are and what is holding you back." },
@@ -63,7 +64,8 @@ export function HomePage() {
       <header className="fixed inset-x-0 top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link to="/" className="flex items-center gap-3 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="Tech Leader Hub home">
-            <img src="/favicon.ico" alt="" className="size-9 rounded-md" />
+            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
+            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
             <span className="font-heading text-base font-bold sm:text-lg">Tech Leader Hub</span>
           </Link>
 
@@ -262,7 +264,7 @@ export function HomePage() {
       <footer className="border-t border-border bg-card/50">
         <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
           <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <Link to="/" className="flex items-center gap-3"><img src="/favicon.ico" alt="" className="size-8 rounded-md" /><span className="font-heading font-bold">Tech Leader Hub</span></Link>
+            <Link to="/" className="flex items-center gap-3"><TLHLogo className="h-9 w-auto max-w-[170px] object-contain" /></Link>
             <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation"><Link to="/about" className="hover:text-foreground">About</Link><Link to="/framework" className="hover:text-foreground">Framework</Link><Link to="/programs" className="hover:text-foreground">Programs</Link><Link to="/masterclass" className="hover:text-foreground">Masterclass</Link><Link to="/contact" className="hover:text-foreground">Contact</Link><Link to="/privacy" className="hover:text-foreground">Privacy</Link><Link to="/terms" className="hover:text-foreground">Terms</Link><Link to="/login" className="hover:text-foreground">Sign in</Link></nav>
           </div>
           <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><p>© {new Date().getFullYear()} Tech Leader Hub.</p><p>Career acceleration. Technology leadership.</p></div>
