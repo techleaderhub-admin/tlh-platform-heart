@@ -16,6 +16,8 @@ import { Route as MasterclassRouteImport } from './routes/masterclass'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
+import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
@@ -52,6 +54,16 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminMasterclassRoute = AuthenticatedAdminMasterclassRouteImport.update({
+  id: '/_authenticated/admin/masterclass',
+  path: '/masterclass',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminStudentsRoute = AuthenticatedAdminStudentsRouteImport.update({
+  id: '/_authenticated/admin/students',
+  path: '/students',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -65,6 +77,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
@@ -74,6 +88,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesById {
@@ -83,15 +99,17 @@ export interface FileRoutesById {
   '/get-started': typeof GetStartedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/dashboard'
+    '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/dashboard'
+  to: '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -101,6 +119,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/_authenticated/admin'
+    | '/_authenticated/admin/masterclass'
+    | '/_authenticated/admin/students'
     | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
@@ -164,6 +184,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/masterclass': {
+      id: '/_authenticated/admin/masterclass'
+      path: '/masterclass'
+      fullPath: '/admin/masterclass'
+      preLoaderRoute: typeof AuthenticatedAdminMasterclassRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/students': {
+      id: '/_authenticated/admin/students'
+      path: '/students'
+      fullPath: '/admin/students'
+      preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -174,13 +208,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
+  AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
+  AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
