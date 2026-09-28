@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Download, Mail, Phone, RefreshCw, Search, Users, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -86,7 +86,7 @@ export function MasterclassRegistrationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadRegistrations = async () => {
+  const loadRegistrations = useCallback(async () => {
     setLoading(true);
     setError(null);
 
