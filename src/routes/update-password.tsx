@@ -32,6 +32,7 @@ function UpdatePasswordPage() {
     let active = true;
     let timeoutId: number | undefined;
     let listener: { subscription: { unsubscribe: () => void } } | undefined;
+    let resolved = false;
 
     async function prepare() {
       try {
@@ -67,8 +68,11 @@ function UpdatePasswordPage() {
         if (!active) return;
 
         if (!sessionError && data.session) {
+          resolved = true;
           setReady(true);
           setChecking(false);
+          if (timeoutId) window.clearTimeout(timeoutId);
+          listener?.subscription.unsubscribe();
           return;
         }
 
@@ -85,6 +89,7 @@ function UpdatePasswordPage() {
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       if (!active) return;
       if (event === "PASSWORD_RECOVERY" && session) {
+        resolved = true;
         setReady(true);
         setChecking(false);
         if (timeoutId) window.clearTimeout(timeoutId);
@@ -94,7 +99,7 @@ function UpdatePasswordPage() {
     listener = authListener;
 
     timeoutId = window.setTimeout(() => {
-      if (!active || !checking) return;
+      if (!active || resolved) return;
       setChecking(false);
       setError("This password reset link is invalid or has expired. Please request a new one.");
       listener?.subscription.unsubscribe();
