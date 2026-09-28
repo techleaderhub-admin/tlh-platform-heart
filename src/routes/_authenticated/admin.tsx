@@ -1,16 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ProtectedPlaceholder } from "@/components/auth/protected-placeholder";
+import { MasterclassRegistrationsPage } from "@/components/admin/masterclass-registrations-page";
 import { requireRole } from "@/lib/route-auth";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: () => requireRole("admin"),
   head: () => ({
     meta: [
-      { title: "Admin Dashboard | Tech Leader Hub" },
-      { name: "description", content: "The secure Tech Leader Hub administration workspace." },
-      { property: "og:title", content: "Admin Dashboard | Tech Leader Hub" },
-      { property: "og:description", content: "The secure Tech Leader Hub administration workspace." },
+      { title: "Masterclass Registrations | Tech Leader Hub" },
+      {
+        name: "description",
+        content: "Secure Tech Leader Hub masterclass registration management.",
+      },
+      { property: "og:title", content: "Masterclass Registrations | Tech Leader Hub" },
+      {
+        property: "og:description",
+        content: "Secure Tech Leader Hub masterclass registration management.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -19,6 +25,5 @@ export const Route = createFileRoute("/_authenticated/admin")({
 });
 
 function AdminDashboard() {
-  const identity = Route.useRouteContext();
-  return <ProtectedPlaceholder area="Admin Dashboard" name={identity.profile.full_name} />;
+  return <MasterclassRegistrationsPage />;
 }
