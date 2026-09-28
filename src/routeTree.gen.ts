@@ -112,9 +112,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/get-started': typeof GetStartedRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
@@ -123,9 +127,9 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
+    '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/forgot-password' | '/update-password' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
+  to: '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/forgot-password' | '/update-password' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -134,6 +138,8 @@ export interface FileRouteTypes {
     | '/masterclass'
     | '/login'
     | '/signup'
+    | '/forgot-password'
+    | '/update-password'
     | '/_authenticated/admin'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
@@ -193,6 +199,20 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/update-password': {
+      id: '/update-password'
+      path: '/update-password'
+      fullPath: '/update-password'
+      preLoaderRoute: typeof UpdatePasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
