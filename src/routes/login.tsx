@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, ArrowRight, LoaderCircle } from "lucide-react";
+import { AlertCircle, ArrowRight, KeyRound, LoaderCircle } from "lucide-react";
 
 import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordField } from "@/components/auth/password-field";
@@ -108,6 +108,12 @@ function LoginPage() {
             {submitting ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : <>Sign in <ArrowRight aria-hidden="true" /></>}
           </Button>
         </form>
+        <div className="mt-5 flex items-center justify-between text-sm">
+          <Link to="/forgot-password" className="inline-flex items-center gap-1.5 font-semibold text-accent underline-offset-4 hover:underline">
+            <KeyRound aria-hidden="true" className="size-4" />
+            Forgot password?
+          </Link>
+        </div>
         <p className="mt-7 text-center text-sm text-muted-foreground">New to Tech Leader Hub? <Link to="/signup" className="font-semibold text-accent underline-offset-4 hover:underline">Create an account</Link></p>
       </div>
     </AuthShell>
