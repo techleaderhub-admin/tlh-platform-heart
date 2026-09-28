@@ -37,7 +37,12 @@ function ForgotPasswordPage() {
 
     setSubmitting(true);
     try {
-      await requestPasswordReset({ data: { identifier } });
+      await requestPasswordReset({
+        data: {
+          identifier,
+          redirectTo: `${window.location.origin}/update-password`,
+        },
+      });
       setSubmitted(true);
     } catch {
       setError("We couldn't process the request right now. Please try again.");
