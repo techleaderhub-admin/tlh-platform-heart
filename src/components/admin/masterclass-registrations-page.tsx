@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Download, Mail, Phone, RefreshCw, Search, Users, X } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -378,7 +378,7 @@ function StatCard({ label, value }: { label: string; value: number }) {
   );
 }
 
-function Detail({ label, children }: { label: string; children: React.ReactNode }) {
+function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-muted/20 p-4">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
