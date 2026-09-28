@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 
 export function PublicPageShell({
   eyebrow,
@@ -18,7 +19,8 @@ export function PublicPageShell({
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/favicon.ico" alt="" className="size-9 rounded-md" />
+            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
+            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
             <span className="font-heading text-base font-bold sm:text-lg">Tech Leader Hub</span>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
@@ -46,7 +48,7 @@ export function PublicPageShell({
       </main>
       <footer className="border-t border-border bg-card/50">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
-          <Link to="/" className="flex items-center gap-3"><img src="/favicon.ico" alt="" className="size-8 rounded-md" /><span className="font-heading font-bold">Tech Leader Hub</span></Link>
+          <Link to="/" className="flex items-center gap-3"><TLHLogo className="h-9 w-auto max-w-[170px] object-contain" /></Link>
           <div className="flex flex-wrap gap-5 text-sm text-muted-foreground">
             <Link to="/about">About</Link><Link to="/framework">Framework</Link><Link to="/programs">Programs</Link><Link to="/masterclass">Masterclass</Link><Link to="/contact">Contact</Link><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link>
           </div>
