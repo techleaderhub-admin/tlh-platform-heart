@@ -13,7 +13,15 @@ function createAuthClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
 
   return createClient<Database>(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      // Password-reset emails are requested from this server-side client.
+      // Use the implicit recovery flow so the browser receives the recovery
+      // session directly and does not depend on a PKCE verifier stored on the
+      // server.
+      flowType: "implicit",
+    },
     global: {
       fetch: (input, init) => {
         const headers = new Headers(init?.headers);
