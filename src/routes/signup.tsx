@@ -70,7 +70,7 @@ function SignupPage() {
       case "phone_exists":
         return { field: "phone", message: "This phone number is already registered. Please use a different number or sign in." };
       case "weak_password":
-        return { field: "password", message: "This password is too weak. Use at least 10 characters with uppercase, lowercase, and a number." };
+        return { field: "password", message: "This password is too weak. Use at least 6 characters with uppercase, lowercase, and a number." };
       case "validation_failed":
         return { field: "email", message: "Please check the email and account details and try again." };
       case "signup_disabled":
