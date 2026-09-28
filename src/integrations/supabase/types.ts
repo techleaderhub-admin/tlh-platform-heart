@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      masterclass_registrations: {
+        Row: {
+          created_at: string
+          email: string
+          experience_range: string
+          full_name: string
+          id: string
+          phone: string
+          roadblock: string
+          session_label: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          experience_range: string
+          full_name: string
+          id?: string
+          phone: string
+          roadblock: string
+          session_label?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          experience_range?: string
+          full_name?: string
+          id?: string
+          phone?: string
+          roadblock?: string
+          session_label?: string
+        }
+        Relationships: []
+      }
       career_assessments: {
         Row: {
           assessment_type: string
