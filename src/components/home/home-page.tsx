@@ -76,7 +76,7 @@ export function HomePage() {
 
           <div className="hidden items-center gap-3 lg:flex">
             <Button asChild variant="ghost"><Link to="/login">Sign in</Link></Button>
-            <Button asChild><Link to="/get-started">Get Started <ArrowRight /></Link></Button>
+            <Button asChild><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
           </div>
 
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}>
@@ -92,7 +92,7 @@ export function HomePage() {
               ))}
               <div className="mt-5 grid grid-cols-2 gap-3">
                 <Button asChild variant="outline"><Link to="/login" onClick={closeMenu}>Sign in</Link></Button>
-                <Button asChild><Link to="/get-started" onClick={closeMenu}>Get Started</Link></Button>
+                <Button asChild><Link to="/masterclass" onClick={closeMenu}>Get Started</Link></Button>
               </div>
             </nav>
           </div>
@@ -116,7 +116,7 @@ export function HomePage() {
                 Tech Leader Hub brings career strategy, focused development, and practical execution into one clear progression—from where you are now to the leader you are ready to become.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="h-12 px-6"><Link to="/get-started">Get Started <ArrowRight /></Link></Button>
+                <Button asChild size="lg" className="h-12 px-6"><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
                 <Button asChild size="lg" variant="outline" className="h-12 px-6"><a href="#framework">Explore the framework <ChevronRight /></a></Button>
               </div>
               <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-muted-foreground">
@@ -254,7 +254,7 @@ export function HomePage() {
             <ShieldCheck className="mx-auto size-9 text-accent" aria-hidden="true" />
             <h2 className="mt-6 font-heading text-4xl font-extrabold sm:text-6xl">Your next chapter should be built on purpose.</h2>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Start with Tech Leader Hub and take a more structured path toward your technology career and leadership goals.</p>
-            <Button asChild size="lg" className="mt-9 h-12 px-7"><Link to="/get-started">Get Started <ArrowRight /></Link></Button>
+            <Button asChild size="lg" className="mt-9 h-12 px-7"><Link to="/masterclass">Get Started <ArrowRight /></Link></Button>
           </div>
         </section>
       </main>
