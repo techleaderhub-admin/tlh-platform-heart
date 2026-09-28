@@ -65,7 +65,10 @@ export const signInWithIdentifier = createServerFn({ method: "POST" })
   });
 
 export const requestPasswordReset = createServerFn({ method: "POST" })
-  .validator((input: unknown) => z.object({ identifier: z.string().trim().min(1) }).parse(input))
+  .validator((input: unknown) => z.object({
+    identifier: z.string().trim().min(1),
+    redirectTo: z.string().url(),
+  }).parse(input))
   .handler(async ({ data }) => {
     const identifier = data.identifier.trim();
     const parsedEmail = z.string().email().safeParse(identifier);
@@ -91,9 +94,7 @@ export const requestPasswordReset = createServerFn({ method: "POST" })
 
     const authClient = createAuthClient();
     await authClient.auth.resetPasswordForEmail(email, {
-      redirectTo: process.env["APP_URL"]
-        ? `${process.env["APP_URL"].replace(/\/$/, "")}/update-password`
-        : "http://localhost:3000/update-password",
+      redirectTo: data.redirectTo,
     });
 
     return { accepted: true };
