@@ -199,3 +199,21 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Premium landing-page visuals */
+.hero-grid {
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.34) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.34) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
+}
+
+.hero-orbit {
+  animation: hero-orbit 18s linear infinite;
+}
+
+@keyframes hero-orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
