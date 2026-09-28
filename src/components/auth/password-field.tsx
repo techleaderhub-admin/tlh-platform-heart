@@ -10,11 +10,15 @@ export function PasswordField({
   label,
   autoComplete,
   error,
+  onBlur,
+  onChange,
 }: {
   id: string;
   label: string;
   autoComplete: string;
   error: string | undefined;
+  onBlur?: React.FocusEventHandler<HTMLInputElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
 }) {
   const [visible, setVisible] = useState(false);
   return (
@@ -28,6 +32,8 @@ export function PasswordField({
           autoComplete={autoComplete}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
+          onBlur={onBlur}
+          onChange={onChange}
           className="h-11 pr-11"
           required
         />
