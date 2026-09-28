@@ -19,7 +19,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Registration = Database["public"]["Tables"]["masterclass_registrations"]["Row"];
 
 const EXPERIENCE_OPTIONS = ["0–2 years", "3–5 years", "6+ years"];
-const ROADBLOCK_OPTIONS = ["Low salary", "Failing interviews", "Stuck in service company"];
+const ROADBLOCK_OPTIONS = ["Low salary", "Failing interviews", "Stuck in a service company"];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
