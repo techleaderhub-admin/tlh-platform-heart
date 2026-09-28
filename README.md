@@ -1,14 +1,20 @@
-# Tech Hub Platform
+# 02 — TLH Platform
 
-Create a new project named "02 — TLH Platform".
+The independent Tech Leader Hub user and administration platform.
 
-This is the future Tech Leader Hub user/admin platform project.
+## Project boundaries
 
-For this turn, ONLY initialize the project structure. Do not build pages, authentication, database tables, dashboards, payments, or business features yet.
+- This is a separate project from **TLH Brand Foundation / 01 — TLH Public Website**.
+- The foundation project remains the source of truth for the shared Tech Leader Hub brand direction and official assets.
+- Platform work should reference that source rather than alter or duplicate the foundation project.
 
-Keep it separate from the existing "TLH Brand Foundation" project.
+## Brand reference
 
-Use the existing TLH project knowledge/brand direction where applicable, but do not modify the existing foundation project.
+Apply the established TLH direction where appropriate: premium, modern, executive, high-trust, future-focused, clean, and spacious. The platform supports the same positioning—**Premium Tech Career Acceleration Platform**—and principle:
+
+> Android is the entry wedge. Career acceleration is the product. Tech leadership is the destination.
+
+Do not invent, redraw, recolor, distort, or replace official TLH brand assets. Confirm the current foundation guidance before implementing branded screens.
 
 This project was built with [Lovable](https://lovable.dev).
 
@@ -30,3 +36,10 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Built with
+
+- TanStack Start
+- TypeScript
+- React
+- Tailwind CSS
