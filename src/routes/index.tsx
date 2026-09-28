@@ -1,24 +1,53 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { LoaderCircle } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import { supabase } from "@/integrations/supabase/client";
+import { destinationForRole } from "@/lib/auth-client";
+import { getMyIdentity } from "@/lib/auth.functions";
+
 export const Route = createFileRoute("/")({
+  ssr: false,
+  head: () => ({
+    meta: [
+      { title: "Tech Leader Hub Platform" },
+      { name: "description", content: "Secure access to the Tech Leader Hub platform." },
+      { property: "og:title", content: "Tech Leader Hub Platform" },
+      { property: "og:description", content: "Secure access to the Tech Leader Hub platform." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let active = true;
+    async function routeAccount() {
+      const { data } = await supabase.auth.getUser();
+      if (!active) return;
+      if (!data.user) {
+        await navigate({ to: "/login", replace: true });
+        return;
+      }
+      try {
+        const identity = await getMyIdentity();
+        if (active) await navigate({ to: destinationForRole(identity.role), replace: true });
+      } catch {
+        await supabase.auth.signOut();
+        if (active) await navigate({ to: "/login", replace: true });
+      }
+    }
+    void routeAccount();
+    return () => { active = false; };
+  }, [navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="flex min-h-screen items-center justify-center bg-background" aria-label="Loading your account">
+      <LoaderCircle aria-hidden="true" className="size-7 animate-spin text-accent" />
+    </main>
   );
 }
