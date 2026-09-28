@@ -11,3 +11,4 @@
 
 - Authentication uses the managed email/password provider; phone sign-in resolves the existing auth email only in a server function so account identifiers and privileged credentials never reach the browser.
 - Protected pages live under the client-only `_authenticated` route gate, with role checks backed by the existing `user_roles` records.
+- The public root route is the TLH marketing home; authenticated workspaces remain at named protected paths so public discovery never conflicts with account routing.
