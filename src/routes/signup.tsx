@@ -32,6 +32,66 @@ function SignupPage() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  function validateField(event: React.FocusEvent<HTMLInputElement>) {
+    const fieldName = event.currentTarget.name;
+    const form = event.currentTarget.form;
+    if (!form) return;
+
+    const values = Object.fromEntries(new FormData(form));
+    const parsed = signupSchema.safeParse(values);
+    const message = parsed.success
+      ? undefined
+      : parsed.error.issues.find((issue) => issue.path[0] === fieldName)?.message;
+
+    setFieldErrors((current) => {
+      const next = { ...current };
+      if (message) next[fieldName] = message;
+      else delete next[fieldName];
+      return next;
+    });
+  }
+
+  function clearFieldError(fieldName: string) {
+    setFieldErrors((current) => {
+      if (!current[fieldName]) return current;
+      const next = { ...current };
+      delete next[fieldName];
+      return next;
+    });
+  }
+
+  function getSignupError(error: { code?: string; message?: string; status?: number } | null) {
+    if (!error) return null;
+
+    switch (error.code) {
+      case "email_exists":
+      case "user_already_exists":
+        return { field: "email", message: "This email is already registered. Please sign in or use Forgot password." };
+      case "phone_exists":
+        return { field: "phone", message: "This phone number is already registered. Please use a different number or sign in." };
+      case "weak_password":
+        return { field: "password", message: "This password is too weak. Use at least 10 characters with uppercase, lowercase, and a number." };
+      case "validation_failed":
+        return { field: "email", message: "Please check the email and account details and try again." };
+      case "signup_disabled":
+      case "email_provider_disabled":
+        return { field: "email", message: "Email sign-up is currently disabled. Please contact Tech Leader Hub support." };
+    }
+
+    const raw = `${error.code ?? ""} ${error.message ?? ""}`.toLowerCase();
+    if (raw.includes("profiles_phone_unique_idx") || (raw.includes("duplicate key") && raw.includes("phone"))) {
+      return { field: "phone", message: "This phone number is already registered. Please use a different number or sign in." };
+    }
+    if (raw.includes("email") && (raw.includes("already") || raw.includes("exists"))) {
+      return { field: "email", message: "This email is already registered. Please sign in or use Forgot password." };
+    }
+    if (raw.includes("password") && (raw.includes("weak") || raw.includes("short"))) {
+      return { field: "password", message: "Please choose a stronger password." };
+    }
+
+    return null;
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -56,7 +116,17 @@ function SignupPage() {
     setSubmitting(false);
 
     if (signupError || !data.user) {
-      setError("We couldn't create your account. Check your details or try signing in.");
+      const mappedError = getSignupError(signupError);
+      if (mappedError) {
+        setFieldErrors({ [mappedError.field]: mappedError.message });
+        return;
+      }
+
+      setError(
+        signupError?.status && signupError.status >= 500
+          ? "We couldn't create your account because the account service is temporarily unavailable. Please try again in a moment."
+          : "We couldn't create your account. Please check the highlighted fields and try again.",
+      );
       return;
     }
     if (data.session) await supabase.auth.signOut();
@@ -93,12 +163,12 @@ function SignupPage() {
           {fields.map((field) => (
             <div key={field.id} className="space-y-2">
               <Label htmlFor={field.id}>{field.label}</Label>
-              <Input id={field.id} name={field.id} type={field.type} autoComplete={field.autoComplete} inputMode={field.inputMode} className="h-11" aria-invalid={Boolean(fieldErrors[field.id])} aria-describedby={fieldErrors[field.id] ? `${field.id}-error` : undefined} required />
+              <Input id={field.id} name={field.id} type={field.type} autoComplete={field.autoComplete} inputMode={field.inputMode} className="h-11" aria-invalid={Boolean(fieldErrors[field.id])} aria-describedby={fieldErrors[field.id] ? `${field.id}-error` : undefined} onBlur={validateField} onChange={() => clearFieldError(field.id)} required />
               {fieldErrors[field.id] ? <p id={`${field.id}-error`} className="text-sm text-destructive">{fieldErrors[field.id]}</p> : null}
             </div>
           ))}
-          <PasswordField id="password" label="Password" autoComplete="new-password" error={fieldErrors["password"]} />
-          <PasswordField id="confirmPassword" label="Confirm Password" autoComplete="new-password" error={fieldErrors["confirmPassword"]} />
+          <PasswordField id="password" label="Password" autoComplete="new-password" error={fieldErrors["password"]} onBlur={validateField} onChange={() => clearFieldError("password")} />
+          <PasswordField id="confirmPassword" label="Confirm Password" autoComplete="new-password" error={fieldErrors["confirmPassword"]} onBlur={validateField} onChange={() => clearFieldError("confirmPassword")} />
           <Button type="submit" className="h-11 w-full" disabled={submitting}>
             {submitting ? <LoaderCircle aria-hidden="true" className="animate-spin" /> : <><UserPlus aria-hidden="true" /> Create account</>}
           </Button>
