@@ -22,7 +22,7 @@ export const signupSchema = z
     ),
     password: z
       .string()
-      .min(10, "Use at least 10 characters.")
+      .min(6, "Use at least 6 characters.")
       .max(128)
       .regex(/[A-Z]/, "Include an uppercase letter.")
       .regex(/[a-z]/, "Include a lowercase letter.")
