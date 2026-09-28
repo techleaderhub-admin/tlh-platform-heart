@@ -43,3 +43,6 @@ npm run dev
 - TypeScript
 - React
 - Tailwind CSS
+
+
+Public website phase 1 includes dedicated About, Framework, Programs, Contact, Privacy, Terms, sitemap, and robots.txt pages.
