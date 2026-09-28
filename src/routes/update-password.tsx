@@ -34,35 +34,74 @@ function UpdatePasswordPage() {
     let listener: { subscription: { unsubscribe: () => void } } | undefined;
 
     async function prepare() {
-      const { data } = await supabase.auth.getSession();
-      if (!active) return;
+      try {
+        // Supabase password recovery can return either:
+        // 1) a PKCE auth code in ?code=...
+        // 2) an implicit-flow recovery session in the URL hash.
+        // Handle both explicitly before deciding whether the reset session exists.
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get("code");
 
-      if (data.session) {
-        setReady(true);
-        setChecking(false);
-        return;
-      }
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) throw exchangeError;
+          url.searchParams.delete("code");
+          window.history.replaceState({}, document.title, url.pathname + (url.search ? url.search : "") + url.hash);
+        } else {
+          const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+          const accessToken = hash.get("access_token");
+          const refreshToken = hash.get("refresh_token");
+          const recoveryType = hash.get("type");
 
-      const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+          if (accessToken && refreshToken && recoveryType === "recovery") {
+            const { error: sessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            if (sessionError) throw sessionError;
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+          }
+        }
+
+        const { data, error: sessionError } = await supabase.auth.getSession();
         if (!active) return;
-        if (event === "PASSWORD_RECOVERY" && session) {
+
+        if (!sessionError && data.session) {
           setReady(true);
           setChecking(false);
-          if (timeoutId) window.clearTimeout(timeoutId);
-          listener?.subscription.unsubscribe();
+          return;
         }
-      });
-      listener = authListener;
 
-      timeoutId = window.setTimeout(() => {
+        throw sessionError ?? new Error("No recovery session");
+      } catch {
         if (!active) return;
         setChecking(false);
         setError("This password reset link is invalid or has expired. Please request a new one.");
-        listener?.subscription.unsubscribe();
-      }, 10000);
+      }
     }
 
+    // Keep listening as a fallback for auth clients that finish processing the
+    // recovery URL asynchronously.
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === "PASSWORD_RECOVERY" && session) {
+        setReady(true);
+        setChecking(false);
+        if (timeoutId) window.clearTimeout(timeoutId);
+        listener?.subscription.unsubscribe();
+      }
+    });
+    listener = authListener;
+
+    timeoutId = window.setTimeout(() => {
+      if (!active || !checking) return;
+      setChecking(false);
+      setError("This password reset link is invalid or has expired. Please request a new one.");
+      listener?.subscription.unsubscribe();
+    }, 10000);
+
     prepare();
+
     return () => {
       active = false;
       if (timeoutId) window.clearTimeout(timeoutId);
@@ -94,11 +133,20 @@ function UpdatePasswordPage() {
     setSubmitting(true);
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password });
-      if (updateError) throw updateError;
+      if (updateError) {
+        if (updateError.message.toLowerCase().includes("different")) {
+          throw new Error("Choose a password that is different from your current password.");
+        }
+        throw updateError;
+      }
       setSuccess(true);
-      await supabase.auth.signOut();
-    } catch {
-      setError("We couldn't update your password. Please request a new reset link.");
+      await supabase.auth.signOut({ scope: "local" });
+    } catch (updateError) {
+      setError(
+        updateError instanceof Error && updateError.message
+          ? updateError.message
+          : "We couldn't update your password. Please request a new reset link.",
+      );
     } finally {
       setSubmitting(false);
     }
