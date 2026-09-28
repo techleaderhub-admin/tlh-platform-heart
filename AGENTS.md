@@ -9,6 +9,9 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
+## Project architecture
+
+- Preserve this repository as the independent Tech Leader Hub user/admin platform; use the separate TLH Brand Foundation as the brand source of truth so public-site and platform concerns remain isolated.
 - Authentication uses the managed email/password provider; phone sign-in resolves the existing auth email only in a server function so account identifiers and privileged credentials never reach the browser.
 - Protected pages live under the client-only `_authenticated` route gate, with role checks backed by the existing `user_roles` records.
 - The public root route is the TLH marketing home; authenticated workspaces remain at named protected paths so public discovery never conflicts with account routing.
