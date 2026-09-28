@@ -11,4 +11,4 @@
 - [x] Build the public TLH home page at `/` with the requested content sections.
 - [x] Add responsive navigation, official logo usage, CTAs, footer, and accessible mobile behavior.
 - [x] Add the minimal `/get-started` placeholder without expanding its scope.
-- [ ] Verify build health, links, routes, and responsive layouts.
+- [x] Verify build health, links, routes, and responsive layouts.
