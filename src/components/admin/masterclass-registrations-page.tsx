@@ -104,12 +104,11 @@ export function MasterclassRegistrationsPage() {
     }
 
     setLoading(false);
-  };
+  }, []);
 
-  useState(() => {
+  useEffect(() => {
     void loadRegistrations();
-    return undefined;
-  });
+  }, [loadRegistrations]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
