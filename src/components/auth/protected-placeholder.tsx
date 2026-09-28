@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { LogOut, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 import { signOutAndReturnToLogin } from "@/lib/auth-client";
 
 export function ProtectedPlaceholder({ area, name }: { area: "Student Dashboard" | "Admin Dashboard"; name: string | null }) {
@@ -14,10 +15,8 @@ export function ProtectedPlaceholder({ area, name }: { area: "Student Dashboard"
       <header className="border-b border-border bg-card">
         <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-5 sm:px-8">
           <div className="flex items-center gap-3">
-            <span className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <ShieldCheck aria-hidden="true" className="size-4" />
-            </span>
-            <span className="font-heading font-bold text-foreground">Tech Leader Hub</span>
+            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
+            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
           </div>
           <Button variant="outline" onClick={() => signOutAndReturnToLogin(queryClient, () => navigate({ to: "/login", replace: true }))}>
             <LogOut aria-hidden="true" /> Sign out
