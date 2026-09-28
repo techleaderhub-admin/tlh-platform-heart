@@ -2,29 +2,85 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, Check, Clock3, Laptop2, Sparkles, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
-const TAGMANGO_URL = import.meta.env.VITE_TAGMANGO_MASTERCLASS_URL ?? "";
-const SESSION_DATE = import.meta.env.VITE_MASTERCLASS_DATE ?? "Session date will be announced";
-const SESSION_TIME = import.meta.env.VITE_MASTERCLASS_TIME ?? "Time will be announced";
+const SESSION_LABEL = "Sunday 11:00 AM IST";
 
 const questions = [
   { title: "What's your Android experience?", options: ["0–2 years", "3–5 years", "6+ years"] },
   { title: "What's your biggest career roadblock?", options: ["Low salary", "Failing interviews", "Stuck in a service company"] },
 ];
 
+type RegistrationForm = {
+  experienceRange: string;
+  roadblock: string;
+  fullName: string;
+  email: string;
+  phone: string;
+};
+
 export function MasterclassPage() {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [processing, setProcessing] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState<RegistrationForm>({
+    experienceRange: "",
+    roadblock: "",
+    fullName: "",
+    email: "",
+    phone: "",
+  });
 
-  const start = () => { setStep(0); setProcessing(false); setOpen(true); };
-  const choose = () => {
-    if (step < questions.length - 1) { setStep(step + 1); return; }
+  const start = () => {
+    setStep(0);
+    setProcessing(false);
+    setRegistered(false);
+    setError("");
+    setForm({ experienceRange: "", roadblock: "", fullName: "", email: "", phone: "" });
+    setOpen(true);
+  };
+
+  const choose = (value: string) => {
+    setError("");
+    if (step === 0) {
+      setForm((current) => ({ ...current, experienceRange: value }));
+      setStep(1);
+      return;
+    }
+
+    setForm((current) => ({ ...current, roadblock: value }));
+    setStep(2);
+  };
+
+  const submitRegistration = async () => {
+    setError("");
+
+    if (!form.fullName.trim() || !form.email.trim() || !form.phone.trim()) {
+      setError("Please enter your name, email, and phone number.");
+      return;
+    }
+
     setProcessing(true);
-    window.setTimeout(() => {
-      if (TAGMANGO_URL) window.location.assign(TAGMANGO_URL);
-      else setProcessing(false);
-    }, 900);
+
+    const { error: insertError } = await supabase.from("masterclass_registrations").insert({
+      full_name: form.fullName.trim(),
+      email: form.email.trim().toLowerCase(),
+      phone: form.phone.trim(),
+      experience_range: form.experienceRange,
+      roadblock: form.roadblock,
+      session_label: SESSION_LABEL,
+    });
+
+    if (insertError) {
+      setProcessing(false);
+      setError("We couldn't complete your registration. Please check your details and try again.");
+      return;
+    }
+
+    setProcessing(false);
+    setRegistered(true);
   };
 
   return (
@@ -45,7 +101,7 @@ export function MasterclassPage() {
             <h1 className="mt-5 max-w-4xl font-heading text-4xl font-extrabold leading-[1.04] sm:text-6xl lg:text-7xl">How Android Developers Can Get Hired in Product-Based Companies and <span className="text-[#2563EB]">2X Their Salary.</span></h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/60 sm:text-xl">A practical 90-minute session on positioning, interview readiness, career architecture, and the moves that can open stronger product-company opportunities.</p>
             <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-              {[[CalendarDays, SESSION_DATE], [Clock3, SESSION_TIME], [Laptop2, "Live on Zoom"]].map(([Icon, value]) => <div key={String(value)} className="border border-white/10 bg-white/[.03] p-4"><Icon className="size-5 text-[#22D3EE]" /><p className="mt-3 text-sm text-white/75">{String(value)}</p></div>)}
+              {[[CalendarDays, "Every Sunday"], [Clock3, "11:00 AM IST"], [Laptop2, "Live on Zoom"]].map(([Icon, value]) => <div key={String(value)} className="border border-white/10 bg-white/[.03] p-4"><Icon className="size-5 text-[#22D3EE]" /><p className="mt-3 text-sm text-white/75">{String(value)}</p></div>)}
             </div>
             <Button size="lg" onClick={start} className="mt-8 h-13 bg-[#2563EB] px-7 text-white hover:bg-[#1d4ed8]">Save My Free Seat Now <ArrowRight /></Button>
           </div>
@@ -67,7 +123,16 @@ export function MasterclassPage() {
 
       <footer className="border-t border-white/10 py-8"><div className="mx-auto flex max-w-7xl justify-between px-5 text-sm text-white/45 sm:px-8"><Link to="/" className="text-white/70">Tech Leader Hub</Link><span>Career acceleration for technology professionals.</span></div></footer>
 
-      {open ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="registration-title"><div className="relative w-full max-w-lg border border-white/15 bg-[#0E1118] p-7 shadow-2xl sm:p-9"><button type="button" onClick={()=>setOpen(false)} aria-label="Close registration" className="absolute right-4 top-4 p-2 text-white/50 hover:text-white"><X className="size-5" /></button>{processing ? <div className="py-12 text-center"><div className="mx-auto size-10 animate-spin rounded-full border-2 border-white/15 border-t-[#22D3EE]" /><h2 id="registration-title" className="mt-6 font-heading text-2xl font-bold">Tailoring your masterclass experience...</h2>{!TAGMANGO_URL && <p className="mt-3 text-white/55">Your TagMango registration link will open once it is configured.</p>}</div> : <><p className="text-xs font-bold uppercase tracking-[.16em] text-[#22D3EE]">Step {step+1} of {questions.length}</p><h2 id="registration-title" className="mt-3 pr-8 font-heading text-2xl font-bold">{questions[step].title}</h2><div className="mt-7 space-y-3">{questions[step].options.map(x=><button key={x} type="button" onClick={choose} className="flex w-full items-center justify-between border border-white/10 bg-white/[.03] px-5 py-4 text-left hover:border-[#2563EB]/70 hover:bg-[#2563EB]/10"><span>{x}</span><ArrowRight className="size-4" /></button>)}</div></>}</div></div> : null}
+      {open ? <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="registration-title"><div className="relative w-full max-w-lg border border-white/15 bg-[#0E1118] p-7 shadow-2xl sm:p-9"><button type="button" onClick={()=>setOpen(false)} aria-label="Close registration" className="absolute right-4 top-4 p-2 text-white/50 hover:text-white"><X className="size-5" /></button>
+        {registered ? <div className="py-10 text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#22D3EE]/10"><Check className="size-7 text-[#22D3EE]" /></div>
+          <h2 id="registration-title" className="mt-6 font-heading text-2xl font-bold">You're registered.</h2>
+          <p className="mt-3 text-white/60">Your masterclass registration has been saved successfully.</p>
+          <div className="mt-6 border border-white/10 bg-white/[.03] p-4 text-sm text-white/75"><strong>Every Sunday · 11:00 AM IST · Live on Zoom</strong></div>
+          <p className="mt-4 text-sm text-white/45">Course details and the next steps can be shared after the masterclass.</p>
+          <Button onClick={()=>setOpen(false)} className="mt-7 bg-[#2563EB] text-white hover:bg-[#1d4ed8]">Done</Button>
+        </div> : processing ? <div className="py-12 text-center"><div className="mx-auto size-10 animate-spin rounded-full border-2 border-white/15 border-t-[#22D3EE]" /><h2 id="registration-title" className="mt-6 font-heading text-2xl font-bold">Saving your seat...</h2></div> : step < 2 ? <><p className="text-xs font-bold uppercase tracking-[.16em] text-[#22D3EE]">Step {step+1} of 3</p><h2 id="registration-title" className="mt-3 pr-8 font-heading text-2xl font-bold">{questions[step].title}</h2><div className="mt-7 space-y-3">{questions[step].options.map(x=><button key={x} type="button" onClick={()=>choose(x)} className="flex w-full items-center justify-between border border-white/10 bg-white/[.03] px-5 py-4 text-left hover:border-[#2563EB]/70 hover:bg-[#2563EB]/10"><span>{x}</span><ArrowRight className="size-4" /></button>)}</div></> : <><p className="text-xs font-bold uppercase tracking-[.16em] text-[#22D3EE]">Step 3 of 3</p><h2 id="registration-title" className="mt-3 pr-8 font-heading text-2xl font-bold">Where should we send your masterclass details?</h2><div className="mt-6 space-y-3"><input value={form.fullName} onChange={(e)=>setForm((current)=>({...current,fullName:e.target.value}))} placeholder="Full Name" autoComplete="name" className="h-12 w-full border border-white/10 bg-white/[.03] px-4 text-white outline-none placeholder:text-white/35 focus:border-[#2563EB]" /><input value={form.email} onChange={(e)=>setForm((current)=>({...current,email:e.target.value}))} placeholder="Email Address" type="email" autoComplete="email" className="h-12 w-full border border-white/10 bg-white/[.03] px-4 text-white outline-none placeholder:text-white/35 focus:border-[#2563EB]" /><input value={form.phone} onChange={(e)=>setForm((current)=>({...current,phone:e.target.value}))} placeholder="Phone Number" type="tel" autoComplete="tel" className="h-12 w-full border border-white/10 bg-white/[.03] px-4 text-white outline-none placeholder:text-white/35 focus:border-[#2563EB]" />{error && <p className="text-sm text-red-300">{error}</p>}<Button onClick={submitRegistration} className="mt-2 h-12 w-full bg-[#2563EB] text-white hover:bg-[#1d4ed8]">Save My Free Seat <ArrowRight /></Button></div></>}
+      </div></div> : null}
     </main>
   );
 }
