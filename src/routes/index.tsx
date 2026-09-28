@@ -1,53 +1,17 @@
-import { useEffect } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LoaderCircle } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { supabase } from "@/integrations/supabase/client";
-import { destinationForRole } from "@/lib/auth-client";
-import { getMyIdentity } from "@/lib/auth.functions";
+import { HomePage } from "@/components/home/home-page";
 
 export const Route = createFileRoute("/")({
-  ssr: false,
   head: () => ({
     meta: [
-      { title: "Tech Leader Hub Platform" },
-      { name: "description", content: "Secure access to the Tech Leader Hub platform." },
-      { property: "og:title", content: "Tech Leader Hub Platform" },
-      { property: "og:description", content: "Secure access to the Tech Leader Hub platform." },
+      { title: "Tech Leader Hub | Build Your Path to Technology Leadership" },
+      { name: "description", content: "A structured career acceleration platform for technology professionals progressing toward meaningful technology leadership." },
+      { property: "og:title", content: "Tech Leader Hub | Build Your Path to Technology Leadership" },
+      { property: "og:description", content: "A structured career acceleration platform for technology professionals progressing toward meaningful technology leadership." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  component: Index,
+  component: HomePage,
 });
-
-function Index() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    let active = true;
-    async function routeAccount() {
-      const { data } = await supabase.auth.getUser();
-      if (!active) return;
-      if (!data.user) {
-        await navigate({ to: "/login", replace: true });
-        return;
-      }
-      try {
-        const identity = await getMyIdentity();
-        if (active) await navigate({ to: destinationForRole(identity.role), replace: true });
-      } catch {
-        await supabase.auth.signOut();
-        if (active) await navigate({ to: "/login", replace: true });
-      }
-    }
-    void routeAccount();
-    return () => { active = false; };
-  }, [navigate]);
-
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-background" aria-label="Loading your account">
-      <LoaderCircle aria-hidden="true" className="size-7 animate-spin text-accent" />
-    </main>
-  );
-}
