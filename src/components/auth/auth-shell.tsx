@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ShieldCheck } from "lucide-react";
+import { TLHLogo } from "@/components/brand/tlh-logo";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
@@ -8,13 +8,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 grid w-full max-w-5xl overflow-hidden rounded-lg border border-border bg-card shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
         <section className="hidden border-r border-border bg-muted/30 p-12 lg:flex lg:flex-col lg:justify-between">
           <div className="flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <ShieldCheck aria-hidden="true" className="size-5" />
-            </span>
-            <div>
-              <p className="font-heading text-lg font-bold text-foreground">Tech Leader Hub</p>
-              <p className="text-xs font-semibold uppercase text-accent">Career acceleration platform</p>
-            </div>
+            <TLHLogo className="h-12 w-auto max-w-[210px] object-contain" />
           </div>
           <div>
             <div className="mb-6 h-1 w-14 rounded-full bg-accent" />
@@ -29,10 +23,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         </section>
         <section className="p-6 sm:p-10 lg:p-12">
           <div className="mb-9 flex items-center gap-3 lg:hidden">
-            <span className="flex size-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <ShieldCheck aria-hidden="true" className="size-4" />
-            </span>
-            <p className="font-heading font-bold text-foreground">Tech Leader Hub</p>
+            <TLHLogo className="h-10 w-auto max-w-[180px] object-contain" />
           </div>
           {children}
         </section>
