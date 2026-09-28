@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const SESSION_LABEL = "Sunday 11:00 AM IST";
+const SESSION_TIME = "11:00 AM IST";
 
 const questions = [
   { title: "What's your Android experience?", options: ["0–2 years", "3–5 years", "6+ years"] },
@@ -101,7 +102,7 @@ export function MasterclassPage() {
             <h1 className="mt-5 max-w-4xl font-heading text-4xl font-extrabold leading-[1.04] sm:text-6xl lg:text-7xl">How Android Developers Can Get Hired in Product-Based Companies and <span className="text-[#2563EB]">2X Their Salary.</span></h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/60 sm:text-xl">A practical 90-minute session on positioning, interview readiness, career architecture, and the moves that can open stronger product-company opportunities.</p>
             <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-              {[[CalendarDays, "Every Sunday"], [Clock3, "11:00 AM IST"], [Laptop2, "Live on Zoom"]].map(([Icon, value]) => <div key={String(value)} className="border border-white/10 bg-white/[.03] p-4"><Icon className="size-5 text-[#22D3EE]" /><p className="mt-3 text-sm text-white/75">{String(value)}</p></div>)}
+              {[[CalendarDays, "Every Sunday"], [Clock3, SESSION_TIME], [Laptop2, "Live on Zoom"]].map(([Icon, value]) => <div key={String(value)} className="border border-white/10 bg-white/[.03] p-4"><Icon className="size-5 text-[#22D3EE]" /><p className="mt-3 text-sm text-white/75">{String(value)}</p></div>)}
             </div>
             <Button size="lg" onClick={start} className="mt-8 h-13 bg-[#2563EB] px-7 text-white hover:bg-[#1d4ed8]">Save My Free Seat Now <ArrowRight /></Button>
           </div>
