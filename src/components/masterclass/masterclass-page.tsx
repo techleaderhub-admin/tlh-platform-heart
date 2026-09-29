@@ -27,22 +27,22 @@ const SESSION_TIME = "11:00 AM IST";
 const audience = [
   {
     icon: Target,
-    title: "2–8 years of Android experience",
-    description: "You're past the beginner stage and want your experience to create stronger career opportunities.",
+    title: "2–13 years of Android experience",
+    description: "You already have Android experience and want that experience to create stronger career opportunities.",
   },
   {
     icon: Layers3,
-    title: "Service or mid-tier product company",
+    title: "Currently in a service or mid-tier product company",
     description: "You want to understand what stronger product organizations expect from experienced engineers.",
   },
   {
     icon: Map,
-    title: "Planning your next switch",
+    title: "Want to crack high-paying product-based roles",
     description: "You've been thinking about changing jobs and need a clearer, structured path.",
   },
   {
     icon: BrainCircuit,
-    title: "Ready for technical leadership",
+    title: "Ready to grow into a tech leader",
     description: "You want to move toward Senior, Lead, Architect or broader technical ownership.",
   },
 ];
@@ -50,25 +50,25 @@ const audience = [
 const learningPoints = [
   {
     number: "01",
-    title: "The Product-Company Mindset",
+    title: "The real difference between a senior developer and a tech leader",
     description:
       "Understand how expectations change when you move from feature execution toward product engineering and technical ownership.",
   },
   {
     number: "02",
-    title: "The 3 Skills That Matter at Senior Level",
+    title: "3 skills that actually matter for ₹36+ LPA Android roles",
     description:
       "Identify the capabilities that increasingly separate experienced engineers from engineers ready for larger technical responsibilities.",
   },
   {
     number: "03",
-    title: "How to Position Yourself as a Tech Leader",
+    title: "How to position yourself as a leader, not just a coder",
     description:
       "Learn why years of experience alone do not automatically communicate leadership-level capability.",
   },
   {
     number: "04",
-    title: "The TLH Career Roadmap",
+    title: "The Tech Leader Hub roadmap to premium Android careers",
     description:
       "See a practical path from Senior Android Engineer toward Tech Lead, Architect and technology leadership.",
   },
@@ -235,18 +235,18 @@ export function MasterclassPage() {
             </div>
 
             <p className="mt-7 text-sm font-semibold text-white/55 sm:text-base">
-              For Android professionals ready to move from senior developer to tech leader.
+              Free 90-minute masterclass for serious Android professionals ready to move from senior developer to tech leader.
             </p>
 
             <h1 className="mt-4 max-w-4xl font-heading text-4xl font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.55rem]">
-              How Senior Android Engineers Can Unlock{" "}
+              How Senior Android Engineers Can Transition Into{" "}
               <span className="bg-gradient-to-r from-[#1677FF] via-[#22D3EE] to-[#F5B942] bg-clip-text text-transparent">
-                High-Paying Product Roles
+                Tech Leader Hub and Unlock ₹36+ LPA Roles
               </span>
             </h1>
 
             <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 sm:text-xl sm:leading-8">
-              A practical career system for Android professionals ready to build stronger technical depth, sharper positioning and the interview readiness needed for their next career move.
+              Most senior Android engineers are stuck in service companies with slow salary growth, outdated skills, and no clear path to product-based leadership roles. This masterclass gives you a practical roadmap to change that.
             </p>
 
             <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
@@ -332,9 +332,9 @@ export function MasterclassPage() {
       <section className="border-b border-white/10 bg-[#0B1C32]/45" aria-label="Trust signals">
         <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
           {[
-            ["13+", "Years in software & Android"],
-            ["Ola", "Product engineering experience"],
-            ["PayU", "Technology experience"],
+            ["13+", "Years building Android products"],
+            ["100M+", "Users reached by Android apps"],
+            ["Ola + PayU", "Product & technology experience"],
             ["100+", "Android engineers mentored"],
           ].map(([value, label]) => (
             <div key={value} className="px-4 py-7 text-center sm:px-6">
@@ -349,18 +349,18 @@ export function MasterclassPage() {
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">The real problem</p>
           <h2 className="mt-4 max-w-4xl font-heading text-3xl font-extrabold tracking-tight sm:text-5xl">
-            Your experience is growing.{" "}
-            <span className="text-white/45">But is your career growing with it?</span>
+            Most senior Android engineers are stuck.{" "}
+            <span className="text-white/45">Your experience deserves a clearer path forward.</span>
           </h2>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/55">
-            You already know Android. You've shipped applications, solved production problems and spent years becoming better at your craft. But career growth can still feel slower than technical growth.
+            Most senior Android engineers are stuck in service companies with slow salary growth, outdated skills, and no clear path to product-based leadership roles.
           </p>
 
           <div className="mt-12 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-3">
             {[
-              ["I keep delaying my switch.", "You know you should move, but months keep passing without a clear plan."],
-              ["I interview, but I don't convert.", "Your experience looks good on paper, but interviews expose preparation gaps."],
-              ["My experience isn't translating.", "You're becoming more experienced without seeing the career acceleration you expected."],
+              ["Slow salary growth", "Your responsibilities are increasing, but your compensation isn't moving at the same pace."],
+              ["Outdated technical depth", "Day-to-day Android work can leave gaps in architecture, system design and leadership-level thinking."],
+              ["No clear leadership path", "You want product-based roles and technical leadership, but don't know what to build, prove and prepare next."],
             ].map(([title, description]) => (
               <article key={title} className="bg-[#071426] p-7 sm:p-9">
                 <span className="text-[#F5B942]">●</span>
@@ -371,7 +371,7 @@ export function MasterclassPage() {
           </div>
 
           <p className="mt-8 text-sm font-semibold text-white/65">
-            If any of these sound familiar, this masterclass was built for you.
+            If this sounds like your career right now, this masterclass is built for you.
           </p>
         </div>
       </section>
@@ -380,7 +380,7 @@ export function MasterclassPage() {
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="max-w-3xl">
             <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Is this you?</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">This masterclass is for experienced Android engineers.</h2>
+            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">This masterclass is for serious Android professionals ready to become tech leaders.</h2>
           </div>
 
           <div className="mt-12 grid gap-5 md:grid-cols-2">
@@ -484,10 +484,10 @@ export function MasterclassPage() {
             <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Hi, I'm Nikhil Rai.</h2>
             <p className="mt-3 font-semibold text-[#F5B942]">Android Architect · Mentor · Founder, Tech Leader Hub</p>
             <p className="mt-6 text-lg leading-8 text-white/55">
-              I've spent 13+ years building software and working through the realities of Android engineering, product development and technical growth.
+              I've spent 13+ years building Android products and working through the realities of Android engineering, product development and technical growth.
             </p>
             <p className="mt-5 text-lg leading-8 text-white/55">
-              I've worked across companies including Ola and PayU, and experienced the difference between simply writing code and taking ownership of larger technical problems.
+              I've worked across companies including Ola and PayU, building Android products used by 100 million+ users and experiencing the difference between simply writing code and taking ownership of larger technical problems.
             </p>
             <p className="mt-5 text-lg leading-8 text-white/55">
               Today, I'm building Tech Leader Hub to help experienced Android engineers turn their existing experience into stronger technical depth, better positioning and a clearer path toward technical leadership.
@@ -518,7 +518,7 @@ export function MasterclassPage() {
           <div className="mt-12 grid gap-5 sm:grid-cols-3">
             {[
               ["100+", "Android engineers mentored"],
-              ["13+", "Years of software & Android experience"],
+              ["100M+", "Users reached by Android apps"],
               ["9", "Stages in the TLH career framework"],
             ].map(([value, label]) => (
               <div key={label} className="rounded-3xl border border-white/10 bg-[#071426] p-8 text-center">
@@ -623,8 +623,8 @@ export function MasterclassPage() {
       <section className="relative overflow-hidden border-b border-white/10 py-20 sm:py-28">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(22,119,255,.16),transparent_45%)]" />
         <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
-          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#22D3EE]">Next live session</p>
-          <h2 className="mt-5 font-heading text-4xl font-extrabold tracking-tight sm:text-6xl">Your next career move deserves a strategy.</h2>
+          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#22D3EE]">Limited live seats · Next session</p>
+          <h2 className="mt-5 font-heading text-4xl font-extrabold tracking-tight sm:text-6xl">Your next career move deserves a tech-leadership roadmap.</h2>
           <div className="mx-auto mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
             {[
               ["Sunday", "11:00 AM IST"],
@@ -649,7 +649,7 @@ export function MasterclassPage() {
           <div className="rounded-[32px] border border-[#1677FF]/20 bg-[#071426] p-7 shadow-2xl sm:p-10">
             <div className="text-center">
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Reserve your seat</p>
-              <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">You already have the experience. Now build the career system around it.</h2>
+              <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">You already have the Android experience. Now build the leadership path around it.</h2>
               <p className="mx-auto mt-5 max-w-2xl leading-7 text-white/45">
                 Join the free Tech Leader Hub masterclass and discover a clearer path from experienced Android engineer to technical leader.
               </p>
