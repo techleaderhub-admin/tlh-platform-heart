@@ -203,8 +203,8 @@
 /* Premium landing-page visuals */
 .hero-grid {
   background-image:
-    linear-gradient(hsl(var(--border) / 0.34) 1px, transparent 1px),
-    linear-gradient(90deg, hsl(var(--border) / 0.34) 1px, transparent 1px);
+    linear-gradient(color-mix(in oklab, var(--border) 34%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--border) 34%, transparent) 1px, transparent 1px);
   background-size: 56px 56px;
   mask-image: radial-gradient(circle at center, black 0%, transparent 78%);
 }
