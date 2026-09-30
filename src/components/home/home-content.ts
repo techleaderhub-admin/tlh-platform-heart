@@ -20,9 +20,9 @@ export const LINKS = {
 } as const;
 
 export const PORTRAITS = {
-  hero: "/images/nikhil/nikhil-rai-arms-crossed-glasses",
-  story: "/images/nikhil/nikhil-rai-standing",
-  headshot: "/images/nikhil/nikhil-rai-headshot",
+  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be05580af9.29314886_Nikhil-Rai-LinkedIn.png",
+  story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
+  headshot: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
 } as const;
 
 export const recognition = [
