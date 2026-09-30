@@ -15,6 +15,7 @@ import {
 
 import {
   LINKS,
+  droidSkoolPath,
   faqs,
   fitFor,
   fitNotFor,
@@ -536,10 +537,16 @@ export function HomePage() {
         {/* ---------- Fit ---------- */}
         <section id="fit" className="tlh-section bg-[var(--mist)]" aria-labelledby="fit-title">
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
-            <h2 id="fit-title" className="tlh-h2 max-w-[36rem] text-[var(--ink)]">
-              Is Tech Leader Hub right for you?
-            </h2>
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <div className="max-w-[720px]">
+              <h2 id="fit-title" className="tlh-h2 text-[var(--ink)]">
+                Is Tech Leader Hub right for you?
+              </h2>
+              <p className="mt-4 text-[18px] leading-[1.6] text-[var(--slate)]">
+                The right platform depends on where you are in your Android career.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
               <div className="rounded-[28px] bg-white p-8 sm:p-10">
                 <h3 className="text-[21px] font-semibold text-[var(--ink)]">It's for you if</h3>
                 <ul className="mt-6 space-y-5">
@@ -557,9 +564,10 @@ export function HomePage() {
                   ))}
                 </ul>
               </div>
-              <div className="rounded-[28px] border border-[var(--line)] p-8 sm:p-10">
+
+              <div className="rounded-[28px] border border-[var(--line)] bg-white/60 p-8 sm:p-10">
                 <h3 className="text-[21px] font-semibold text-[var(--ink)]">It's not for you if</h3>
-                <ul className="mt-6 space-y-5">
+                <ul className="mt-6">
                   {fitNotFor.map((line) => (
                     <li
                       key={line}
@@ -574,43 +582,99 @@ export function HomePage() {
                   ))}
                 </ul>
 
-                <div className="mt-8 overflow-hidden rounded-[24px] border border-[var(--blue)]/20 bg-[linear-gradient(135deg,rgba(11,99,229,0.08),rgba(242,181,68,0.12))] p-6 sm:p-7">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <span className="inline-flex items-center rounded-full border border-[var(--blue)]/20 bg-white/70 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--blue)]">
-                      Also by Nikhil Rai
-                    </span>
-                    <span className="text-[12px] font-medium text-[var(--slate)]">
-                      Android learning • Projects • Job-readiness
-                    </span>
-                  </div>
+                <p className="mt-7 text-[15px] leading-[1.6] text-[var(--slate)]">
+                  Start with Droid Skool, build your Android foundation and become job-ready before
+                  stepping into a senior-career acceleration platform.
+                </p>
 
-                  <h4 className="mt-5 text-[23px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
-                    Build your Android foundation with Droid Skool.
-                  </h4>
-                  <p className="mt-3 max-w-[42rem] text-[16px] leading-[1.65] text-[var(--slate)]">
-                    Droid Skool is Nikhil Rai's practical Android developer platform for building
-                    real apps, developing strong fundamentals and becoming job-ready. When you're
-                    ready to move from <strong>learning and building</strong> to
-                    <strong> senior-career acceleration</strong>, Tech Leader Hub is the next step.
-                  </p>
-
-                  <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-medium text-[var(--ink)]">
-                    <span>Learn →</span>
-                    <span>Build →</span>
-                    <span>Get Job-Ready →</span>
-                    <span>Accelerate Your Career</span>
-                  </div>
-
-                  <a
-                    href={LINKS.droidSkool}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="tlh-btn tlh-btn-primary mt-6 inline-flex"
-                  >
-                    Explore Droid Skool
-                  </a>
-                </div>
+                <a
+                  href={LINKS.droidSkool}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-btn tlh-btn-primary mt-6 inline-flex"
+                >
+                  Join Droid Skool
+                </a>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Droid Skool / TLH path ---------- */}
+        <section
+          className="tlh-section bg-white"
+          aria-labelledby="droid-skool-path-title"
+        >
+          <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
+            <div className="mx-auto max-w-[760px] text-center">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.15em] text-[var(--blue)]">
+                {droidSkoolPath.eyebrow}
+              </p>
+              <h2 id="droid-skool-path-title" className="tlh-h2 mt-3 text-[var(--ink)]">
+                {droidSkoolPath.title}
+              </h2>
+              <p className="mt-5 text-[18px] leading-[1.65] text-[var(--slate)]">
+                {droidSkoolPath.description}
+              </p>
+            </div>
+
+            <div className="mt-12 grid gap-6 lg:grid-cols-2">
+              <article className="relative overflow-hidden rounded-[30px] border border-[var(--blue)]/20 bg-[linear-gradient(145deg,rgba(11,99,229,0.08),rgba(242,181,68,0.10))] p-7 sm:p-9">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="inline-flex rounded-full border border-[var(--blue)]/20 bg-white/80 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.11em] text-[var(--blue)]">
+                    {droidSkoolPath.droidSkool.badge}
+                  </span>
+                  <span className="text-[12px] font-semibold text-[var(--blue)]">Start here</span>
+                </div>
+                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em] text-[var(--ink)]">
+                  {droidSkoolPath.droidSkool.title}
+                </h3>
+                <p className="mt-1 text-[17px] font-medium text-[var(--slate)]">
+                  {droidSkoolPath.droidSkool.subtitle}
+                </p>
+                <ul className="mt-6 space-y-4">
+                  {droidSkoolPath.droidSkool.points.map((point) => (
+                    <li key={point} className="flex gap-3 text-[16px] leading-[1.55] text-[var(--ink)]">
+                      <Check className="mt-1 size-[18px] shrink-0 text-[var(--blue)]" aria-hidden="true" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href={LINKS.droidSkool}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-btn tlh-btn-primary mt-8 inline-flex"
+                >
+                  Join Droid Skool
+                </a>
+              </article>
+
+              <article className="rounded-[30px] border border-[var(--line)] bg-[var(--mist)] p-7 sm:p-9">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <span className="inline-flex rounded-full border border-[var(--line)] bg-white/80 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.11em] text-[var(--slate)]">
+                    {droidSkoolPath.techLeaderHub.badge}
+                  </span>
+                  <span className="text-[12px] font-semibold text-[var(--slate)]">Next level</span>
+                </div>
+                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em] text-[var(--ink)]">
+                  {droidSkoolPath.techLeaderHub.title}
+                </h3>
+                <p className="mt-1 text-[17px] font-medium text-[var(--slate)]">
+                  {droidSkoolPath.techLeaderHub.subtitle}
+                </p>
+                <ul className="mt-6 space-y-4">
+                  {droidSkoolPath.techLeaderHub.points.map((point) => (
+                    <li key={point} className="flex gap-3 text-[16px] leading-[1.55] text-[var(--ink)]">
+                      <Check className="mt-1 size-[18px] shrink-0 text-[var(--blue)]" aria-hidden="true" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/masterclass" className="tlh-btn tlh-btn-secondary mt-8 inline-flex">
+                  Explore Tech Leader Hub
+                </Link>
+              </article>
             </div>
           </div>
         </section>
