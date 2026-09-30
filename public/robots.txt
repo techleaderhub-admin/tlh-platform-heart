@@ -1,4 +1,21 @@
+# Tech Leader Hub
+# Public pages are open to search engines and AI assistants so they can find and cite TLH.
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /dashboard
+
+# AI assistants and answer engines (explicitly welcomed)
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
 
 Sitemap: https://techleaderhub.com/sitemap.xml
