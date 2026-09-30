@@ -532,18 +532,40 @@ export function HomePage() {
                   ))}
                 </ul>
 
-                <div className="mt-8 border-t border-[var(--line)] pt-7">
-                  <p className="text-[16px] leading-[1.6] text-[var(--ink)]">
-                    Not ready for a senior-career acceleration system yet? Build your Android
-                    foundation, projects and job-readiness first with Droid Skool.
+                <div className="mt-8 overflow-hidden rounded-[24px] border border-[var(--blue)]/20 bg-[linear-gradient(135deg,rgba(11,99,229,0.08),rgba(242,181,68,0.12))] p-6 sm:p-7">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span className="inline-flex items-center rounded-full border border-[var(--blue)]/20 bg-white/70 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-[var(--blue)]">
+                      Also by Nikhil Rai
+                    </span>
+                    <span className="text-[12px] font-medium text-[var(--slate)]">
+                      Android learning • Projects • Job-readiness
+                    </span>
+                  </div>
+
+                  <h4 className="mt-5 text-[23px] font-semibold tracking-[-0.02em] text-[var(--ink)]">
+                    Build your Android foundation with Droid Skool.
+                  </h4>
+                  <p className="mt-3 max-w-[42rem] text-[16px] leading-[1.65] text-[var(--slate)]">
+                    Droid Skool is Nikhil Rai's practical Android developer platform for building
+                    real apps, developing strong fundamentals and becoming job-ready. When you're
+                    ready to move from <strong>learning and building</strong> to
+                    <strong> senior-career acceleration</strong>, Tech Leader Hub is the next step.
                   </p>
+
+                  <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-medium text-[var(--ink)]">
+                    <span>Learn →</span>
+                    <span>Build →</span>
+                    <span>Get Job-Ready →</span>
+                    <span>Accelerate Your Career</span>
+                  </div>
+
                   <a
                     href={LINKS.droidSkool}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="tlh-btn tlh-btn-secondary mt-5 inline-flex"
+                    className="tlh-btn tlh-btn-primary mt-6 inline-flex"
                   >
-                    Start with Droid Skool
+                    Explore Droid Skool
                   </a>
                 </div>
               </div>
