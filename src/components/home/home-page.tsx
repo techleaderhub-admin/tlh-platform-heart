@@ -361,16 +361,16 @@ export function HomePage() {
             {/* Authority intro spans the full canvas so the section reads as one deliberate story. */}
             <div className="mx-auto max-w-[850px] text-center">
               <p className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
-                The authority behind the system
+                Real-world Android expertise
               </p>
               <h2 id="nikhil-title" className="tlh-h2 mt-3 text-white">
-                Built in production. Taught with proof. Designed for career moves.
+                Where production experience becomes career advantage.
               </h2>
-              <p className="mx-auto mt-5 max-w-[780px] text-[18px] leading-[1.65] text-[var(--on-night-muted)] sm:text-[19px]">
-                Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His authority comes
-                from doing the work first — building Android products, making architecture decisions,
-                mentoring developers, and turning that experience into practical systems other
-                engineers can apply.
+              <p className="mx-auto mt-5 max-w-[800px] text-[18px] leading-[1.65] text-[var(--on-night-muted)] sm:text-[19px]">
+                Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His experience spans
+                product companies, high-scale Android systems, architecture, technical leadership
+                and developer mentorship — giving Tech Leader Hub a foundation built from real
+                engineering work, not theory alone.
               </p>
             </div>
 
@@ -398,9 +398,9 @@ export function HomePage() {
                 <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
                   {[
                     { value: "13+", label: "Years in Android" },
-                    { value: "Ola", label: "Maps architecture" },
-                    { value: "PayU", label: "Product experience" },
-                    { value: "Millions", label: "Users reached" },
+                    { value: "100M+", label: "Daily users reached" },
+                    { value: "Ola", label: "Maps & architecture" },
+                    { value: "GamesKraft", label: "Technical leadership" },
                   ].map((stat) => (
                     <div
                       key={stat.label}
@@ -441,7 +441,20 @@ export function HomePage() {
                 </div>
 
                 <div className="mt-4 rounded-[22px] border border-white/10 bg-white/[0.025] p-5 sm:p-6">
-                  <div className="flex flex-wrap gap-2">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+                    Engineering career across
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {["OLA", "GamesKraft", "PayU", "Synchronoss"].map((company) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[12px] font-medium text-[var(--on-night-muted)]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {[
                       "Android Architecture",
                       "Production Engineering",
