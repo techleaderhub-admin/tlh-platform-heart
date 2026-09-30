@@ -21,7 +21,7 @@ import {
   recognition,
   steps,
   stories,
-  timeline,
+  authorityPillars,
 } from "@/components/home/home-content";
 
 const NAV = [
@@ -357,7 +357,7 @@ export function HomePage() {
           className="tlh-night tlh-section relative overflow-hidden"
           aria-labelledby="nikhil-title"
         >
-          <div className="mx-auto grid max-w-[1200px] gap-14 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+          <div className="mx-auto grid max-w-[1200px] gap-14 px-5 sm:px-8 lg:grid-cols-[.78fr_1.22fr] lg:gap-20">
             <div className="relative mx-auto w-full max-w-[420px] lg:sticky lg:top-24 lg:self-start">
               <div
                 className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
@@ -365,51 +365,77 @@ export function HomePage() {
               />
               <Portrait
                 base={REMOTE_PORTRAITS.story}
-                alt="Nikhil Rai standing in a charcoal suit"
+                alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
                 className="relative w-full"
               />
+              <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
+                <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
+                <p className="text-[13px] text-[var(--on-night-muted)]">
+                  Founder, Droid Skool & Tech Leader Hub
+                </p>
+              </div>
             </div>
 
             <div>
-              <h2 id="nikhil-title" className="tlh-h2 text-white">
-                From a village in Uttar Pradesh to architecting Ola Maps.
+              <p className="text-[15px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+                The authority behind the system
+              </p>
+              <h2 id="nikhil-title" className="tlh-h2 mt-3 text-white">
+                Built in production. Taught with proof. Designed for career moves.
               </h2>
-              <p className="mt-6 max-w-[38rem] text-[19px] leading-[1.6] text-[var(--on-night-muted)]">
-                Nikhil Rai didn't have the marks, the English or a campus placement. He had sixteen
-                months in Bangalore and a decision to master one skill at a time. Thirteen years
-                later, he coaches developers through the same climb.
+              <p className="mt-6 max-w-[40rem] text-[19px] leading-[1.6] text-[var(--on-night-muted)]">
+                Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His authority comes
+                from doing the work first — building Android products, making architecture decisions,
+                mentoring developers, and turning that experience into practical systems other
+                engineers can apply.
               </p>
 
-              <ol className="mt-12 border-l border-white/12">
-                {timeline.map((item) => (
-                  <li
-                    key={item.year}
-                    className="relative grid gap-1 pb-7 pl-7 last:pb-0 sm:grid-cols-[4.5rem_1fr] sm:gap-4"
+              <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                {authorityPillars.map((item, index) => (
+                  <article
+                    key={item.title}
+                    className="rounded-[22px] border border-white/10 bg-white/[0.035] p-6 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.055]"
                   >
-                    <span
-                      className="absolute -left-[5px] top-[9px] size-[9px] rounded-full bg-[var(--gold)]"
-                      aria-hidden="true"
-                    />
-                    <span className="text-[15px] font-semibold tabular-nums text-[var(--gold)]">
-                      {item.year}
-                    </span>
-                    <span className="text-[17px] leading-[1.55] text-[var(--on-night-muted)]">
-                      {item.text}
-                    </span>
-                  </li>
+                    <div className="flex items-start gap-3">
+                      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[13px] font-semibold text-[var(--gold)]">
+                        0{index + 1}
+                      </span>
+                      <div>
+                        <h3 className="text-[18px] font-semibold text-white">{item.title}</h3>
+                        <p className="mt-2 text-[15px] leading-[1.6] text-[var(--on-night-muted)]">
+                          {item.text}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
                 ))}
-              </ol>
+              </div>
 
-              <blockquote className="mt-14 border-t border-white/12 pt-10">
-                <p className="text-[28px] font-semibold leading-[1.2] tracking-[-0.02em] text-white sm:text-[34px]">
-                  “Marks do not decide your market value.”
+              <div className="mt-10 rounded-[24px] border border-white/10 bg-white/[0.025] p-6 sm:p-7">
+                <div className="flex flex-wrap gap-2.5">
+                  {[
+                    "Android Architecture",
+                    "Production Engineering",
+                    "Technical Leadership",
+                    "Interview Strategy",
+                    "Career Positioning",
+                  ].map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-white/10 bg-white/[0.035] px-3.5 py-2 text-[13px] font-medium text-[var(--on-night-muted)]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-5 max-w-[42rem] text-[16px] leading-[1.65] text-[var(--on-night-faint)]">
+                  The goal is not to make you consume more content. It is to make your experience
+                  legible to the market, your engineering depth visible in interviews, and your next
+                  career move intentional.
                 </p>
-                <footer className="mt-3 text-[15px] text-[var(--on-night-faint)]">
-                  Nikhil Rai
-                </footer>
-              </blockquote>
+              </div>
 
-              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+              <div className="mt-9 flex flex-wrap gap-x-8 gap-y-3">
                 <a
                   href={LINKS.journeyVideo}
                   target="_blank"
@@ -417,7 +443,7 @@ export function HomePage() {
                   className="tlh-text-link-light"
                 >
                   <Play className="size-4 fill-current" aria-hidden="true" />
-                  Watch his journey
+                  Watch Nikhil's journey
                 </a>
                 <a
                   href={LINKS.nikhilLinkedIn}
@@ -505,6 +531,21 @@ export function HomePage() {
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-8 border-t border-[var(--line)] pt-7">
+                  <p className="text-[16px] leading-[1.6] text-[var(--ink)]">
+                    Not ready for a senior-career acceleration system yet? Build your Android
+                    foundation, projects and job-readiness first with Droid Skool.
+                  </p>
+                  <a
+                    href={LINKS.droidSkool}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tlh-btn tlh-btn-secondary mt-5 inline-flex"
+                  >
+                    Start with Droid Skool
+                  </a>
+                </div>
               </div>
             </div>
           </div>
