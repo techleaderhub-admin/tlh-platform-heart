@@ -79,11 +79,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "02 — TLH Platform" },
-      { name: "description", content: "Future Tech Leader Hub user and administration platform." },
+      { title: "Tech Leader Hub" },
+      {
+        name: "description",
+        content:
+          "Career acceleration for experienced Android developers moving into product-company roles and technical leadership.",
+      },
       { name: "author", content: "Tech Leader Hub" },
-      { property: "og:title", content: "02 — TLH Platform" },
-      { property: "og:description", content: "Future Tech Leader Hub user and administration platform." },
+      { property: "og:title", content: "Tech Leader Hub" },
+      {
+        property: "og:description",
+        content:
+          "Career acceleration for experienced Android developers moving into product-company roles and technical leadership.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -107,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en-IN">
       <head>
         <HeadContent />
       </head>
