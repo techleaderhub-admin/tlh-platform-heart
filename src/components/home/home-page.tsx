@@ -1,527 +1,670 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
-  ArrowRight,
   Check,
   ChevronDown,
-  Clock3,
-  Code2,
-  Layers3,
+  Facebook,
+  Instagram,
+  Linkedin,
   Menu,
-  Network,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  TrendingUp,
-  Users,
+  Minus,
+  Play,
   X,
-  Zap,
+  Youtube,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { TLHLogo } from "@/components/brand/tlh-logo";
+import {
+  LINKS,
+  PORTRAITS,
+  faqs,
+  fitFor,
+  fitNotFor,
+  recognition,
+  steps,
+  stories,
+  timeline,
+} from "@/components/home/home-content";
 
-const framework = [
-  ["01", "Diagnose", "Understand exactly what is keeping your career stuck."],
-  ["02", "Position", "Define the role, level and opportunity you are actually targeting."],
-  ["03", "Upgrade", "Close the technical gaps that senior interviews expose."],
-  ["04", "Prove", "Turn your experience into evidence recruiters can understand."],
-  ["05", "Prepare", "Build interview readiness across Android, Kotlin, HLD and LLD."],
-  ["06", "Activate", "Start executing a focused job-switch strategy."],
-  ["07", "Convert", "Handle interviews with stronger technical and communication depth."],
-  ["08", "Negotiate", "Approach compensation conversations with preparation."],
-  ["09", "Advance", "Build toward greater scope, ownership and leadership."],
+const NAV = [
+  { label: "Is it for you", href: "#recognition" },
+  { label: "How it works", href: "#approach" },
+  { label: "Nikhil", href: "#nikhil" },
+  { label: "Stories", href: "#stories" },
+  { label: "FAQ", href: "#faq" },
 ];
 
-const audience = [
-  {
-    icon: Clock3,
-    title: "“I keep delaying my switch.”",
-    text: "You have been thinking about changing companies for months. You know you need to move, but preparation never seems to become a consistent system.",
-  },
-  {
-    icon: Target,
-    title: "“I interview, but I don't convert.”",
-    text: "You have real production experience, yet interviews expose gaps in architecture, system design, Kotlin depth or the way you communicate your decisions.",
-  },
-  {
-    icon: TrendingUp,
-    title: "“My experience is growing. My career isn't.”",
-    text: "Your years of experience keep increasing, while salary, role scope or the quality of opportunities do not move at the same pace.",
-  },
+const SOCIALS = [
+  { label: "Instagram", href: LINKS.instagram, Icon: Instagram },
+  { label: "Facebook", href: LINKS.facebook, Icon: Facebook },
+  { label: "YouTube", href: LINKS.youtube, Icon: Youtube },
+  { label: "LinkedIn", href: LINKS.linkedin, Icon: Linkedin },
 ];
 
-const takeaways = [
-  ["01", "Why experienced Android developers get stuck", "See the gap between doing Android work every day and being ready for the level the market expects next."],
-  ["02", "The Senior → Lead → Architect capability map", "Understand which technical depth, system thinking and ownership signals matter as your responsibility grows."],
-  ["03", "The interview readiness system", "Learn how to prepare Android, Kotlin, architecture, HLD, LLD and problem-solving as one connected system."],
-  ["04", "The career positioning framework", "Turn your existing experience into a sharper professional story instead of starting from zero again."],
-];
+/* ---------- Small building blocks ---------- */
 
-const faqs = [
-  ["Is this really free?", "Yes. The masterclass is a free 90-minute live session. There is no requirement to purchase anything to attend."],
-  ["Who is this masterclass for?", "It is designed primarily for experienced Android developers who feel stuck, are considering a switch, are interviewing without enough conversions, or want to move toward Senior, Lead or Architect-level opportunities."],
-  ["Is this another Android coding course?", "No. The focus is career acceleration: technical depth, architecture thinking, interview readiness, positioning and execution. It is not a beginner syntax course."],
-  ["What will I get from the session?", "You will get a clearer view of the capability gaps to work on, a connected career framework and practical next steps for your current career stage."],
-  ["What if I cannot attend live?", "Register first so your details are captured. The live session schedule and next-step information can then be shared with you."],
-];
+function PrimaryCta({
+  children,
+  className = "",
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <Link to="/masterclass" onClick={onClick} className={`tlh-btn tlh-btn-primary ${className}`}>
+      {children}
+    </Link>
+  );
+}
+
+function Portrait({
+  base,
+  alt,
+  className = "",
+  priority = false,
+}: {
+  base: string;
+  alt: string;
+  className?: string;
+  priority?: boolean;
+}) {
+  return (
+    <img
+      src={`${base}-1200.webp`}
+      srcSet={`${base}-640.webp 640w, ${base}-1200.webp 1200w`}
+      sizes="(min-width: 1024px) 40vw, 80vw"
+      alt={alt}
+      className={className}
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
+    />
+  );
+}
+
+/** The brand ring: the blue-to-gold circle from the TLH phoenix mark. The page's one signature element. */
+function BrandRing({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 600 600" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="tlh-ring-gradient" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#3B8BFF" />
+          <stop offset="55%" stopColor="#9FC3FF" />
+          <stop offset="100%" stopColor="#F2B544" />
+        </linearGradient>
+      </defs>
+      <circle
+        cx="300"
+        cy="300"
+        r="286"
+        fill="none"
+        stroke="rgba(255,255,255,0.06)"
+        strokeWidth="1"
+      />
+      <circle
+        cx="300"
+        cy="300"
+        r="262"
+        fill="none"
+        stroke="url(#tlh-ring-gradient)"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        pathLength={1}
+        className="tlh-ring-draw"
+        transform="rotate(-90 300 300)"
+      />
+    </svg>
+  );
+}
+
+/* ---------- Page ---------- */
 
 export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showMobileBar, setShowMobileBar] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+
+  // Show the mobile "join" bar only once the hero's own button has scrolled away.
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => entry && setShowMobileBar(!entry.isIntersecting),
+      {
+        rootMargin: "-40% 0px 0px 0px",
+      },
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
 
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
-      <a
-        href="#main-content"
-        className="sr-only z-50 bg-accent px-4 py-3 text-accent-foreground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
-      >
+    <div className="tlh-home min-h-screen overflow-x-clip">
+      <a href="#main-content" className="tlh-skip">
         Skip to content
       </a>
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-2xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
+      {/* ---------- Header ---------- */}
+      <header className="tlh-header fixed inset-x-0 top-0 z-50">
+        <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between px-5 sm:px-8">
           <Link
             to="/"
             onClick={closeMenu}
-            className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex items-center gap-2.5 rounded-md"
             aria-label="Tech Leader Hub home"
           >
-            <TLHLogo className="hidden h-10 w-auto max-w-[190px] object-contain sm:block" />
-            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
+            <img src="/tlh-icon.png" alt="" width={30} height={30} className="size-[30px]" />
+            <span className="text-[15px] font-semibold tracking-[-0.01em] text-white">
+              Tech Leader Hub
+            </span>
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main navigation">
-            <a href="#why" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Why this class</a>
-            <a href="#inside" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Inside</a>
-            <a href="#framework" className="text-sm text-muted-foreground transition-colors hover:text-foreground">Framework</a>
-            <a href="#faq" className="text-sm text-muted-foreground transition-colors hover:text-foreground">FAQ</a>
-            <Button asChild size="sm" className="rounded-full px-5">
-              <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
-            </Button>
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href} className="tlh-nav-link">
+                {item.label}
+              </a>
+            ))}
           </nav>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => setMenuOpen((value) => !value)}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-          >
-            {menuOpen ? <X /> : <Menu />}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link to="/login" className="tlh-nav-link hidden px-2 sm:inline-block">
+              Sign in
+            </Link>
+            <PrimaryCta className="tlh-btn-sm hidden sm:inline-flex">
+              Join free masterclass
+            </PrimaryCta>
+            <button
+              type="button"
+              className="tlh-icon-btn lg:hidden"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+              aria-controls="tlh-mobile-menu"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
         </div>
 
         {menuOpen ? (
-          <div id="mobile-menu" className="border-t border-border bg-background/95 px-5 py-5 backdrop-blur-2xl lg:hidden">
-            <nav className="mx-auto flex max-w-7xl flex-col" aria-label="Mobile navigation">
-              {[
-                ["Why this class", "#why"],
-                ["Inside", "#inside"],
-                ["Framework", "#framework"],
-                ["FAQ", "#faq"],
-              ].map(([label, href]) => (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={closeMenu}
-                  className="border-b border-border/60 py-4 text-sm font-medium"
-                >
-                  {label}
-                </a>
-              ))}
-              <Button asChild className="mt-5 h-12 rounded-full">
-                <Link to="/masterclass" onClick={closeMenu}>Reserve My Free Seat <ArrowRight /></Link>
-              </Button>
-            </nav>
-          </div>
+          <nav id="tlh-mobile-menu" className="tlh-mobile-menu lg:hidden" aria-label="Mobile">
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href} onClick={closeMenu}>
+                {item.label}
+              </a>
+            ))}
+            <Link to="/login" onClick={closeMenu}>
+              Sign in
+            </Link>
+            <PrimaryCta onClick={closeMenu} className="mt-5 w-full">
+              Join the free masterclass
+            </PrimaryCta>
+          </nav>
         ) : null}
       </header>
 
       <main id="main-content">
-        {/* HERO */}
-        <section className="relative overflow-hidden border-b border-border pt-28 sm:pt-32">
-          <div className="hero-grid absolute inset-0 opacity-60" aria-hidden="true" />
-          <div className="absolute left-1/2 top-24 size-[420px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl sm:size-[650px]" aria-hidden="true" />
-          <div className="relative mx-auto grid min-h-[calc(100svh-7rem)] max-w-7xl items-center gap-14 px-5 pb-20 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-10 lg:pb-24">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/5 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-accent">
-                <Sparkles className="size-3.5" aria-hidden="true" />
-                Free live masterclass · Sunday · 11:00 AM IST
-              </div>
-
-              <p className="mt-7 text-sm font-semibold text-muted-foreground sm:text-base">
-                For experienced Android developers who know they are capable of more.
+        {/* ---------- Hero ---------- */}
+        <section
+          ref={heroRef}
+          className="tlh-night relative overflow-hidden pt-14"
+          aria-labelledby="hero-title"
+        >
+          <div className="tlh-hero-light absolute inset-0" aria-hidden="true" />
+          <div className="relative mx-auto grid max-w-[1200px] items-end gap-6 px-5 sm:px-8 lg:min-h-[min(860px,calc(100svh-56px))] lg:grid-cols-[1.15fr_.85fr] lg:gap-10">
+            <div className="self-center pt-16 pb-4 sm:pt-20 lg:py-24">
+              <p className="text-[17px] font-medium text-[var(--gold)]">
+                For experienced Android developers
               </p>
-
-              <h1 className="mt-4 font-heading text-[clamp(2.7rem,6vw,5.7rem)] font-extrabold leading-[0.98] tracking-[-0.045em]">
-                You don't need
-                <span className="block text-muted-foreground">another Android course.</span>
-                <span className="mt-1 block text-accent">You need a career system.</span>
+              <h1 id="hero-title" className="tlh-display mt-4 text-white">
+                You've been planning your next move for months. Let's finally make it.
               </h1>
-
-              <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-                Learn how experienced Android developers can break out of career stagnation, build senior-level technical depth, prepare for architecture interviews and move toward stronger product-company opportunities.
+              <p className="mt-6 max-w-[34rem] text-[19px] leading-[1.55] text-[var(--on-night-muted)] sm:text-[21px]">
+                Tech Leader Hub helps experienced Android developers break out of career stagnation,
+                crack product-company interviews and grow into tech leaders.
               </p>
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild size="lg" className="h-13 rounded-full px-7 text-base shadow-lg shadow-primary/20">
-                  <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
-                </Button>
-                <Button asChild size="lg" variant="outline" className="h-13 rounded-full px-7 text-base">
-                  <a href="#inside">See what's inside <ChevronDown /></a>
-                </Button>
-              </div>
-
-              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
-                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> 90 minutes</span>
-                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> Live on Zoom</span>
-                <span className="flex items-center gap-2"><Check className="size-4 text-accent" /> 100% free</span>
-              </div>
-            </div>
-
-            {/* Custom CSS visual: career architecture console */}
-            <div className="relative mx-auto w-full max-w-xl">
-              <div className="hero-orbit absolute -inset-8 rounded-full border border-accent/10" aria-hidden="true" />
-              <div className="relative overflow-hidden rounded-[28px] border border-border bg-card/75 p-4 shadow-2xl backdrop-blur-xl sm:p-5">
-                <div className="rounded-[22px] border border-border bg-background/90 p-5 sm:p-6">
-                  <div className="flex items-center justify-between border-b border-border pb-5">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-accent">Android career OS</p>
-                      <p className="mt-1 font-heading text-lg font-bold">Next-level readiness</p>
-                    </div>
-                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                      <Code2 className="size-5" />
-                    </div>
-                  </div>
-
-                  <div className="mt-6 grid gap-3">
-                    {[
-                      ["Technical Depth", "Kotlin · Android · Architecture", "84%"],
-                      ["System Design", "HLD · LLD · Trade-offs", "68%"],
-                      ["Interview Readiness", "Stories · Communication · Practice", "56%"],
-                    ].map(([label, detail, value], index) => (
-                      <div key={label} className="rounded-2xl border border-border bg-card p-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <p className="font-heading text-sm font-bold">{label}</p>
-                            <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
-                          </div>
-                          <span className="text-xs font-bold text-accent">{value}</span>
-                        </div>
-                        <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-secondary">
-                          <div className="h-full rounded-full bg-accent" style={{ width: value }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
-                      <Network className="size-5 text-accent" />
-                      <p className="mt-5 text-xs text-muted-foreground">Current</p>
-                      <p className="mt-1 font-heading font-bold">Stuck / unsure</p>
-                    </div>
-                    <div className="rounded-2xl border border-achievement/25 bg-achievement/5 p-4">
-                      <Zap className="size-5 text-achievement" />
-                      <p className="mt-5 text-xs text-muted-foreground">Target</p>
-                      <p className="mt-1 font-heading font-bold">Ready / intentional</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -bottom-5 -left-3 hidden rounded-2xl border border-border bg-card px-4 py-3 shadow-xl sm:block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">The shift</p>
-                <p className="mt-1 font-heading text-sm font-bold">From experience → evidence</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* PAIN / IDENTIFICATION */}
-        <section id="why" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">This is probably you</p>
-              <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
-                Your problem may not be your experience.
-                <span className="block text-muted-foreground">It may be what your experience is not yet proving.</span>
-              </h2>
-            </div>
-
-            <div className="mt-12 grid gap-4 lg:grid-cols-3">
-              {audience.map(({ icon: Icon, title, text }, index) => (
-                <article key={title} className="group rounded-[24px] border border-border bg-card/50 p-7 transition-all duration-500 hover:-translate-y-1 hover:border-accent/40 hover:shadow-xl sm:p-8">
-                  <div className="flex items-center justify-between">
-                    <span className="flex size-11 items-center justify-center rounded-2xl bg-secondary text-accent">
-                      <Icon className="size-5" />
-                    </span>
-                    <span className="font-heading text-xs font-bold text-muted-foreground">0{index + 1}</span>
-                  </div>
-                  <h3 className="mt-9 font-heading text-xl font-bold">{title}</h3>
-                  <p className="mt-3 leading-7 text-muted-foreground">{text}</p>
-                </article>
-              ))}
-            </div>
-
-            <div className="mt-10 rounded-[24px] border border-accent/20 bg-accent/5 p-6 sm:p-8">
-              <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="font-heading text-lg font-bold">If you recognised yourself in even one of these, start here.</p>
-                  <p className="mt-1 text-sm text-muted-foreground">The masterclass is built around the next career move—not another pile of tutorials.</p>
-                </div>
-                <Button asChild className="shrink-0 rounded-full">
-                  <Link to="/masterclass">Save My Free Seat <ArrowRight /></Link>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* OUTCOMES */}
-        <section id="inside" className="scroll-mt-24 border-b border-border bg-card/30 py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="grid gap-12 lg:grid-cols-[.75fr_1.25fr] lg:gap-20">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Inside the masterclass</p>
-                <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
-                  90 minutes to see your career differently.
-                </h2>
-                <p className="mt-5 text-lg leading-8 text-muted-foreground">
-                  This is a strategic session for developers who have already put in the years and now want a clearer way to turn that experience into the next level of opportunity.
-                </p>
-                <Button asChild size="lg" className="mt-8 rounded-full">
-                  <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
-                </Button>
-              </div>
-
-              <div className="divide-y divide-border border-y border-border">
-                {takeaways.map(([number, title, text]) => (
-                  <div key={number} className="grid gap-5 py-7 sm:grid-cols-[48px_1fr] sm:py-9">
-                    <span className="font-heading text-sm font-bold text-accent">{number}</span>
-                    <div>
-                      <h3 className="font-heading text-xl font-bold">{title}</h3>
-                      <p className="mt-2 max-w-2xl leading-7 text-muted-foreground">{text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* VISUAL FRAMEWORK */}
-        <section id="framework" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-              <div className="max-w-3xl">
-                <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">The TLH career framework</p>
-                <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
-                  Stop preparing randomly. Start progressing deliberately.
-                </h2>
-              </div>
-              <p className="max-w-sm text-sm leading-6 text-muted-foreground">
-                The same connected philosophy powers the Tech Leader Hub platform.
-              </p>
-            </div>
-
-            <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {framework.map(([number, title, text], index) => (
-                <article
-                  key={number}
-                  className="group relative min-h-48 overflow-hidden rounded-[22px] border border-border bg-card/40 p-6 transition-all duration-500 hover:-translate-y-1 hover:border-primary/50 hover:bg-card"
+              <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7">
+                <PrimaryCta>Join the free masterclass</PrimaryCta>
+                <a
+                  href={LINKS.journeyVideo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-text-link-light"
                 >
-                  <span className="absolute -right-2 -top-5 font-heading text-8xl font-extrabold tracking-[-0.06em] text-border/50 transition-colors group-hover:text-primary/10">
-                    {number}
+                  <Play className="size-4 fill-current" aria-hidden="true" />
+                  Watch Nikhil's story
+                </a>
+              </div>
+              <p className="mt-10 max-w-[30rem] text-[15px] leading-6 text-[var(--on-night-faint)]">
+                Led by Nikhil Rai, former Ola Maps architect with 13+ years building Android at Ola,
+                PayU and Gameskraft.
+              </p>
+            </div>
+
+            <div className="relative mx-auto w-full max-w-[520px] self-end">
+              <BrandRing className="absolute left-1/2 top-[2%] w-[112%] max-w-none -translate-x-1/2" />
+              <div
+                className="tlh-portrait-glow absolute left-1/2 top-[18%] size-[70%] -translate-x-1/2"
+                aria-hidden="true"
+              />
+              <Portrait
+                base={PORTRAITS.hero}
+                alt="Nikhil Rai, founder of Tech Leader Hub"
+                priority
+                className="tlh-portrait-in relative mx-auto block w-[86%]"
+              />
+              <div className="tlh-glass absolute bottom-6 left-0 sm:bottom-10 sm:-left-4">
+                <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
+                <p className="text-[13px] text-[var(--on-night-muted)]">Founder, Tech Leader Hub</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Recognition ---------- */}
+        <section
+          id="recognition"
+          className="tlh-section bg-white"
+          aria-labelledby="recognition-title"
+        >
+          <div className="tlh-container">
+            <h2 id="recognition-title" className="tlh-h2 text-[var(--ink)]">
+              Does this sound like you?
+            </h2>
+            <div className="mt-12 border-t border-[var(--line)] sm:mt-16">
+              {recognition.map((item) => (
+                <div
+                  key={item.quote}
+                  className="grid gap-3 border-b border-[var(--line)] py-8 sm:py-10 md:grid-cols-[1.15fr_.85fr] md:gap-12"
+                >
+                  <p className="text-[24px] font-semibold leading-[1.25] tracking-[-0.02em] text-[var(--ink)] sm:text-[30px]">
+                    “{item.quote}”
+                  </p>
+                  <p className="text-[17px] leading-[1.6] text-[var(--slate)] md:pt-1.5">
+                    {item.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-12 text-[21px] font-medium leading-[1.45] text-[var(--ink)] sm:text-[24px]">
+              None of these is a talent problem. Each one is a system problem.
+            </p>
+          </div>
+        </section>
+
+        {/* ---------- The truth ---------- */}
+        <section className="tlh-section bg-[var(--mist)]" aria-labelledby="truth-title">
+          <div className="mx-auto max-w-[900px] px-5 text-center sm:px-8">
+            <h2 id="truth-title" className="tlh-statement text-[var(--ink)]">
+              You don't need another course. You need a system.
+            </h2>
+            <p className="mx-auto mt-7 max-w-[40rem] text-[19px] leading-[1.6] text-[var(--slate)] sm:text-[21px]">
+              Too many experienced developers walk into 2026 interviews with 2021 preparation. More
+              tutorials won't change that. Knowing exactly what product companies test, and
+              preparing for it on purpose, will.
+            </p>
+          </div>
+        </section>
+
+        {/* ---------- How it works ---------- */}
+        <section id="approach" className="tlh-section bg-white" aria-labelledby="approach-title">
+          <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
+            <div className="max-w-[40rem]">
+              <h2 id="approach-title" className="tlh-h2 text-[var(--ink)]">
+                How Tech Leader Hub works
+              </h2>
+              <p className="mt-5 text-[19px] leading-[1.6] text-[var(--slate)]">
+                Three stages, built around your next career move rather than a syllabus.
+              </p>
+            </div>
+
+            <ol className="tlh-steps mt-14 grid gap-10 sm:mt-20 md:grid-cols-3 md:gap-8">
+              {steps.map((step, index) => (
+                <li key={step.title} className="relative md:pt-12">
+                  <span className="tlh-step-dot" aria-hidden="true">
+                    {index + 1}
                   </span>
-                  <div className="relative flex h-full flex-col justify-end">
-                    <div className={`mb-5 h-1 w-8 transition-all duration-500 group-hover:w-14 ${index > 6 ? "bg-achievement" : "bg-primary"}`} />
-                    <h3 className="font-heading text-xl font-bold">{title}</h3>
-                    <p className="mt-2 max-w-xs text-sm leading-6 text-muted-foreground">{text}</p>
+                  <h3 className="mt-5 text-[24px] font-semibold tracking-[-0.015em] text-[var(--ink)] md:mt-0">
+                    {step.title}
+                  </h3>
+                  <p className="mt-3 max-w-[22rem] text-[17px] leading-[1.6] text-[var(--slate)]">
+                    {step.text}
+                  </p>
+                </li>
+              ))}
+            </ol>
+
+            <div className="mt-16 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <PrimaryCta>Join the free masterclass</PrimaryCta>
+              <p className="text-[15px] text-[var(--slate)]">
+                See the full approach live, and ask Nikhil your questions.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Nikhil ---------- */}
+        <section
+          id="nikhil"
+          className="tlh-night tlh-section relative overflow-hidden"
+          aria-labelledby="nikhil-title"
+        >
+          <div className="mx-auto grid max-w-[1200px] gap-14 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+            <div className="relative mx-auto w-full max-w-[420px] lg:sticky lg:top-24 lg:self-start">
+              <div
+                className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
+                aria-hidden="true"
+              />
+              <Portrait
+                base={PORTRAITS.story}
+                alt="Nikhil Rai standing in a charcoal suit"
+                className="relative w-full"
+              />
+            </div>
+
+            <div>
+              <h2 id="nikhil-title" className="tlh-h2 text-white">
+                From a village in Uttar Pradesh to architecting Ola Maps.
+              </h2>
+              <p className="mt-6 max-w-[38rem] text-[19px] leading-[1.6] text-[var(--on-night-muted)]">
+                Nikhil Rai didn't have the marks, the English or a campus placement. He had sixteen
+                months in Bangalore and a decision to master one skill at a time. Thirteen years
+                later, he coaches developers through the same climb.
+              </p>
+
+              <ol className="mt-12 border-l border-white/12">
+                {timeline.map((item) => (
+                  <li
+                    key={item.year}
+                    className="relative grid gap-1 pb-7 pl-7 last:pb-0 sm:grid-cols-[4.5rem_1fr] sm:gap-4"
+                  >
+                    <span
+                      className="absolute -left-[5px] top-[9px] size-[9px] rounded-full bg-[var(--gold)]"
+                      aria-hidden="true"
+                    />
+                    <span className="text-[15px] font-semibold tabular-nums text-[var(--gold)]">
+                      {item.year}
+                    </span>
+                    <span className="text-[17px] leading-[1.55] text-[var(--on-night-muted)]">
+                      {item.text}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+
+              <blockquote className="mt-14 border-t border-white/12 pt-10">
+                <p className="text-[28px] font-semibold leading-[1.2] tracking-[-0.02em] text-white sm:text-[34px]">
+                  “Marks do not decide your market value.”
+                </p>
+                <footer className="mt-3 text-[15px] text-[var(--on-night-faint)]">
+                  Nikhil Rai
+                </footer>
+              </blockquote>
+
+              <div className="mt-10 flex flex-wrap gap-x-8 gap-y-3">
+                <a
+                  href={LINKS.journeyVideo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-text-link-light"
+                >
+                  <Play className="size-4 fill-current" aria-hidden="true" />
+                  Watch his journey
+                </a>
+                <a
+                  href={LINKS.nikhilLinkedIn}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-text-link-light"
+                >
+                  <Linkedin className="size-4" aria-hidden="true" />
+                  Connect on LinkedIn
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Stories ---------- */}
+        <section id="stories" className="tlh-section bg-white" aria-labelledby="stories-title">
+          <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
+            <h2 id="stories-title" className="tlh-h2 max-w-[36rem] text-[var(--ink)]">
+              Developers who've worked with Nikhil
+            </h2>
+            <p className="mt-4 text-[17px] text-[var(--slate)]">
+              Shared by Droid Skool mentees, in their own words.
+            </p>
+
+            <div className="mt-14 grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-16">
+              <figure className="lg:pr-4">
+                <blockquote className="text-[24px] font-medium leading-[1.4] tracking-[-0.015em] text-[var(--ink)] sm:text-[28px]">
+                  “{stories[0].quote}”
+                </blockquote>
+                <StoryAuthor story={stories[0]} large />
+              </figure>
+
+              <div className="grid gap-10 border-t border-[var(--line)] pt-10 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+                {stories.slice(1).map((story) => (
+                  <figure key={story.name}>
+                    <blockquote className="text-[17px] leading-[1.65] text-[var(--ink)]">
+                      “{story.quote}”
+                    </blockquote>
+                    <StoryAuthor story={story} />
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Fit ---------- */}
+        <section id="fit" className="tlh-section bg-[var(--mist)]" aria-labelledby="fit-title">
+          <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
+            <h2 id="fit-title" className="tlh-h2 max-w-[36rem] text-[var(--ink)]">
+              Is Tech Leader Hub right for you?
+            </h2>
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              <div className="rounded-[28px] bg-white p-8 sm:p-10">
+                <h3 className="text-[21px] font-semibold text-[var(--ink)]">It's for you if</h3>
+                <ul className="mt-6 space-y-5">
+                  {fitFor.map((line) => (
+                    <li
+                      key={line}
+                      className="flex gap-3.5 text-[17px] leading-[1.55] text-[var(--ink)]"
+                    >
+                      <Check
+                        className="mt-1 size-[18px] shrink-0 text-[var(--blue)]"
+                        aria-hidden="true"
+                      />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-[28px] border border-[var(--line)] p-8 sm:p-10">
+                <h3 className="text-[21px] font-semibold text-[var(--ink)]">It's not for you if</h3>
+                <ul className="mt-6 space-y-5">
+                  {fitNotFor.map((line) => (
+                    <li
+                      key={line}
+                      className="flex gap-3.5 text-[17px] leading-[1.55] text-[var(--slate)]"
+                    >
+                      <Minus
+                        className="mt-1 size-[18px] shrink-0 text-[var(--slate)]"
+                        aria-hidden="true"
+                      />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- FAQ ---------- */}
+        <section id="faq" className="tlh-section bg-white" aria-labelledby="faq-title">
+          <div className="mx-auto max-w-[820px] px-5 sm:px-8">
+            <h2 id="faq-title" className="tlh-h2 text-[var(--ink)]">
+              Questions developers ask
+            </h2>
+            <div className="mt-12 border-t border-[var(--line)]">
+              {faqs.map((faq, index) => (
+                <details
+                  key={faq.id}
+                  id={faq.id}
+                  className="tlh-faq group border-b border-[var(--line)]"
+                  open={index === 0}
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6">
+                    <h3 className="text-[19px] font-semibold leading-[1.35] tracking-[-0.01em] text-[var(--ink)]">
+                      {faq.question}
+                    </h3>
+                    <ChevronDown
+                      className="size-5 shrink-0 text-[var(--slate)] transition-transform duration-300 group-open:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </summary>
+                  <div className="pb-7 pr-2 sm:pr-12">
+                    <p className="text-[17px] leading-[1.65] text-[var(--slate)]">{faq.answer}</p>
+                    {faq.link ? (
+                      faq.link.href.startsWith("#") ? (
+                        <a href={faq.link.href} className="tlh-text-link mt-3">
+                          {faq.link.label}
+                        </a>
+                      ) : (
+                        <Link to="/masterclass" className="tlh-text-link mt-3">
+                          {faq.link.label}
+                        </Link>
+                      )
+                    ) : null}
                   </div>
-                </article>
+                </details>
               ))}
             </div>
           </div>
         </section>
 
-        {/* MENTOR */}
-        <section className="border-b border-border bg-card/30 py-20 sm:py-28">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:gap-20 lg:px-10">
-            <div className="relative mx-auto w-full max-w-md">
-              <div className="absolute -inset-5 rounded-[32px] border border-accent/10" />
-              <div className="relative rounded-[28px] border border-border bg-background p-7 shadow-xl sm:p-9">
-                <div className="flex items-center gap-4">
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Users className="size-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-accent">Your mentor</p>
-                    <p className="mt-1 font-heading text-lg font-bold">Nikhil Rai</p>
-                  </div>
-                </div>
-                <div className="mt-8 grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl border border-border p-4">
-                    <p className="font-heading text-2xl font-extrabold">12+</p>
-                    <p className="mt-1 text-xs text-muted-foreground">years in Android / tech</p>
-                  </div>
-                  <div className="rounded-2xl border border-border p-4">
-                    <p className="font-heading text-2xl font-extrabold">3</p>
-                    <p className="mt-1 text-xs text-muted-foreground">major product / tech environments</p>
-                  </div>
-                </div>
-                <div className="mt-3 rounded-2xl border border-border bg-card p-4">
-                  <p className="text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">Experience across</p>
-                  <p className="mt-2 text-sm font-semibold">Ola · PayU · GamesKraft · Synchronoss · startups</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="max-w-2xl">
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Learn from the other side of the interview table</p>
-              <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight sm:text-5xl">
-                Your years of Android experience deserve a stronger career narrative.
-              </h2>
-              <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Nikhil Rai has worked across Android engineering and product environments including Ola, PayU, GamesKraft and Synchronoss. The focus of this masterclass is practical: connect technical depth, architecture thinking, interview preparation and career direction.
-              </p>
-              <div className="mt-7 space-y-3">
-                {[
-                  "No beginner-level syntax marathon.",
-                  "No random collection of interview questions.",
-                  "No promise of an overnight career transformation.",
-                  "A structured way to understand what to work on next.",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
-                    <Check className="mt-0.5 size-4 shrink-0 text-accent" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <Button asChild size="lg" className="mt-9 rounded-full">
-                <Link to="/masterclass">Join the Free Masterclass <ArrowRight /></Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* BONUSES / VALUE */}
-        <section className="border-b border-border py-20 sm:py-28">
-          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
-            <div className="rounded-[30px] border border-accent/20 bg-gradient-to-br from-accent/10 via-background to-achievement/5 p-7 sm:p-10 lg:p-14">
-              <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:gap-20">
-                <div>
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-accent/10 text-accent">
-                    <Layers3 className="size-6" />
-                  </div>
-                  <p className="mt-7 text-sm font-bold uppercase tracking-[0.16em] text-accent">Your free session pack</p>
-                  <h2 className="mt-3 font-heading text-3xl font-bold sm:text-4xl">Come for the class. Leave with a clearer next move.</h2>
-                  <p className="mt-4 leading-7 text-muted-foreground">The goal is not to give you more content to collect. It is to give you a framework you can use to decide what deserves your attention next.</p>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {[
-                    "Android career roadmap",
-                    "Career-readiness thinking framework",
-                    "Interview preparation direction",
-                    "Technical depth checklist",
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3 rounded-2xl border border-border bg-background/70 p-5">
-                      <Check className="size-5 shrink-0 text-accent" />
-                      <span className="text-sm font-semibold">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section id="faq" className="scroll-mt-24 border-b border-border py-20 sm:py-28">
-          <div className="mx-auto max-w-4xl px-5 sm:px-8">
-            <div className="text-center">
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-accent">Questions</p>
-              <h2 className="mt-4 font-heading text-3xl font-bold sm:text-5xl">You probably have a few.</h2>
-            </div>
-
-            <div className="mt-12 divide-y divide-border border-y border-border">
-              {faqs.map(([question, answer], index) => {
-                const isOpen = openFaq === index;
-                return (
-                  <div key={question}>
-                    <button
-                      type="button"
-                      onClick={() => setOpenFaq(isOpen ? null : index)}
-                      className="flex w-full items-center justify-between gap-6 py-6 text-left"
-                      aria-expanded={isOpen}
-                    >
-                      <span className="font-heading text-base font-bold sm:text-lg">{question}</span>
-                      <ChevronDown className={`size-5 shrink-0 transition-transform ${isOpen ? "rotate-180 text-accent" : "text-muted-foreground"}`} />
-                    </button>
-                    {isOpen ? <p className="max-w-3xl pb-6 pr-10 text-sm leading-7 text-muted-foreground">{answer}</p> : null}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* FINAL CTA */}
-        <section className="relative overflow-hidden py-24 sm:py-32">
-          <div className="hero-grid absolute inset-0 opacity-40" aria-hidden="true" />
-          <div className="absolute left-1/2 top-1/2 size-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-3xl" aria-hidden="true" />
-          <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
-            <ShieldCheck className="mx-auto size-9 text-accent" aria-hidden="true" />
-            <p className="mt-6 text-sm font-bold uppercase tracking-[0.16em] text-accent">Your next move starts here</p>
-            <h2 className="mt-4 font-heading text-4xl font-extrabold tracking-tight sm:text-6xl">
-              Stop asking,
-              <span className="block text-muted-foreground">“When should I start?”</span>
-              <span className="block text-accent">Start with a clear plan.</span>
+        {/* ---------- Final call ---------- */}
+        <section
+          className="tlh-night relative overflow-hidden py-28 sm:py-36"
+          aria-labelledby="final-title"
+        >
+          <div className="tlh-final-light absolute inset-0" aria-hidden="true" />
+          <div className="relative mx-auto max-w-[760px] px-5 text-center sm:px-8">
+            <img src="/tlh-icon.png" alt="" width={56} height={56} className="mx-auto size-14" />
+            <h2 id="final-title" className="tlh-statement mt-8 text-white">
+              Stop waiting for the right time. Start with a clear plan.
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
-              Join the next free 90-minute live masterclass and understand what to work on next in your Android career.
+            <p className="mx-auto mt-6 max-w-[34rem] text-[19px] leading-[1.6] text-[var(--on-night-muted)]">
+              Join the free 90-minute live masterclass and leave knowing exactly what to work on
+              next.
             </p>
-            <Button asChild size="lg" className="mt-9 h-14 rounded-full px-8 text-base shadow-xl shadow-primary/20">
-              <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
-            </Button>
-            <p className="mt-4 text-xs text-muted-foreground">Sunday · 11:00 AM IST · Live on Zoom · No credit card required</p>
+            <PrimaryCta className="mt-10">Reserve my free seat</PrimaryCta>
           </div>
         </section>
       </main>
 
-      {/* Mobile conversion bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/90 p-3 backdrop-blur-xl lg:hidden">
-        <Button asChild className="h-12 w-full rounded-full shadow-lg">
-          <Link to="/masterclass">Reserve My Free Seat <ArrowRight /></Link>
-        </Button>
-      </div>
-
-      <footer className="border-t border-border bg-card/40 pb-20 lg:pb-0">
-        <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-10">
-          <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between">
-            <Link to="/" aria-label="Tech Leader Hub home">
-              <TLHLogo className="h-9 w-auto max-w-[175px] object-contain" />
+      {/* ---------- Footer ---------- */}
+      <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0">
+        <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
+              <img src="/tlh-icon.png" alt="" width={32} height={32} className="size-8" />
+              <span className="text-[16px] font-semibold text-white">Tech Leader Hub</span>
             </Link>
-            <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-muted-foreground" aria-label="Footer navigation">
-              <Link to="/about" className="hover:text-foreground">About</Link>
-              <Link to="/framework" className="hover:text-foreground">Framework</Link>
-              <Link to="/programs" className="hover:text-foreground">Programs</Link>
-              <Link to="/masterclass" className="hover:text-foreground">Masterclass</Link>
-              <Link to="/contact" className="hover:text-foreground">Contact</Link>
-              <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-              <Link to="/terms" className="hover:text-foreground">Terms</Link>
-            </nav>
+            <p className="mt-4 max-w-[18rem] text-[14px] leading-6 text-[var(--on-night-faint)]">
+              Learn. Grow. Lead. Career acceleration for experienced Android developers.
+            </p>
           </div>
-          <div className="mt-8 flex flex-col gap-2 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-            <p>© {new Date().getFullYear()} Tech Leader Hub.</p>
-            <p>Career acceleration for technology professionals.</p>
+
+          <FooterColumn title="Explore">
+            <Link to="/masterclass">Free masterclass</Link>
+            <Link to="/about">About</Link>
+            <Link to="/contact">Contact</Link>
+            <Link to="/login">Sign in</Link>
+          </FooterColumn>
+
+          <FooterColumn title="Legal">
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+          </FooterColumn>
+
+          <div>
+            <p className="text-[13px] font-semibold text-white">Follow</p>
+            <div className="mt-4 flex gap-2">
+              {SOCIALS.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Tech Leader Hub on ${label}`}
+                  className="tlh-social"
+                >
+                  <Icon className="size-[18px]" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
+        <div className="mx-auto max-w-[1200px] border-t border-white/10 px-5 py-6 text-[12px] leading-5 text-[var(--on-night-faint)] sm:px-8">
+          <p>© {new Date().getFullYear()} Tech Leader Hub. All rights reserved.</p>
+          <p className="mt-1">
+            Android is a trademark of Google LLC. Company names are mentioned only to describe
+            Nikhil Rai's work history and do not imply endorsement.
+          </p>
+        </div>
       </footer>
+
+      {/* ---------- Mobile join bar (appears after the hero) ---------- */}
+      <div
+        className={`tlh-mobile-bar lg:hidden ${showMobileBar ? "is-visible" : ""}`}
+        aria-hidden={!showMobileBar}
+        inert={!showMobileBar}
+      >
+        <PrimaryCta className="w-full" onClick={closeMenu}>
+          Join the free masterclass
+        </PrimaryCta>
+      </div>
+    </div>
+  );
+}
+
+function StoryAuthor({
+  story,
+  large = false,
+}: {
+  story: (typeof stories)[number];
+  large?: boolean;
+}) {
+  return (
+    <figcaption className={`flex items-center gap-3.5 ${large ? "mt-8" : "mt-5"}`}>
+      <img
+        src={story.photo}
+        alt=""
+        width={large ? 52 : 44}
+        height={large ? 52 : 44}
+        loading="lazy"
+        className={`${large ? "size-[52px]" : "size-11"} rounded-full bg-[var(--mist)] object-cover`}
+      />
+      <span>
+        <span className="block text-[15px] font-semibold text-[var(--ink)]">{story.name}</span>
+        <span className="block text-[14px] text-[var(--slate)]">{story.role}</span>
+      </span>
+    </figcaption>
+  );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-[13px] font-semibold text-white">{title}</p>
+      <div className="tlh-footer-links mt-4 flex flex-col gap-3">{children}</div>
     </div>
   );
 }
