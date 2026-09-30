@@ -58,34 +58,22 @@ export const steps = [
   },
 ] as const;
 
-export const timeline = [
+export const authorityPillars = [
   {
-    year: "2012",
-    text: "Arrives in Bangalore with a B.Tech, 59% marks, no campus placement and limited English.",
+    title: "Production engineering",
+    text: "Nikhil has built and scaled real-world Android products across demanding product and technology environments.",
   },
   {
-    year: "2013",
-    text: "Tops a Java test of 200 candidates, teaches Java, then trains in Android and starts his first developer role, sixteen months after arriving.",
+    title: "Architecture & leadership",
+    text: "His work sits beyond feature coding — architecture, technical decisions, scalability and the engineering trade-offs that senior interviews test.",
   },
   {
-    year: "2017",
-    text: "One of two engineers kept on after the Coin Mobile and PayU merger. Helps launch LazyPay.",
+    title: "Practical mentorship",
+    text: "Droid Skool brings the same production mindset into structured, project-based Android mentorship and a developer community.",
   },
   {
-    year: "2021",
-    text: "Promoted to Android Lead at Pocket52, which later merges into Gameskraft.",
-  },
-  {
-    year: "2023",
-    text: "Joins Ola as Architect and Lead for Ola Maps, and ships it across platforms.",
-  },
-  {
-    year: "2025",
-    text: "Founds Droid Skool to coach Android developers.",
-  },
-  {
-    year: "2026",
-    text: "Launches Tech Leader Hub for experienced developers ready for their next move.",
+    title: "Career acceleration",
+    text: "Tech Leader Hub builds on that foundation with a focused system for senior Android engineers who want stronger product-company opportunities and technical leadership growth.",
   },
 ] as const;
 
@@ -147,7 +135,7 @@ export const faqs: Faq[] = [
     id: "who-is-nikhil-rai",
     question: "Who is Nikhil Rai?",
     answer:
-      "Nikhil Rai is an Android architect and career coach with more than 13 years of experience at companies including Ola, PayU and Gameskraft, where he worked as a lead and architect. He founded Droid Skool in 2025 and Tech Leader Hub in 2026.",
+      "Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His work combines practical Android engineering, mentorship and career guidance for developers who want to turn experience into stronger career opportunities.",
     link: { label: "Read his story", href: "#nikhil" },
   },
   {
@@ -192,7 +180,7 @@ export const faqs: Faq[] = [
     id: "job-guarantee",
     question: "Does Tech Leader Hub guarantee a job?",
     answer:
-      "No. Nobody can honestly guarantee you a job offer. What Tech Leader Hub gives you is clarity on why you're stuck, a plan to fix it, and an experienced architect guiding you while you do the work.",
+      "No. Tech Leader Hub does not guarantee a job or an interview call. What the community gives you is an exact career path: identify the gaps holding you back, strengthen your profile and positioning, build the skills product companies test, and prepare deliberately to handle technical, architecture and system-design interviews with confidence.",
   },
   {
     id: "get-started",
