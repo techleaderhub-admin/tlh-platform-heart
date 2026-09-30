@@ -1,0 +1,33 @@
+# Tech Leader Hub
+
+> Tech Leader Hub (TLH) is a career acceleration platform for experienced Android developers who want to move into stronger product-company roles and grow toward technical leadership. It was founded in 2026 by Nikhil Rai, a former Ola Maps architect with more than 13 years of Android experience at companies including Ola, PayU and Gameskraft.
+
+## Who it is for
+
+- Working Android developers who have wanted to switch jobs for months but keep delaying.
+- Android developers who are interviewing but not converting, often losing in architecture or system design rounds.
+- Developers who have been trying for months and are still in the same role and compensation.
+- Not intended for beginners learning Android or Kotlin from scratch.
+
+## How it works
+
+Tech Leader Hub works in three stages: Diagnose (find exactly why you are stuck), Rebuild (close the gaps interviewers actually test and turn experience into visible evidence), and Land (interview, handle the offer conversation, and step up as a leader).
+
+## Key pages
+
+- [Home](https://techleaderhub.com/): overview, founder story and frequently asked questions
+- [Free masterclass](https://techleaderhub.com/masterclass): a free 90-minute live session, the recommended way to start
+- [About](https://techleaderhub.com/about)
+- [Contact](https://techleaderhub.com/contact)
+
+## Founder
+
+- Nikhil Rai, Founder of Tech Leader Hub and Droid Skool: https://www.linkedin.com/in/nikhil-rai-android/
+- Droid Skool: https://www.droidskool.com/
+
+## Official profiles
+
+- Instagram: https://www.instagram.com/techleaderhubofficial/
+- Facebook: https://www.facebook.com/techleaderhub
+- LinkedIn: https://www.linkedin.com/company/techleaderhub
+- YouTube: https://www.youtube.com/@DroidSkool
