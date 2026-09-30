@@ -71,8 +71,7 @@ function Portrait({
 }) {
   return (
     <img
-      src={`${base}-1200.webp`}
-      srcSet={`${base}-640.webp 640w, ${base}-1200.webp 1200w`}
+      src={base}
       sizes="(min-width: 1024px) 40vw, 80vw"
       alt={alt}
       className={className}
