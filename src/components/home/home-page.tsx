@@ -15,7 +15,6 @@ import {
 
 import {
   LINKS,
-  PORTRAITS,
   faqs,
   fitFor,
   fitNotFor,
@@ -32,6 +31,11 @@ const NAV = [
   { label: "Stories", href: "#stories" },
   { label: "FAQ", href: "#faq" },
 ];
+
+const REMOTE_PORTRAITS = {
+  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be05580af9.29314886_Nikhil-Rai-LinkedIn.png",
+  story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
+} as const;
 
 const SOCIALS = [
   { label: "Instagram", href: LINKS.instagram, Icon: Instagram },
@@ -251,7 +255,7 @@ export function HomePage() {
                 aria-hidden="true"
               />
               <Portrait
-                base={PORTRAITS.hero}
+                base={REMOTE_PORTRAITS.hero}
                 alt="Nikhil Rai, founder of Tech Leader Hub"
                 priority
                 className="tlh-portrait-in relative mx-auto block w-[86%]"
@@ -359,7 +363,7 @@ export function HomePage() {
                 aria-hidden="true"
               />
               <Portrait
-                base={PORTRAITS.story}
+                base={REMOTE_PORTRAITS.story}
                 alt="Nikhil Rai standing in a charcoal suit"
                 className="relative w-full"
               />
