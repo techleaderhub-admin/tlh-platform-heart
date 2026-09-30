@@ -110,10 +110,35 @@ export const fitFor = [
 ] as const;
 
 export const fitNotFor = [
-  "You're looking for a beginner course to learn Kotlin or Android from scratch.",
-  "You want a shortcut or someone to promise you an offer.",
-  "You'd rather keep collecting tutorials than work on your real gaps.",
+  "You're still learning Kotlin or Android, or you don't yet have meaningful production experience.",
 ] as const;
+
+export const droidSkoolPath = {
+  eyebrow: "Recommended starting point",
+  title: "Build first. Then accelerate.",
+  description:
+    "Not every Android developer needs Tech Leader Hub today. If you're still building your Kotlin and Android foundation, creating real projects, or working toward job-readiness, Droid Skool is the place to start. Once you have real production experience and you're ready for stronger product-company opportunities, Tech Leader Hub is built for that next step.",
+  droidSkool: {
+    title: "Droid Skool",
+    subtitle: "Build & become job-ready",
+    badge: "For beginners & early-career developers",
+    points: [
+      "Learn Kotlin and Android through practical, structured training.",
+      "Build real apps and portfolio-ready projects.",
+      "Get mentorship, feedback and interview preparation.",
+    ],
+  },
+  techLeaderHub: {
+    title: "Tech Leader Hub",
+    subtitle: "Accelerate your career",
+    badge: "For experienced Android engineers",
+    points: [
+      "Find and close the gaps holding your career move back.",
+      "Build the architecture, system-design and interview skills product companies test.",
+      "Position yourself for stronger roles and technical leadership.",
+    ],
+  },
+} as const;
 
 export type Faq = {
   id: string;
