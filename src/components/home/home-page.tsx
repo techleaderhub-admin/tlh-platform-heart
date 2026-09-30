@@ -357,103 +357,132 @@ export function HomePage() {
           className="tlh-night tlh-section relative overflow-hidden"
           aria-labelledby="nikhil-title"
         >
-          <div className="mx-auto grid max-w-[1200px] gap-14 px-5 sm:px-8 lg:grid-cols-[.78fr_1.22fr] lg:gap-20">
-            <div className="relative mx-auto w-full max-w-[420px] lg:sticky lg:top-24 lg:self-start">
-              <div
-                className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
-                aria-hidden="true"
-              />
-              <Portrait
-                base={REMOTE_PORTRAITS.story}
-                alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
-                className="relative w-full"
-              />
-              <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
-                <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
-                <p className="text-[13px] text-[var(--on-night-muted)]">
-                  Founder, Droid Skool & Tech Leader Hub
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <p className="text-[15px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+          <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
+            {/* Authority intro spans the full canvas so the section reads as one deliberate story. */}
+            <div className="mx-auto max-w-[850px] text-center">
+              <p className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
                 The authority behind the system
               </p>
               <h2 id="nikhil-title" className="tlh-h2 mt-3 text-white">
                 Built in production. Taught with proof. Designed for career moves.
               </h2>
-              <p className="mt-6 max-w-[40rem] text-[19px] leading-[1.6] text-[var(--on-night-muted)]">
+              <p className="mx-auto mt-5 max-w-[780px] text-[18px] leading-[1.65] text-[var(--on-night-muted)] sm:text-[19px]">
                 Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His authority comes
                 from doing the work first — building Android products, making architecture decisions,
                 mentoring developers, and turning that experience into practical systems other
                 engineers can apply.
               </p>
+            </div>
 
-              <div className="mt-10 grid gap-4 sm:grid-cols-2">
-                {authorityPillars.map((item, index) => (
-                  <article
-                    key={item.title}
-                    className="rounded-[22px] border border-white/10 bg-white/[0.035] p-6 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.055]"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full border border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[13px] font-semibold text-[var(--gold)]">
-                        0{index + 1}
-                      </span>
-                      <div>
-                        <h3 className="text-[18px] font-semibold text-white">{item.title}</h3>
-                        <p className="mt-2 text-[15px] leading-[1.6] text-[var(--on-night-muted)]">
-                          {item.text}
-                        </p>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+            <div className="mt-12 grid items-stretch gap-8 lg:grid-cols-[.78fr_1.22fr] lg:gap-10">
+              {/* Founder profile + proof */}
+              <div className="flex h-full flex-col">
+                <div className="relative mx-auto w-full max-w-[430px] lg:mx-0">
+                  <div
+                    className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
+                    aria-hidden="true"
+                  />
+                  <Portrait
+                    base={REMOTE_PORTRAITS.story}
+                    alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
+                    className="relative mx-auto block w-full"
+                  />
+                  <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
+                    <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
+                    <p className="text-[13px] text-[var(--on-night-muted)]">
+                      Founder, Droid Skool & Tech Leader Hub
+                    </p>
+                  </div>
+                </div>
 
-              <div className="mt-10 rounded-[24px] border border-white/10 bg-white/[0.025] p-6 sm:p-7">
-                <div className="flex flex-wrap gap-2.5">
+                <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
                   {[
-                    "Android Architecture",
-                    "Production Engineering",
-                    "Technical Leadership",
-                    "Interview Strategy",
-                    "Career Positioning",
-                  ].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-white/10 bg-white/[0.035] px-3.5 py-2 text-[13px] font-medium text-[var(--on-night-muted)]"
+                    { value: "13+", label: "Years in Android" },
+                    { value: "Ola", label: "Maps architecture" },
+                    { value: "PayU", label: "Product experience" },
+                    { value: "Millions", label: "Users reached" },
+                  ].map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="rounded-[18px] border border-white/10 bg-white/[0.035] px-4 py-4"
                     >
-                      {tag}
-                    </span>
+                      <p className="text-[20px] font-semibold tracking-[-0.02em] text-white">
+                        {stat.value}
+                      </p>
+                      <p className="mt-1 text-[12px] leading-5 text-[var(--on-night-faint)]">
+                        {stat.label}
+                      </p>
+                    </div>
                   ))}
                 </div>
-                <p className="mt-5 max-w-[42rem] text-[16px] leading-[1.65] text-[var(--on-night-faint)]">
-                  The goal is not to make you consume more content. It is to make your experience
-                  legible to the market, your engineering depth visible in interviews, and your next
-                  career move intentional.
-                </p>
               </div>
 
-              <div className="mt-9 flex flex-wrap gap-x-8 gap-y-3">
-                <a
-                  href={LINKS.journeyVideo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tlh-text-link-light"
-                >
-                  <Play className="size-4 fill-current" aria-hidden="true" />
-                  Watch Nikhil's journey
-                </a>
-                <a
-                  href={LINKS.nikhilLinkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tlh-text-link-light"
-                >
-                  <Linkedin className="size-4" aria-hidden="true" />
-                  Connect on LinkedIn
-                </a>
+              {/* Authority pillars */}
+              <div className="flex flex-col">
+                <div className="grid flex-1 gap-4 sm:grid-cols-2">
+                  {authorityPillars.map((item, index) => (
+                    <article
+                      key={item.title}
+                      className="group rounded-[22px] border border-white/10 bg-white/[0.035] p-5 sm:p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.055]"
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[13px] font-semibold text-[var(--gold)]">
+                          0{index + 1}
+                        </span>
+                        <div>
+                          <h3 className="text-[18px] font-semibold text-white">{item.title}</h3>
+                          <p className="mt-2 text-[15px] leading-[1.6] text-[var(--on-night-muted)]">
+                            {item.text}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                <div className="mt-4 rounded-[22px] border border-white/10 bg-white/[0.025] p-5 sm:p-6">
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Android Architecture",
+                      "Production Engineering",
+                      "Technical Leadership",
+                      "Interview Strategy",
+                      "Career Positioning",
+                    ].map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[12px] font-medium text-[var(--on-night-muted)]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mt-4 max-w-[42rem] text-[15px] leading-[1.6] text-[var(--on-night-faint)]">
+                    The goal is not more content. It is to make your experience legible to the market,
+                    your engineering depth visible in interviews, and your next career move intentional.
+                  </p>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-x-7 gap-y-3">
+                  <a
+                    href={LINKS.journeyVideo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tlh-text-link-light"
+                  >
+                    <Play className="size-4 fill-current" aria-hidden="true" />
+                    Watch Nikhil's journey
+                  </a>
+                  <a
+                    href={LINKS.nikhilLinkedIn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tlh-text-link-light"
+                  >
+                    <Linkedin className="size-4" aria-hidden="true" />
+                    Connect on LinkedIn
+                  </a>
+                </div>
               </div>
             </div>
           </div>
