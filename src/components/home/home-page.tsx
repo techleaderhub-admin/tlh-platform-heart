@@ -33,7 +33,7 @@ const NAV = [
 ];
 
 const REMOTE_PORTRAITS = {
-  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
+  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-640.webp",
   story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
 } as const;
 
