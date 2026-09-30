@@ -33,7 +33,7 @@ const NAV = [
 ];
 
 const REMOTE_PORTRAITS = {
-  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be05580af9.29314886_Nikhil-Rai-LinkedIn.png",
+  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
   story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
 } as const;
 
@@ -218,8 +218,8 @@ export function HomePage() {
           aria-labelledby="hero-title"
         >
           <div className="tlh-hero-light absolute inset-0" aria-hidden="true" />
-          <div className="relative mx-auto grid max-w-[1200px] items-end gap-6 px-5 sm:px-8 lg:min-h-[min(860px,calc(100svh-56px))] lg:grid-cols-[1.15fr_.85fr] lg:gap-10">
-            <div className="self-center pt-16 pb-4 sm:pt-20 lg:py-24">
+          <div className="relative mx-auto grid max-w-[1200px] items-center gap-6 px-5 sm:px-8 lg:min-h-[min(860px,calc(100svh-56px))] lg:grid-cols-[1.05fr_.95fr] lg:gap-4">
+            <div className="self-center pt-16 pb-8 sm:pt-20 lg:py-24">
               <p className="text-[17px] font-medium text-[var(--gold)]">
                 For experienced Android developers
               </p>
@@ -248,19 +248,19 @@ export function HomePage() {
               </p>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[520px] self-end">
-              <BrandRing className="absolute left-1/2 top-[2%] w-[112%] max-w-none -translate-x-1/2" />
+            <div className="relative mx-auto flex w-full max-w-[600px] items-center justify-center self-center lg:-mr-8">
+              <BrandRing className="absolute left-1/2 top-1/2 w-[116%] max-w-none -translate-x-1/2 -translate-y-1/2" />
               <div
-                className="tlh-portrait-glow absolute left-1/2 top-[18%] size-[70%] -translate-x-1/2"
+                className="tlh-portrait-glow absolute left-1/2 top-1/2 size-[82%] -translate-x-1/2 -translate-y-1/2"
                 aria-hidden="true"
               />
               <Portrait
                 base={REMOTE_PORTRAITS.hero}
                 alt="Nikhil Rai, founder of Tech Leader Hub"
                 priority
-                className="tlh-portrait-in relative mx-auto block w-[86%]"
+                className="tlh-portrait-in relative z-10 mx-auto block w-[108%] max-w-none"
               />
-              <div className="tlh-glass absolute bottom-6 left-0 sm:bottom-10 sm:-left-4">
+              <div className="tlh-glass absolute bottom-10 left-0 z-20 sm:bottom-12 sm:-left-4">
                 <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
                 <p className="text-[13px] text-[var(--on-night-muted)]">Founder, Tech Leader Hub</p>
               </div>
