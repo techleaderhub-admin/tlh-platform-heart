@@ -94,9 +94,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: OG_IMAGE },
       { "script:ld+json": structuredData },
     ],
-    links: [
-      { rel: "canonical", href: `${SITE_URL}/` },
-    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
   }),
   component: HomePage,
 });
