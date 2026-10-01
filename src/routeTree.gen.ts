@@ -11,16 +11,22 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as GetStartedRouteImport } from './routes/get-started'
-import { Route as MasterclassRouteImport } from './routes/masterclass'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as SignupRouteImport } from './routes/signup'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as FrameworkRouteImport } from './routes/framework'
+import { Route as GetStartedRouteImport } from './routes/get-started'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MasterclassRouteImport } from './routes/masterclass'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProgramsRouteImport } from './routes/programs'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,14 +37,29 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FrameworkRoute = FrameworkRouteImport.update({
+  id: '/framework',
+  path: '/framework',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GetStartedRoute = GetStartedRouteImport.update({
   id: '/get-started',
   path: '/get-started',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MasterclassRoute = MasterclassRouteImport.update({
-  id: '/masterclass',
-  path: '/masterclass',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -46,14 +67,29 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MasterclassRoute = MasterclassRouteImport.update({
+  id: '/masterclass',
+  path: '/masterclass',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgramsRoute = ProgramsRouteImport.update({
+  id: '/programs',
+  path: '/programs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
@@ -66,90 +102,158 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAdminMasterclassRoute = AuthenticatedAdminMasterclassRouteImport.update({
-  id: '/_authenticated/admin/masterclass',
-  path: '/masterclass',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminStudentsRoute = AuthenticatedAdminStudentsRouteImport.update({
-  id: '/_authenticated/admin/students',
-  path: '/students',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminMasterclassRoute =
+  AuthenticatedAdminMasterclassRouteImport.update({
+    id: '/masterclass',
+    path: '/masterclass',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminStudentsRoute =
+  AuthenticatedAdminStudentsRouteImport.update({
+    id: '/students',
+    path: '/students',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/get-started': typeof GetStartedRoute
-  '/masterclass': typeof MasterclassRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/framework': typeof FrameworkRoute
+  '/get-started': typeof GetStartedRoute
+  '/login': typeof LoginRoute
+  '/masterclass': typeof MasterclassRoute
+  '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
+  '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/get-started': typeof GetStartedRoute
-  '/masterclass': typeof MasterclassRoute
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/framework': typeof FrameworkRoute
+  '/get-started': typeof GetStartedRoute
+  '/login': typeof LoginRoute
+  '/masterclass': typeof MasterclassRoute
+  '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
+  '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/framework': typeof FrameworkRoute
   '/get-started': typeof GetStartedRoute
   '/login': typeof LoginRoute
+  '/masterclass': typeof MasterclassRoute
+  '/privacy': typeof PrivacyRoute
+  '/programs': typeof ProgramsRoute
   '/signup': typeof SignupRoute
+  '/terms': typeof TermsRoute
+  '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/forgot-password' | '/update-password' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/forgot-password'
+    | '/framework'
+    | '/get-started'
+    | '/login'
+    | '/masterclass'
+    | '/privacy'
+    | '/programs'
+    | '/signup'
+    | '/terms'
+    | '/update-password'
+    | '/admin'
+    | '/dashboard'
+    | '/admin/masterclass'
+    | '/admin/students'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/get-started' | '/masterclass' | '/login' | '/signup' | '/forgot-password' | '/update-password' | '/admin' | '/admin/masterclass' | '/admin/students' | '/dashboard'
+  to:
+    | '/'
+    | '/about'
+    | '/contact'
+    | '/forgot-password'
+    | '/framework'
+    | '/get-started'
+    | '/login'
+    | '/masterclass'
+    | '/privacy'
+    | '/programs'
+    | '/signup'
+    | '/terms'
+    | '/update-password'
+    | '/admin'
+    | '/dashboard'
+    | '/admin/masterclass'
+    | '/admin/students'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/get-started'
-    | '/masterclass'
-    | '/login'
-    | '/signup'
+    | '/about'
+    | '/contact'
     | '/forgot-password'
+    | '/framework'
+    | '/get-started'
+    | '/login'
+    | '/masterclass'
+    | '/privacy'
+    | '/programs'
+    | '/signup'
+    | '/terms'
     | '/update-password'
     | '/_authenticated/admin'
+    | '/_authenticated/dashboard'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
-    | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  GetStartedRoute: typeof GetStartedRoute
-  MasterclassRoute: typeof MasterclassRoute
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  FrameworkRoute: typeof FrameworkRoute
+  GetStartedRoute: typeof GetStartedRoute
+  LoginRoute: typeof LoginRoute
+  MasterclassRoute: typeof MasterclassRoute
+  PrivacyRoute: typeof PrivacyRoute
+  ProgramsRoute: typeof ProgramsRoute
+  SignupRoute: typeof SignupRoute
+  TermsRoute: typeof TermsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
 }
 
@@ -169,18 +273,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/framework': {
+      id: '/framework'
+      path: '/framework'
+      fullPath: '/framework'
+      preLoaderRoute: typeof FrameworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/get-started': {
       id: '/get-started'
       path: '/get-started'
       fullPath: '/get-started'
       preLoaderRoute: typeof GetStartedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/masterclass': {
-      id: '/masterclass'
-      path: '/masterclass'
-      fullPath: '/masterclass'
-      preLoaderRoute: typeof MasterclassRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -190,6 +315,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/masterclass': {
+      id: '/masterclass'
+      path: '/masterclass'
+      fullPath: '/masterclass'
+      preLoaderRoute: typeof MasterclassRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programs': {
+      id: '/programs'
+      path: '/programs'
+      fullPath: '/programs'
+      preLoaderRoute: typeof ProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/signup': {
       id: '/signup'
       path: '/signup'
@@ -197,11 +343,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/update-password': {
@@ -218,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/masterclass': {
       id: '/_authenticated/admin/masterclass'
       path: '/masterclass'
@@ -231,13 +384,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/students'
       preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
@@ -271,11 +417,17 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  GetStartedRoute: GetStartedRoute,
-  MasterclassRoute: MasterclassRoute,
-  LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
+  AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  FrameworkRoute: FrameworkRoute,
+  GetStartedRoute: GetStartedRoute,
+  LoginRoute: LoginRoute,
+  MasterclassRoute: MasterclassRoute,
+  PrivacyRoute: PrivacyRoute,
+  ProgramsRoute: ProgramsRoute,
+  SignupRoute: SignupRoute,
+  TermsRoute: TermsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
 }
 export const routeTree = rootRouteImport
