@@ -358,7 +358,7 @@ export function HomePage() {
           </div>
         </section>
 
-        {/* ---------- Recognition ---------- */>
+        {/* ---------- Recognition ---------- */}
         <section
           id="recognition"
           className="tlh-section bg-white"
