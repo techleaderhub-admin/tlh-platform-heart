@@ -32,9 +32,10 @@ const NAV = [
 ];
 
 // Base paths of Nikhil's self-hosted portraits; each has -640.webp and -1200.webp sizes.
+// Width and height are the large file's real size, so the page does not shift as images load.
 const PORTRAITS = {
-  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal",
-  story: "/images/nikhil/nikhil-rai-standing",
+  hero: { base: "/images/nikhil/nikhil-rai-arms-crossed-charcoal", width: 736, height: 1018 },
+  story: { base: "/images/nikhil/nikhil-rai-standing", width: 1200, height: 1623 },
 } as const;
 
 const SOCIALS = [
@@ -63,21 +64,23 @@ function PrimaryCta({
 }
 
 function Portrait({
-  base,
+  image,
   alt,
   className = "",
   priority = false,
 }: {
-  base: string;
+  image: (typeof PORTRAITS)[keyof typeof PORTRAITS];
   alt: string;
   className?: string;
   priority?: boolean;
 }) {
   return (
     <img
-      src={`${base}-1200.webp`}
-      srcSet={`${base}-640.webp 640w, ${base}-1200.webp 1200w`}
+      src={`${image.base}-1200.webp`}
+      srcSet={`${image.base}-640.webp 640w, ${image.base}-1200.webp ${image.width}w`}
       sizes="(min-width: 1024px) 600px, 92vw"
+      width={image.width}
+      height={image.height}
       alt={alt}
       className={className}
       loading={priority ? "eager" : "lazy"}
@@ -436,7 +439,7 @@ export function HomePage() {
                 aria-hidden="true"
               />
               <Portrait
-                base={PORTRAITS.hero}
+                image={PORTRAITS.hero}
                 alt="Nikhil Rai, founder of Tech Leader Hub"
                 priority
                 className="tlh-portrait-in relative z-10 mx-auto block w-[108%] max-w-none"
@@ -617,7 +620,7 @@ export function HomePage() {
                   aria-hidden="true"
                 />
                 <Portrait
-                  base={PORTRAITS.story}
+                  image={PORTRAITS.story}
                   alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
                   className="relative mx-auto block w-full"
                 />
@@ -1058,7 +1061,10 @@ function useReveal() {
   }, []);
 }
 
-/** Renders the final number on the server and without JavaScript; counts up on the client. */
+/**
+ * Shows the final number on the server, without JavaScript and until it scrolls into view;
+ * only then counts up from zero.
+ */
 function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string }) {
   const [value, setValue] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
@@ -1074,7 +1080,6 @@ function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string
     }
 
     let frame = 0;
-    setValue(0);
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
