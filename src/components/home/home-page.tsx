@@ -460,7 +460,6 @@ export function HomePage() {
             </div>
 
             <ApproachSteps />
-l>
 
             <div className="mt-16 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
               <PrimaryCta>Join the free masterclass</PrimaryCta>
