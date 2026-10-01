@@ -68,12 +68,8 @@ export const authorityPillars = [
     text: "His work sits beyond feature coding — architecture, technical decisions, scalability and the engineering trade-offs that senior interviews test.",
   },
   {
-    title: "Practical mentorship",
-    text: "Droid Skool brings the same production mindset into structured, project-based Android mentorship and a developer community.",
-  },
-  {
     title: "Career acceleration",
-    text: "Tech Leader Hub builds on that foundation with a focused system for senior Android engineers who want stronger product-company opportunities and technical leadership growth.",
+    text: "Droid Skool builds practical Android capability; Tech Leader Hub turns experienced engineering depth into stronger interviews, positioning and technical leadership.",
   },
 ] as const;
 
