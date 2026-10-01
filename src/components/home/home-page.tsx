@@ -293,7 +293,7 @@ export function HomePage() {
           <Link
             to="/"
             onClick={closeMenu}
-            className="flex items-center gap-2.5 rounded-md"
+            className="flex min-h-10 items-center gap-2.5 rounded-md"
             aria-label="Tech Leader Hub home"
           >
             <span className="tlh-logo-mark">
@@ -972,7 +972,11 @@ export function HomePage() {
       <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0" inert={menuOpen}>
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
+            <Link
+              to="/"
+              className="flex min-h-10 items-center gap-2.5"
+              aria-label="Tech Leader Hub home"
+            >
               <img
                 src={BRAND_ICON.small}
                 alt=""
@@ -1399,7 +1403,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   return (
     <div>
       <p className="text-[13px] font-semibold text-white">{title}</p>
-      <div className="tlh-footer-links mt-4 flex flex-col gap-3">{children}</div>
+      <div className="tlh-footer-links mt-2 flex flex-col">{children}</div>
     </div>
   );
 }

@@ -331,7 +331,7 @@
 .tlh-btn-xs { min-height: 40px; padding: 0 14px; font-size: 13px; }
 
 .tlh-text-link, .tlh-text-link-light {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px;
   font-size: 17px; font-weight: 500;
 }
 .tlh-text-link { color: var(--blue); }
@@ -397,7 +397,10 @@
 .tlh-faq > summary:hover h3 { color: var(--blue); }
 
 /* Footer */
-.tlh-footer-links a { font-size: 14px; color: var(--on-night-muted); width: fit-content; }
+.tlh-footer-links a {
+  display: inline-flex; align-items: center; min-height: 40px;
+  font-size: 14px; color: var(--on-night-muted); width: fit-content;
+}
 .tlh-footer-links a:hover { color: #fff; }
 .tlh-social {
   display: inline-flex; align-items: center; justify-content: center;
