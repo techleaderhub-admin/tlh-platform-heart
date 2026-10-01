@@ -614,21 +614,24 @@ export function HomePage() {
             </div>
 
             <div className="mt-12 grid items-start gap-10 lg:grid-cols-[.72fr_1.28fr] lg:gap-14">
-              <div className="relative mx-auto w-full max-w-[420px] lg:mx-0">
-                <div
-                  className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
-                  aria-hidden="true"
-                />
-                <Portrait
-                  image={PORTRAITS.story}
-                  alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
-                  className="relative mx-auto block w-full"
-                />
-                <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
-                  <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
-                  <p className="text-[13px] text-[var(--on-night-muted)]">
-                    Founder, Droid Skool & Tech Leader Hub
-                  </p>
+              <div className="mx-auto w-full max-w-[420px] lg:mx-0">
+                {/* The name card is positioned against the photo only, never the stat tiles below. */}
+                <div className="relative">
+                  <div
+                    className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
+                    aria-hidden="true"
+                  />
+                  <Portrait
+                    image={PORTRAITS.story}
+                    alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
+                    className="relative mx-auto block w-full"
+                  />
+                  <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
+                    <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
+                    <p className="text-[13px] text-[var(--on-night-muted)]">
+                      Founder, Droid Skool & Tech Leader Hub
+                    </p>
+                  </div>
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3">
                   {[
