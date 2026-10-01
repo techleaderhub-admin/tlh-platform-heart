@@ -482,7 +482,7 @@ export function MasterclassPage() {
           <div id="host">
             <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Your host</p>
             <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Hi, I'm Nikhil Rai.</h2>
-            <p className="mt-3 font-semibold text-[#F5B942]">Android Architect · Mentor · Founder, Tech Leader Hub</p>
+            <p className="mt-3 font-semibold text-[#F5B942]">Android Architect · Mentor · Founder, Tech Leader Hub & Droid Skool</p>
             <p className="mt-6 text-lg leading-8 text-white/55">
               I've spent 13+ years building Android products and working through the realities of Android engineering, product development and technical growth.
             </p>

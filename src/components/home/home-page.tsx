@@ -422,16 +422,18 @@ export function HomePage() {
                 </a>
               </div>
               <div className="mt-8 flex flex-wrap gap-2.5">
-                {["13+ years in Android", "Ex-Ola Maps architect", "Founder, Droid Skool"].map(
-                  (chip) => (
-                    <span
-                      key={chip}
-                      className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[12px] font-medium text-[var(--on-night-muted)]"
-                    >
-                      {chip}
-                    </span>
-                  ),
-                )}
+                {[
+                  "13+ years in Android",
+                  "Ex-Ola Maps architect",
+                  "Founder, Tech Leader Hub & Droid Skool",
+                ].map((chip) => (
+                  <span
+                    key={chip}
+                    className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[12px] font-medium text-[var(--on-night-muted)]"
+                  >
+                    {chip}
+                  </span>
+                ))}
               </div>
               <p className="mt-4 flex items-center gap-2.5 text-[13px] text-[var(--on-night-faint)]">
                 <span className="tlh-live-dot" aria-hidden="true" />
@@ -447,13 +449,15 @@ export function HomePage() {
               />
               <Portrait
                 image={PORTRAITS.hero}
-                alt="Nikhil Rai, founder of Tech Leader Hub"
+                alt="Nikhil Rai, Founder, Tech Leader Hub & Droid Skool"
                 priority
                 className="tlh-portrait-in relative z-10 mx-auto block w-[108%] max-w-none"
               />
               <div className="tlh-glass absolute bottom-10 left-0 z-20 sm:bottom-12 sm:-left-4">
                 <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
-                <p className="text-[13px] text-[var(--on-night-muted)]">Founder, Tech Leader Hub</p>
+                <p className="text-[13px] text-[var(--on-night-muted)]">
+                  Founder, Tech Leader Hub & Droid Skool
+                </p>
               </div>
             </div>
           </div>
@@ -475,7 +479,7 @@ export function HomePage() {
               </span>
               <span className="hidden h-4 w-px bg-[var(--line)] sm:block" aria-hidden="true" />
               <span className="text-[var(--ink)]">
-                <strong>Founder</strong>, Droid Skool
+                <strong>Founder</strong>, Tech Leader Hub & Droid Skool
               </span>
               <span className="hidden h-4 w-px bg-[var(--line)] sm:block" aria-hidden="true" />
               <span>Ola · Gameskraft · PayU · Synchronoss</span>
@@ -614,7 +618,7 @@ export function HomePage() {
                 Where production experience becomes career advantage.
               </h2>
               <p className="mx-auto mt-5 max-w-[800px] text-[18px] leading-[1.65] text-[var(--on-night-muted)] sm:text-[19px]">
-                Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His experience spans
+                Nikhil Rai is the Founder of Tech Leader Hub and Droid Skool. His experience spans
                 product companies, high-scale Android systems, architecture, technical leadership
                 and developer mentorship.
               </p>
@@ -630,13 +634,13 @@ export function HomePage() {
                   />
                   <Portrait
                     image={PORTRAITS.story}
-                    alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
+                    alt="Nikhil Rai, Founder, Tech Leader Hub & Droid Skool"
                     className="relative mx-auto block w-full"
                   />
                   <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
                     <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
                     <p className="text-[13px] text-[var(--on-night-muted)]">
-                      Founder, Droid Skool & Tech Leader Hub
+                      Founder, Tech Leader Hub & Droid Skool
                     </p>
                   </div>
                 </div>
@@ -644,7 +648,7 @@ export function HomePage() {
                   {[
                     { value: "13+", label: "Years in Android" },
                     { value: "Ola", label: "Maps architect" },
-                    { value: "Droid Skool", label: "Founder" },
+                    { value: "Founder", label: "Tech Leader Hub & Droid Skool" },
                   ].map((stat) => (
                     <div
                       key={stat.label}
@@ -715,8 +719,8 @@ export function HomePage() {
                     architected Android mapping and navigation experiences at scale.
                   </p>
                   <p>
-                    <span className="font-semibold text-white">Today.</span> Founder of Droid Skool
-                    and Tech Leader Hub, turning that experience into practical career systems.
+                    <span className="font-semibold text-white">Today.</span> Founder of Tech Leader
+                    Hub and Droid Skool, turning that experience into practical career systems.
                   </p>
                 </div>
 
