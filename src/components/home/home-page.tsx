@@ -33,6 +33,7 @@ const NAV = [
 ];
 
 // Hero portrait uses the exact uploaded charcoal arms-crossed asset.
+// TLH homepage interaction layer: recognition, animated journey, and readiness scorecard.
 const REMOTE_PORTRAITS = {
   hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-1200.webp",
   story: "/images/nikhil/nikhil-rai-standing-1200.webp",
