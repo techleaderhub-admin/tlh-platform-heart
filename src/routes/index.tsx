@@ -25,13 +25,23 @@ const structuredData = {
       sameAs: [LINKS.instagram, LINKS.facebook, LINKS.linkedin, LINKS.youtube],
     },
     {
+      "@type": "Organization",
+      "@id": "https://www.droidskool.com/#organization",
+      name: "Droid Skool",
+      url: "https://www.droidskool.com/",
+      founder: { "@id": `${SITE_URL}/#nikhil-rai` },
+    },
+    {
       "@type": "Person",
       "@id": `${SITE_URL}/#nikhil-rai`,
       name: "Nikhil Rai",
-      jobTitle: "Founder, Tech Leader Hub",
+      jobTitle: "Founder, Droid Skool and Tech Leader Hub",
       description:
         "Android architect and career coach with more than 13 years of experience at companies including Ola, PayU and Gameskraft. Founder of Droid Skool and Tech Leader Hub.",
-      worksFor: { "@id": `${SITE_URL}/#organization` },
+      worksFor: [
+        { "@id": `${SITE_URL}/#organization` },
+        { "@id": "https://www.droidskool.com/#organization" },
+      ],
       knowsAbout: [
         "Android development",
         "Kotlin",
