@@ -3,10 +3,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomePage } from "@/components/home/home-page";
 import { LINKS, SITE_URL, faqs } from "@/components/home/home-content";
 
-const TITLE = "Tech Leader Hub | Android Career Coach for Experienced Developers";
+const TITLE = "Tech Leader Hub | Android Career Acceleration & Interview Coaching";
 const DESCRIPTION =
-  "Stuck in your Android career? Tech Leader Hub helps experienced Android developers crack product-company interviews and grow into tech leaders, guided by Nikhil Rai.";
-const OG_IMAGE = `${SITE_URL}/tlh-logo.jpg`;
+  "Tech Leader Hub helps experienced Android developers overcome career stagnation, prepare for architecture and system-design interviews, and move toward stronger product-company roles with Nikhil Rai.";
+const OG_IMAGE = `${SITE_URL}/og-home.jpg`;
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -40,6 +40,7 @@ const structuredData = {
         "Technical interviews",
         "Career coaching",
       ],
+      image: `${SITE_URL}/images/nikhil/nikhil-rai-standing-1200.webp`,
       sameAs: [LINKS.nikhilLinkedIn, LINKS.youtube, LINKS.droidSkool],
     },
     {
