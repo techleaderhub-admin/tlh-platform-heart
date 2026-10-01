@@ -36,9 +36,9 @@ const structuredData = {
       "@type": "Person",
       "@id": `${SITE_URL}/#nikhil-rai`,
       name: "Nikhil Rai",
-      jobTitle: "Founder, Droid Skool and Tech Leader Hub",
+      jobTitle: "Founder, Tech Leader Hub & Droid Skool",
       description:
-        "Android architect and career coach with more than 13 years of experience at companies including Ola, PayU and Gameskraft. Founder of Droid Skool and Tech Leader Hub.",
+        "Android architect and career coach with more than 13 years of experience at companies including Ola, PayU and Gameskraft. Founder of Tech Leader Hub and Droid Skool.",
       worksFor: [
         { "@id": `${SITE_URL}/#organization` },
         { "@id": "https://www.droidskool.com/#organization" },

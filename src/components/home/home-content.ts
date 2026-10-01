@@ -135,7 +135,7 @@ export const faqs: Faq[] = [
     id: "who-is-nikhil-rai",
     question: "Who is Nikhil Rai?",
     answer:
-      "Nikhil Rai is an Android architect and career coach with more than 13 years of experience at Ola, PayU and Gameskraft, and the founder of Droid Skool and Tech Leader Hub.",
+      "Nikhil Rai is an Android architect and career coach with more than 13 years of experience at Ola, PayU and Gameskraft, and the founder of Tech Leader Hub and Droid Skool.",
     link: { label: "Read his story", href: "#nikhil" },
   },
   {
