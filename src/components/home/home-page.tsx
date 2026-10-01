@@ -132,6 +132,11 @@ export function HomePage() {
   const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
   const [picked, setPicked] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const scrollLockedRef = useRef(false);
+  const pendingHashRef = useRef<string | null>(null);
   const pickedItem = picked === null ? undefined : recognition[picked];
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
@@ -149,7 +154,17 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setHeaderCompact(window.scrollY > 28);
+    // Browsers without CSS scroll timelines get the progress line from this listener instead.
+    const cssProgress = typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()");
+    const onScroll = () => {
+      if (scrollLockedRef.current) return;
+      setHeaderCompact(window.scrollY > 28);
+      const line = progressRef.current;
+      if (!cssProgress && line) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        line.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -177,20 +192,61 @@ export function HomePage() {
     };
   }, []);
 
+  // While the mobile menu is open: lock page scroll (iOS-safe), close on Escape, keep focus in the menu.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    const { body, documentElement: html } = document;
+    const scrollY = window.scrollY;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: html.style.overflow,
+    };
+    scrollLockedRef.current = true;
+    html.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    menuRef.current?.querySelector<HTMLElement>("a")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKeyDown);
+
     return () => {
-      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.width = previous.width;
+      html.style.overflow = previous.overflow;
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+      scrollLockedRef.current = false;
+      const hash = pendingHashRef.current;
+      pendingHashRef.current = null;
+      if (hash) {
+        document.getElementById(hash.slice(1))?.scrollIntoView();
+        window.history.pushState(null, "", hash);
+      }
     };
   }, [menuOpen]);
 
   useReveal();
 
   const closeMenu = () => setMenuOpen(false);
+  // Section links scroll after the scroll lock is released, so the jump lands in the right place.
+  const goToSection = (event: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    event.preventDefault();
+    pendingHashRef.current = hash;
+    setMenuOpen(false);
+  };
 
   return (
     <div className="tlh-home min-h-screen overflow-x-clip">
-      <a href="#main-content" className="tlh-skip">
+      <a href="#main-content" className="tlh-skip" inert={menuOpen}>
         Skip to content
       </a>
 
@@ -242,10 +298,11 @@ export function HomePage() {
               Sign in
             </Link>
             <PrimaryCta className="tlh-btn-sm hidden lg:inline-flex">
-              Join free masterclass
+              Join the free masterclass
             </PrimaryCta>
             <PrimaryCta className="tlh-btn-xs lg:hidden">Join free</PrimaryCta>
             <button
+              ref={menuButtonRef}
               type="button"
               className="tlh-icon-btn lg:hidden"
               onClick={() => setMenuOpen((open) => !open)}
@@ -258,13 +315,23 @@ export function HomePage() {
           </div>
         </div>
 
-        <div className="tlh-progress" aria-hidden="true" />
+        <div ref={progressRef} className="tlh-progress" aria-hidden="true" />
       </header>
       {menuOpen ? (
-        <nav id="tlh-mobile-menu" className="tlh-mobile-menu lg:hidden" aria-label="Mobile">
+        <nav
+          ref={menuRef}
+          id="tlh-mobile-menu"
+          className="tlh-mobile-menu lg:hidden"
+          style={{ top: headerCompact ? 56 : 64 }}
+          aria-label="Mobile"
+        >
           <div className="tlh-mobile-menu-inner">
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} onClick={closeMenu}>
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => goToSection(event, item.href)}
+              >
                 {item.label}
               </a>
             ))}
@@ -292,7 +359,7 @@ export function HomePage() {
         </nav>
       ) : null}
 
-      <main id="main-content">
+      <main id="main-content" inert={menuOpen}>
         {/* ---------- Hero ---------- */}
         <section
           ref={heroRef}
@@ -851,7 +918,7 @@ export function HomePage() {
       </main>
 
       {/* ---------- Footer ---------- */}
-      <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0">
+      <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0" inert={menuOpen}>
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
@@ -911,8 +978,8 @@ export function HomePage() {
       {/* ---------- Mobile join bar (appears after the hero) ---------- */}
       <div
         className={`tlh-mobile-bar lg:hidden ${showMobileBar ? "is-visible" : ""}`}
-        aria-hidden={!showMobileBar}
-        inert={!showMobileBar}
+        aria-hidden={!showMobileBar || menuOpen}
+        inert={!showMobileBar || menuOpen}
       >
         <PrimaryCta className="w-full" onClick={closeMenu}>
           Join the free masterclass
