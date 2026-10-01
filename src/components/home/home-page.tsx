@@ -38,6 +38,12 @@ const PORTRAITS = {
   story: { base: "/images/nikhil/nikhil-rai-standing", width: 1200, height: 1623 },
 } as const;
 
+// Small WebP copies of the TLH mark (the 500px tlh-icon.png is ~400KB), sized for 2x screens.
+const BRAND_ICON = {
+  small: "/images/brand/tlh-icon-72.webp",
+  large: "/images/brand/tlh-icon-112.webp",
+} as const;
+
 const SOCIALS = [
   { label: "Instagram", href: LINKS.instagram, Icon: Instagram },
   { label: "Facebook", href: LINKS.facebook, Icon: Facebook },
@@ -257,6 +263,7 @@ export function HomePage() {
   }, [menuOpen]);
 
   useReveal();
+  useInViewEffects();
 
   const closeMenu = () => setMenuOpen(false);
   // Section links scroll after the scroll lock is released, so the jump lands in the right place.
@@ -286,11 +293,11 @@ export function HomePage() {
           <Link
             to="/"
             onClick={closeMenu}
-            className="flex items-center gap-2.5 rounded-md"
+            className="flex min-h-10 items-center gap-2.5 rounded-md"
             aria-label="Tech Leader Hub home"
           >
             <span className="tlh-logo-mark">
-              <img src="/tlh-icon.png" alt="" width={36} height={36} className="size-9" />
+              <img src={BRAND_ICON.small} alt="" width={36} height={36} className="size-9" />
             </span>
             <span className="min-w-0">
               <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
@@ -614,21 +621,24 @@ export function HomePage() {
             </div>
 
             <div className="mt-12 grid items-start gap-10 lg:grid-cols-[.72fr_1.28fr] lg:gap-14">
-              <div className="relative mx-auto w-full max-w-[420px] lg:mx-0">
-                <div
-                  className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
-                  aria-hidden="true"
-                />
-                <Portrait
-                  image={PORTRAITS.story}
-                  alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
-                  className="relative mx-auto block w-full"
-                />
-                <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
-                  <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
-                  <p className="text-[13px] text-[var(--on-night-muted)]">
-                    Founder, Droid Skool & Tech Leader Hub
-                  </p>
+              <div className="mx-auto w-full max-w-[420px] lg:mx-0">
+                {/* The name card is positioned against the photo only, never the stat tiles below. */}
+                <div className="relative">
+                  <div
+                    className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
+                    aria-hidden="true"
+                  />
+                  <Portrait
+                    image={PORTRAITS.story}
+                    alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
+                    className="relative mx-auto block w-full"
+                  />
+                  <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
+                    <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
+                    <p className="text-[13px] text-[var(--on-night-muted)]">
+                      Founder, Droid Skool & Tech Leader Hub
+                    </p>
+                  </div>
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3">
                   {[
@@ -930,7 +940,14 @@ export function HomePage() {
         >
           <div className="tlh-final-light absolute inset-0" aria-hidden="true" />
           <div className="relative mx-auto max-w-[760px] px-5 text-center sm:px-8">
-            <img src="/tlh-icon.png" alt="" width={56} height={56} className="mx-auto size-14" />
+            <img
+              src={BRAND_ICON.large}
+              alt=""
+              width={56}
+              height={56}
+              loading="lazy"
+              className="mx-auto size-14"
+            />
             <h2 id="final-title" className="tlh-statement mt-8 text-white">
               Stop waiting for the right time. Start with a clear plan.
             </h2>
@@ -955,8 +972,19 @@ export function HomePage() {
       <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0" inert={menuOpen}>
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
-              <img src="/tlh-icon.png" alt="" width={32} height={32} className="size-8" />
+            <Link
+              to="/"
+              className="flex min-h-10 items-center gap-2.5"
+              aria-label="Tech Leader Hub home"
+            >
+              <img
+                src={BRAND_ICON.small}
+                alt=""
+                width={32}
+                height={32}
+                loading="lazy"
+                className="size-8"
+              />
               <span className="text-[16px] font-semibold text-white">Tech Leader Hub</span>
             </Link>
             <p className="mt-4 max-w-[18rem] text-[14px] leading-6 text-[var(--on-night-faint)]">
@@ -1057,6 +1085,75 @@ function useReveal() {
     return () => {
       observer.disconnect();
       document.documentElement.classList.remove("tlh-reveal-ready");
+    };
+  }, []);
+}
+
+const GLOW_MS = 2600;
+const GLOW_STAGGER_MS = 220;
+
+/**
+ * Plays the decorative effects when they reach the screen, with no hover needed:
+ * glow borders and the logo ring sweep once, buttons shine once, and looping effects
+ * (border beam, live dot) run only while visible. Skipped entirely for reduced motion.
+ */
+function useInViewEffects() {
+  useEffect(() => {
+    if (
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const timers: number[] = [];
+    const glowOnce = (element: Element, delay: number) => {
+      timers.push(
+        window.setTimeout(() => {
+          element.classList.add("is-glowing");
+          timers.push(window.setTimeout(() => element.classList.remove("is-glowing"), GLOW_MS));
+        }, delay),
+      );
+    };
+
+    const looping = ".tlh-beam, .tlh-live-dot";
+    const once = ".tlh-glow-card, .tlh-logo-mark, .tlh-btn-primary";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const element = entry.target;
+          if (element.matches(looping)) {
+            element.classList.toggle("is-visible", entry.isIntersecting);
+          }
+          if (
+            !entry.isIntersecting ||
+            !element.matches(once) ||
+            element.hasAttribute("data-fx-done")
+          ) {
+            return;
+          }
+          element.setAttribute("data-fx-done", "");
+          if (element.matches(".tlh-btn-primary")) {
+            element.classList.add("is-shine");
+          } else {
+            const index = element.parentElement
+              ? Array.prototype.indexOf.call(element.parentElement.children, element)
+              : 0;
+            glowOnce(element, 300 + Math.max(index, 0) * GLOW_STAGGER_MS);
+          }
+          if (!element.matches(looping)) observer.unobserve(element);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px" },
+    );
+
+    document.documentElement.classList.add("tlh-fx-ready");
+    document
+      .querySelectorAll(`.tlh-home :is(${looping}, ${once})`)
+      .forEach((element) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      timers.forEach((timer) => window.clearTimeout(timer));
+      document.documentElement.classList.remove("tlh-fx-ready");
     };
   }, []);
 }
@@ -1306,7 +1403,7 @@ function FooterColumn({ title, children }: { title: string; children: React.Reac
   return (
     <div>
       <p className="text-[13px] font-semibold text-white">{title}</p>
-      <div className="tlh-footer-links mt-4 flex flex-col gap-3">{children}</div>
+      <div className="tlh-footer-links mt-2 flex flex-col">{children}</div>
     </div>
   );
 }

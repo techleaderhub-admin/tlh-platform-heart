@@ -331,7 +331,7 @@
 .tlh-btn-xs { min-height: 40px; padding: 0 14px; font-size: 13px; }
 
 .tlh-text-link, .tlh-text-link-light {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 40px;
   font-size: 17px; font-weight: 500;
 }
 .tlh-text-link { color: var(--blue); }
@@ -397,7 +397,10 @@
 .tlh-faq > summary:hover h3 { color: var(--blue); }
 
 /* Footer */
-.tlh-footer-links a { font-size: 14px; color: var(--on-night-muted); width: fit-content; }
+.tlh-footer-links a {
+  display: inline-flex; align-items: center; min-height: 40px;
+  font-size: 14px; color: var(--on-night-muted); width: fit-content;
+}
 .tlh-footer-links a:hover { color: #fff; }
 .tlh-social {
   display: inline-flex; align-items: center; justify-content: center;
@@ -443,12 +446,13 @@
   background: conic-gradient(from var(--tlh-angle), #3b8bff, #f2b544, #3b8bff);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
   mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
-  animation: tlh-spin 5s linear infinite;
+  animation: tlh-spin 5s linear infinite paused;
   opacity: 0;
   transition: opacity .3s;
   pointer-events: none;
 }
-.tlh-logo-mark:hover::after { opacity: 1; }
+.tlh-logo-mark:hover::after,
+.tlh-logo-mark.is-glowing::after { opacity: 1; animation-play-state: running; }
 /* Scroll progress line: CSS scroll timeline where supported, JS fallback sets the transform elsewhere */
 .tlh-progress {
   position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
@@ -494,10 +498,12 @@
   opacity: 0;
   transition: opacity .35s;
   pointer-events: none;
-  animation: tlh-spin 4s linear infinite;
+  /* Spins only while it is showing: on hover/focus, or during the in-view intro (is-glowing) */
+  animation: tlh-spin 4s linear infinite paused;
 }
 .tlh-glow-card:hover::after,
-.tlh-glow-card:focus-within::after { opacity: 1; }
+.tlh-glow-card:focus-within::after,
+.tlh-glow-card.is-glowing::after { opacity: 1; animation-play-state: running; }
 .tlh-btn-primary::after {
   content: "";
   position: absolute;
@@ -508,6 +514,12 @@
   transition: transform .8s cubic-bezier(.22,1,.36,1);
 }
 .tlh-btn-primary:hover::after { transform: translateX(120%); }
+/* One shine sweep the first time a button scrolls into view (is-shine is added by JS) */
+.tlh-btn-primary.is-shine::after { animation: tlh-shine 1.1s cubic-bezier(.22,1,.36,1) .25s 1; }
+@keyframes tlh-shine {
+  from { transform: translateX(-120%); }
+  to { transform: translateX(120%); }
+}
 .tlh-gradient-text {
   /* Signal Blue to Deep Gold: Leader Gold is never used for text on light backgrounds */
   background: linear-gradient(90deg, #0b63e5, #8a6a2f);
@@ -561,6 +573,13 @@
   animation: tlh-ping 1.8s cubic-bezier(0,0,.2,1) infinite;
 }
 @keyframes tlh-ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
+
+/*
+ * Looping effects pause while off screen once the script is managing them (tlh-fx-ready),
+ * so the page only animates what the visitor can see. Without JavaScript they simply run.
+ */
+.tlh-fx-ready .tlh-beam:not(.is-visible)::before,
+.tlh-fx-ready .tlh-live-dot:not(.is-visible)::after { animation-play-state: paused; }
 
 .tlh-pain {
   display: block;
@@ -668,7 +687,7 @@
   .tlh-glow-card::after,
   .tlh-beam::before,
   .tlh-live-dot::after { animation: none !important; }
-  .tlh-btn-primary::after { display: none; }
+  .tlh-btn-primary::after { display: none; animation: none !important; }
   .tlh-btn-primary:active,
   .tlh-lift:hover,
   .tlh-score-btn:hover { transform: none !important; }
