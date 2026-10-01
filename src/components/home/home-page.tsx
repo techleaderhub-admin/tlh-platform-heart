@@ -19,7 +19,6 @@ import {
   droidSkoolPath,
   faqs,
   fitFor,
-  fitNotFor,
   recognition,
   steps,
   stories,
@@ -129,7 +128,7 @@ export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMobileBar, setShowMobileBar] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
-  const [activeNav, setActiveNav] = useState(NAV[0].href);
+  const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
   const heroRef = useRef<HTMLElement>(null);
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
@@ -175,6 +174,13 @@ export function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
@@ -185,7 +191,7 @@ export function HomePage() {
 
       {/* ---------- Header ---------- */}
       <header className={"tlh-header fixed inset-x-0 top-0 z-50 " + (headerCompact ? "is-compact" : "")}>
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5 transition-[height] duration-300 sm:px-8">
+        <div className={"mx-auto flex " + (headerCompact ? "h-14" : "h-16") + " max-w-[1200px] items-center justify-between px-5 transition-[height] duration-300 sm:px-8"}>
           <Link
             to="/"
             onClick={closeMenu}
@@ -197,7 +203,7 @@ export function HomePage() {
             </span>
             <span className="min-w-0">
               <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
-                Tech <span className="text-[var(--blue)]">Leader</span> Hub
+                Tech <span className="text-[#3B8BFF]">Leader</span> Hub
               </span>
               <span className="hidden text-[10px] leading-4 text-white/45 sm:block">
                 Learn. Grow. Lead.
@@ -241,7 +247,9 @@ export function HomePage() {
           </div>
         </div>
 
-        {menuOpen ? (
+        <div className="tlh-progress" aria-hidden="true" />
+      </header>
+      {menuOpen ? (
           <nav id="tlh-mobile-menu" className="tlh-mobile-menu lg:hidden" aria-label="Mobile">
             <div className="tlh-mobile-menu-inner">
               {NAV.map((item) => (
@@ -271,9 +279,7 @@ export function HomePage() {
               </div>
             </div>
           </nav>
-        ) : null}
-        <div className="tlh-progress" aria-hidden="true" />
-      </header>
+      ) : null}
 
       <main id="main-content">
         {/* ---------- Hero ---------- */}
@@ -545,24 +551,18 @@ export function HomePage() {
               Shared by Droid Skool mentees, in their own words.
             </p>
 
-            <div className="tlh-story-scroller mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 lg:grid lg:grid-cols-[1.25fr_1fr] lg:gap-16 lg:overflow-visible">
-              <figure className="min-w-[86%] snap-start lg:min-w-0 lg:pr-4">
-                <blockquote className="text-[24px] font-medium leading-[1.4] tracking-[-0.015em] text-[var(--ink)] sm:text-[28px]">
-                  “{stories[0].quote}”
-                </blockquote>
-                <StoryAuthor story={stories[0]} large />
-              </figure>
-
-              <div className="grid min-w-[86%] snap-start gap-10 border-t border-[var(--line)] pt-10 lg:min-w-0 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
-                {stories.slice(1).map((story) => (
-                  <figure key={story.name}>
-                    <blockquote className="text-[17px] leading-[1.65] text-[var(--ink)]">
-                      “{story.quote}”
-                    </blockquote>
-                    <StoryAuthor story={story} />
-                  </figure>
-                ))}
-              </div>
+            <div className="tlh-story-scroller mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible">
+              {stories.map((story) => (
+                <figure
+                  key={story.name}
+                  className="min-w-[88%] snap-start rounded-[24px] border border-[var(--line)] bg-[var(--mist)] p-6 sm:min-w-[72%] sm:p-7 lg:min-w-0"
+                >
+                  <blockquote className="text-[17px] leading-[1.65] text-[var(--ink)]">
+                    “{story.quote}”
+                  </blockquote>
+                  <StoryAuthor story={story} />
+                </figure>
+              ))}
             </div>
           </div>
         </section>
@@ -737,7 +737,7 @@ export function HomePage() {
           </div>
         </div>
         <div className="mx-auto max-w-[1200px] border-t border-white/10 px-5 py-6 text-[12px] leading-5 text-[var(--on-night-faint)] sm:px-8">
-          <p>© {new Date().getFullYear()} Tech Leader Hub. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Nikhil Rai. Tech Leader Hub and Droid Skool are brands founded by Nikhil Rai.</p>
           <p className="mt-1">
             Android is a trademark of Google LLC. Company names are mentioned only to describe
             Nikhil Rai's work history and do not imply endorsement.
