@@ -27,19 +27,28 @@ export const PORTRAITS = {
 
 export const recognition = [
   {
+    persona: "The one who keeps delaying",
     quote: "I've wanted to switch for a year. I still haven't applied.",
     detail:
       "You browse openings on weekends and polish your resume, then the week takes over again. The gap feels too big to start.",
+    response:
+      "You don't need more time. You need a clear starting point. The masterclass shows exactly where to begin, so the gap stops feeling impossible.",
   },
   {
+    persona: "The one who's interviewing",
     quote: "I clear the coding round, then lose it in system design.",
     detail:
       "Your code works. But interviewers push on architecture and trade-offs, and the answers don't come out the way you know them.",
+    response:
+      "Your gap isn't coding. It's how you explain and defend architecture decisions. That's exactly what the masterclass breaks down.",
   },
   {
+    persona: "The one who's been trying for months",
     quote: "Six months of interviews. Same desk. Same salary.",
     detail:
       "You're doing what everyone tells you to do: more LeetCode, more applications. Nothing moves.",
+    response:
+      "Doing more of the same won't change the result. The masterclass shows what to change, and why your effort isn't converting yet.",
   },
 ] as const;
 
