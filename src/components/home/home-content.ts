@@ -160,7 +160,7 @@ export const faqs: Faq[] = [
     id: "who-is-nikhil-rai",
     question: "Who is Nikhil Rai?",
     answer:
-      "Nikhil Rai is the Founder of Droid Skool and Tech Leader Hub. His work combines practical Android engineering, mentorship and career guidance for developers who want to turn experience into stronger career opportunities.",
+      "Nikhil Rai is an Android architect and career coach with more than 13 years of experience at Ola, PayU and Gameskraft, and the founder of Droid Skool and Tech Leader Hub.",
     link: { label: "Read his story", href: "#nikhil" },
   },
   {
@@ -205,7 +205,7 @@ export const faqs: Faq[] = [
     id: "job-guarantee",
     question: "Does Tech Leader Hub guarantee a job?",
     answer:
-      "No. Tech Leader Hub does not guarantee a job or an interview call. What the community gives you is an exact career path: identify the gaps holding you back, strengthen your profile and positioning, build the skills product companies test, and prepare deliberately to handle technical, architecture and system-design interviews with confidence.",
+      "No. Tech Leader Hub does not guarantee a job or an interview call. What Tech Leader Hub gives you is an exact career path: identify the gaps holding you back, strengthen your profile and positioning, build the skills product companies test, and prepare deliberately to handle technical, architecture and system-design interviews with confidence.",
   },
   {
     id: "get-started",
