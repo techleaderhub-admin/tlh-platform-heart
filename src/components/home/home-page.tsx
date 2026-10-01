@@ -511,7 +511,9 @@ l>
                     { value: "Droid Skool", label: "Founder" },
                   ].map((stat) => (
                     <div key={stat.label} className="rounded-[18px] border border-white/10 bg-white/[0.035] px-3 py-4 text-center">
-                      <p className="text-[18px] font-semibold tracking-[-0.02em] text-white">{stat.value}</p>
+                      <p className="text-[18px] font-semibold tracking-[-0.02em] text-white">
+                        {stat.value === "13+" ? <CountUpValue target={13} suffix="+" /> : stat.value}
+                      </p>
                       <p className="mt-1 text-[11px] leading-4 text-[var(--on-night-faint)]">{stat.label}</p>
                     </div>
                   ))}
@@ -824,6 +826,41 @@ function useReveal() {
       document.documentElement.classList.remove("tlh-reveal-ready");
     };
   }, []);
+}
+
+function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [value, setValue] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setValue(target);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        const start = performance.now();
+        const duration = 900;
+        const tick = (now: number) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setValue(Math.round(target * eased));
+          if (progress < 1) window.requestAnimationFrame(tick);
+        };
+        window.requestAnimationFrame(tick);
+        observer.disconnect();
+      },
+      { threshold: 0.6 },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return <span ref={ref}>{value}{suffix}</span>;
 }
 
 function ApproachSteps() {
