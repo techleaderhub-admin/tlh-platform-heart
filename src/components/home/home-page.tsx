@@ -15,6 +15,7 @@ import {
 
 import {
   LINKS,
+  authorityPillars,
   droidSkoolPath,
   faqs,
   fitFor,
@@ -22,7 +23,6 @@ import {
   recognition,
   steps,
   stories,
-  authorityPillars,
 } from "@/components/home/home-content";
 
 const NAV = [
@@ -35,8 +35,8 @@ const NAV = [
 
 // Hero portrait uses the exact uploaded charcoal arms-crossed asset.
 const REMOTE_PORTRAITS = {
-  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-640.webp",
-  story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
+  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-1200.webp",
+  story: "/images/nikhil/nikhil-rai-standing-1200.webp",
 } as const;
 
 const SOCIALS = [
@@ -308,7 +308,7 @@ export function HomePage() {
         >
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <div className="mx-auto max-w-[760px] text-center">
-              <p className="text-[14px] font-semibold uppercase tracking-[0.15em] text-[var(--blue)]">
+              <p className="text-[14px] font-semibold text-[var(--blue)]">
                 {droidSkoolPath.eyebrow}
               </p>
               <h2 id="droid-skool-path-title" className="tlh-h2 mt-3 text-[var(--ink)]">
@@ -322,7 +322,7 @@ export function HomePage() {
             <div className="mt-12 grid gap-6 lg:grid-cols-2">
               <article className="relative overflow-hidden rounded-[30px] border border-[var(--blue)]/20 bg-[linear-gradient(145deg,rgba(11,99,229,0.08),rgba(242,181,68,0.10))] p-7 sm:p-9">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="inline-flex rounded-full border border-[var(--blue)]/20 bg-white/80 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.11em] text-[var(--blue)]">
+                  <span className="inline-flex rounded-full border border-[var(--blue)]/20 bg-white/80 px-3 py-1.5 text-[12px] font-semibold text-[var(--blue)]">
                     For beginners, freshers & early-career Android developers
                   </span>
                   <span className="text-[12px] font-semibold text-[var(--blue)]">Start here</span>
@@ -353,7 +353,7 @@ export function HomePage() {
 
               <article className="rounded-[30px] border border-[var(--line)] bg-[var(--mist)] p-7 sm:p-9">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="inline-flex rounded-full border border-[var(--line)] bg-white/80 px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.11em] text-[var(--slate)]">
+                  <span className="inline-flex rounded-full border border-[var(--line)] bg-white/80 px-3 py-1.5 text-[12px] font-semibold text-[var(--slate)]">
                       For experienced Android engineers
                   </span>
                   <span className="text-[12px] font-semibold text-[var(--slate)]">Next level</span>
@@ -373,7 +373,7 @@ export function HomePage() {
                   ))}
                 </ul>
                 <Link to="/masterclass" className="tlh-btn tlh-btn-secondary mt-8 inline-flex">
-                  Explore Tech Leader Hub
+                  Join the free masterclass
                 </Link>
               </article>
             </div>
@@ -440,7 +440,7 @@ export function HomePage() {
           <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
             {/* Authority intro spans the full canvas so the section reads as one deliberate story. */}
             <div className="mx-auto max-w-[850px] text-center">
-              <p className="text-[14px] font-semibold uppercase tracking-[0.16em] text-[var(--gold)]">
+              <p className="text-[14px] font-semibold text-[var(--gold)]">
                 Real-world Android expertise
               </p>
               <h2 id="nikhil-title" className="tlh-h2 mt-3 text-white">
@@ -451,6 +451,9 @@ export function HomePage() {
                 product companies, high-scale Android systems, architecture, technical leadership
                 and developer mentorship — giving Tech Leader Hub a foundation built from real
                 engineering work, not theory alone.
+              </p>
+              <p className="mx-auto mt-4 max-w-[720px] text-[16px] font-medium leading-[1.6] text-[var(--gold)] sm:text-[17px]">
+                From a difficult start in Bangalore to architecting Ola Maps — the system is built on lived engineering experience.
               </p>
             </div>
 
@@ -478,7 +481,7 @@ export function HomePage() {
                 <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
                   {[
                     { value: "13+", label: "Years in Android" },
-                    { value: "100M+", label: "Daily users reached" },
+                    { value: "4", label: "Companies across career" },
                     { value: "Ola", label: "Maps & architecture" },
                     { value: "GamesKraft", label: "Technical leadership" },
                   ].map((stat) => (
@@ -521,11 +524,11 @@ export function HomePage() {
                 </div>
 
                 <div className="mt-4 rounded-[22px] border border-white/10 bg-white/[0.025] p-5 sm:p-6">
-                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[var(--gold)]">
+                  <p className="text-[12px] font-semibold text-[var(--gold)]">
                     Engineering career across
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {["OLA", "GamesKraft", "PayU", "Synchronoss"].map((company) => (
+                    {["Ola", "Gameskraft", "PayU", "Synchronoss"].map((company) => (
                       <span
                         key={company}
                         className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[12px] font-medium text-[var(--on-night-muted)]"
@@ -670,7 +673,7 @@ export function HomePage() {
                   href={LINKS.droidSkool}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tlh-btn tlh-btn-primary mt-6 inline-flex"
+                  className="tlh-text-link mt-5"
                 >
                   Join Droid Skool
                 </a>
