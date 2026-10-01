@@ -132,6 +132,7 @@ export function HomePage() {
   const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
   const [picked, setPicked] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const pickedItem = picked === null ? undefined : recognition[picked];
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
   useEffect(() => {
@@ -429,13 +430,13 @@ export function HomePage() {
             </div>
 
             <div aria-live="polite" className="mt-8">
-              {picked !== null ? (
+              {pickedItem ? (
                 <div
                   key={picked}
                   className="tlh-pain-answer rounded-[24px] bg-[var(--night)] p-7 text-white sm:p-9"
                 >
                   <p className="text-[21px] font-semibold leading-[1.4] tracking-[-0.01em]">
-                    {recognition[picked].response}
+                    {pickedItem.response}
                   </p>
                   <div className="mt-6 flex flex-wrap items-center gap-5">
                     <PrimaryCta>Join the free masterclass</PrimaryCta>
@@ -962,7 +963,7 @@ function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
+        if (!entry?.isIntersecting) return;
         const start = performance.now();
         const duration = 900;
         const tick = (now: number) => {
