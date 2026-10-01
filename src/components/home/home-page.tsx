@@ -35,8 +35,8 @@ const NAV = [
 // Hero portrait uses the exact uploaded charcoal arms-crossed asset.
 // TLH homepage interaction layer: recognition, animated journey, and readiness scorecard.
 const REMOTE_PORTRAITS = {
-  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-1200.webp",
-  story: "/images/nikhil/nikhil-rai-standing-1200.webp",
+  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal",
+  story: "/images/nikhil/nikhil-rai-standing",
 } as const;
 
 const SOCIALS = [
@@ -77,8 +77,9 @@ function Portrait({
 }) {
   return (
     <img
-      src={base}
-      sizes="(min-width: 1024px) 40vw, 80vw"
+      src={`${base}-1200.webp`}
+      srcSet={`${base}-640.webp 640w, ${base}-1200.webp 1200w`}
+      sizes="(min-width: 1024px) 600px, 92vw"
       alt={alt}
       className={className}
       loading={priority ? "eager" : "lazy"}
@@ -294,7 +295,7 @@ export function HomePage() {
               <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
                 Tech <span className="text-[#3B8BFF]">Leader</span> Hub
               </span>
-              <span className="hidden text-[10px] leading-4 text-white/45 sm:block">
+              <span className="hidden text-[10px] leading-4 text-white/60 sm:block">
                 Learn. Grow. Lead.
               </span>
             </span>
@@ -748,7 +749,12 @@ export function HomePage() {
               Shared by Droid Skool mentees, in their own words.
             </p>
 
-            <div className="tlh-story-scroller mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Student stories"
+              className="tlh-story-scroller mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible"
+            >
               {stories.map((story) => (
                 <figure
                   key={story.name}
@@ -792,7 +798,7 @@ export function HomePage() {
                   For experienced Android engineers
                 </span>
                 <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em]">
-                  Tech Leader Hub — Accelerate your career
+                  Tech Leader Hub — accelerate your career
                 </h3>
                 <ul className="mt-6 space-y-4">
                   {fitFor.map((line) => (
@@ -815,7 +821,7 @@ export function HomePage() {
                   For beginners, freshers & early-career developers
                 </span>
                 <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em] text-[var(--ink)]">
-                  Droid Skool — Learn, Build & Get Job-Ready
+                  Droid Skool — learn, build and get job-ready
                 </h3>
                 <ul className="mt-6 space-y-4">
                   {droidSkoolPath.droidSkool.points.map((point) => (
@@ -939,7 +945,7 @@ export function HomePage() {
             <p className="mt-4 text-[13px] text-[var(--on-night-faint)]">
               Free · 90 minutes · Live on Zoom · Every Sunday, 11:00 AM IST
             </p>
-            <PrimaryCta className="mt-10">Reserve my free seat</PrimaryCta>
+            <PrimaryCta className="mt-10">Join the free masterclass</PrimaryCta>
           </div>
         </section>
       </main>

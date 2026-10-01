@@ -249,7 +249,7 @@
   text-wrap: balance;
 }
 
-.tlh-home :where(a, button, summary):focus-visible {
+.tlh-home :where(a, button, summary, [tabindex]):focus-visible {
   outline: 2px solid #4d8dff;
   outline-offset: 3px;
   border-radius: 8px;
@@ -508,7 +508,8 @@
 }
 .tlh-btn-primary:hover::after { transform: translateX(120%); }
 .tlh-gradient-text {
-  background: linear-gradient(90deg, #0b63e5, #f2b544);
+  /* Signal Blue to Deep Gold: Leader Gold is never used for text on light backgrounds */
+  background: linear-gradient(90deg, #0b63e5, #8a6a2f);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

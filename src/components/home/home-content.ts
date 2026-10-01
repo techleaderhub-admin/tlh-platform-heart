@@ -211,6 +211,6 @@ export const faqs: Faq[] = [
     question: "How do I get started with Tech Leader Hub?",
     answer:
       "Join the free 90-minute live masterclass. You'll see the gaps that keep experienced Android developers stuck, and leave knowing what to work on next.",
-    link: { label: "Reserve your seat", href: LINKS.masterclass },
+    link: { label: "Join the free masterclass", href: LINKS.masterclass },
   },
 ];
