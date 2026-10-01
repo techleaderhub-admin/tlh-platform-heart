@@ -7,7 +7,6 @@ import {
   Instagram,
   Linkedin,
   Menu,
-  Minus,
   Play,
   X,
   Youtube,
@@ -16,7 +15,7 @@ import {
 import {
   LINKS,
   authorityPillars,
-  droidSkoolPath,
+  droidSkoolPoints,
   faqs,
   fitFor,
   recognition,
@@ -32,9 +31,8 @@ const NAV = [
   { label: "FAQ", href: "#faq" },
 ];
 
-// Hero portrait uses the exact uploaded charcoal arms-crossed asset.
-// TLH homepage interaction layer: recognition, animated journey, and readiness scorecard.
-const REMOTE_PORTRAITS = {
+// Base paths of Nikhil's self-hosted portraits; each has -640.webp and -1200.webp sizes.
+const PORTRAITS = {
   hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal",
   story: "/images/nikhil/nikhil-rai-standing",
 } as const;
@@ -438,7 +436,7 @@ export function HomePage() {
                 aria-hidden="true"
               />
               <Portrait
-                base={REMOTE_PORTRAITS.hero}
+                base={PORTRAITS.hero}
                 alt="Nikhil Rai, founder of Tech Leader Hub"
                 priority
                 className="tlh-portrait-in relative z-10 mx-auto block w-[108%] max-w-none"
@@ -619,7 +617,7 @@ export function HomePage() {
                   aria-hidden="true"
                 />
                 <Portrait
-                  base={REMOTE_PORTRAITS.story}
+                  base={PORTRAITS.story}
                   alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
                   className="relative mx-auto block w-full"
                 />
@@ -824,7 +822,7 @@ export function HomePage() {
                   Droid Skool — learn, build and get job-ready
                 </h3>
                 <ul className="mt-6 space-y-4">
-                  {droidSkoolPath.droidSkool.points.map((point) => (
+                  {droidSkoolPoints.map((point) => (
                     <li
                       key={point}
                       className="flex gap-3 text-[16px] leading-[1.55] text-[var(--ink)]"
@@ -1280,22 +1278,16 @@ function ReadinessScorecard() {
   );
 }
 
-function StoryAuthor({
-  story,
-  large = false,
-}: {
-  story: (typeof stories)[number];
-  large?: boolean;
-}) {
+function StoryAuthor({ story }: { story: (typeof stories)[number] }) {
   return (
-    <figcaption className={`flex items-center gap-3.5 ${large ? "mt-8" : "mt-5"}`}>
+    <figcaption className="mt-5 flex items-center gap-3.5">
       <img
         src={story.photo}
         alt=""
-        width={large ? 52 : 44}
-        height={large ? 52 : 44}
+        width={44}
+        height={44}
         loading="lazy"
-        className={`${large ? "size-[52px]" : "size-11"} rounded-full bg-[var(--mist)] object-cover`}
+        className="size-11 rounded-full bg-[var(--mist)] object-cover"
       />
       <span>
         <span className="block text-[15px] font-semibold text-[var(--ink)]">{story.name}</span>

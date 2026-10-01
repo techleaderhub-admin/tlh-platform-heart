@@ -324,7 +324,7 @@
   font-size: 17px; font-weight: 600; letter-spacing: -0.01em; white-space: nowrap;
   transition: background-color 0.2s, transform 0.2s;
 }
-.tlh-btn-primary { background: var(--blue); color: #fff; }
+.tlh-btn-primary { position: relative; overflow: hidden; background: var(--blue); color: #fff; }
 .tlh-btn-primary:hover { background: var(--blue-hover); }
 .tlh-btn-primary:active { transform: scale(0.98); }
 .tlh-btn-sm { min-height: 40px; padding: 0 18px; font-size: 14px; }
@@ -375,17 +375,19 @@
   to { opacity: 1; transform: none; }
 }
 
-/* Steps: a single gradient line joins the three stages on wide screens */
+/* Steps: a grey track joins the three stages on wide screens; the gradient fill shows progress */
 .tlh-step-dot {
   display: inline-flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border-radius: 999px;
   background: var(--ink); color: #fff; font-size: 15px; font-weight: 600;
+  z-index: 1;
+  transition: background-color .4s, color .4s, box-shadow .4s, transform .4s;
 }
 @media (min-width: 768px) {
   .tlh-steps { position: relative; }
   .tlh-steps::before {
     content: ""; position: absolute; left: 18px; right: 0; top: 17px; height: 2px;
-    background: linear-gradient(90deg, #3b8bff, #9fc3ff 55%, var(--gold));
+    background: var(--line);
   }
   .tlh-step-dot { position: absolute; top: 0; left: 0; }
 }
@@ -496,7 +498,6 @@
 }
 .tlh-glow-card:hover::after,
 .tlh-glow-card:focus-within::after { opacity: 1; }
-.tlh-btn-primary { position: relative; overflow: hidden; }
 .tlh-btn-primary::after {
   content: "";
   position: absolute;
@@ -582,10 +583,6 @@
   transition: opacity .4s;
   outline-offset: 6px;
 }
-.tlh-step-dot {
-  z-index: 1;
-  transition: background-color .4s, color .4s, box-shadow .4s, transform .4s;
-}
 .tlh-step.is-done .tlh-step-dot { background: var(--blue); }
 .tlh-step.is-active .tlh-step-dot {
   background: var(--gold);
@@ -595,7 +592,6 @@
 }
 @media (min-width: 768px) {
   .tlh-step:not(.is-active) { opacity: .55; }
-  .tlh-steps::before { background: var(--line); }
   .tlh-steps::after {
     content: "";
     position: absolute;
