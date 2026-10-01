@@ -7,6 +7,7 @@ const TITLE = "Tech Leader Hub | Android Career Acceleration & Interview Coachin
 const DESCRIPTION =
   "Tech Leader Hub helps experienced Android developers overcome career stagnation, prepare for architecture and system-design interviews, and move toward stronger product-company roles with Nikhil Rai.";
 const OG_IMAGE = `${SITE_URL}/og-home.jpg`;
+const OG_IMAGE_ALT = "Tech Leader Hub: career acceleration for experienced Android developers";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -87,16 +88,17 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:image", content: OG_IMAGE },
-      { property: "og:image:alt", content: "Tech Leader Hub" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: OG_IMAGE_ALT },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
       { name: "twitter:image", content: OG_IMAGE },
+      { name: "twitter:image:alt", content: OG_IMAGE_ALT },
       { "script:ld+json": structuredData },
     ],
-    links: [
-      { rel: "canonical", href: `${SITE_URL}/` },
-    ],
+    links: [{ rel: "canonical", href: `${SITE_URL}/` }],
   }),
   component: HomePage,
 });

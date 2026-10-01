@@ -7,7 +7,6 @@ import {
   Instagram,
   Linkedin,
   Menu,
-  Minus,
   Play,
   X,
   Youtube,
@@ -16,7 +15,7 @@ import {
 import {
   LINKS,
   authorityPillars,
-  droidSkoolPath,
+  droidSkoolPoints,
   faqs,
   fitFor,
   recognition,
@@ -32,11 +31,11 @@ const NAV = [
   { label: "FAQ", href: "#faq" },
 ];
 
-// Hero portrait uses the exact uploaded charcoal arms-crossed asset.
-// TLH homepage interaction layer: recognition, animated journey, and readiness scorecard.
-const REMOTE_PORTRAITS = {
-  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal-1200.webp",
-  story: "/images/nikhil/nikhil-rai-standing-1200.webp",
+// Base paths of Nikhil's self-hosted portraits; each has -640.webp and -1200.webp sizes.
+// Width and height are the large file's real size, so the page does not shift as images load.
+const PORTRAITS = {
+  hero: { base: "/images/nikhil/nikhil-rai-arms-crossed-charcoal", width: 736, height: 1018 },
+  story: { base: "/images/nikhil/nikhil-rai-standing", width: 1200, height: 1623 },
 } as const;
 
 const SOCIALS = [
@@ -65,20 +64,23 @@ function PrimaryCta({
 }
 
 function Portrait({
-  base,
+  image,
   alt,
   className = "",
   priority = false,
 }: {
-  base: string;
+  image: (typeof PORTRAITS)[keyof typeof PORTRAITS];
   alt: string;
   className?: string;
   priority?: boolean;
 }) {
   return (
     <img
-      src={base}
-      sizes="(min-width: 1024px) 40vw, 80vw"
+      src={`${image.base}-1200.webp`}
+      srcSet={`${image.base}-640.webp 640w, ${image.base}-1200.webp ${image.width}w`}
+      sizes="(min-width: 1024px) 600px, 92vw"
+      width={image.width}
+      height={image.height}
       alt={alt}
       className={className}
       loading={priority ? "eager" : "lazy"}
@@ -132,6 +134,32 @@ export function HomePage() {
   const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
   const [picked, setPicked] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const scrollLockedRef = useRef(false);
+  const pendingHashRef = useRef<string | null>(null);
+  const pickedItem = picked === null ? undefined : recognition[picked];
+  const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // Radio-group keyboard pattern: arrows move and select, Home/End jump, one Tab stop.
+  const onCardKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const count = recognition.length;
+    const moves: Record<string, number> = {
+      ArrowRight: index + 1,
+      ArrowDown: index + 1,
+      ArrowLeft: index - 1,
+      ArrowUp: index - 1,
+      Home: 0,
+      End: count - 1,
+    };
+    const target = moves[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    const next = (target + count) % count;
+    setPicked(next);
+    cardRefs.current[next]?.focus();
+  };
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
   useEffect(() => {
@@ -148,7 +176,17 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setHeaderCompact(window.scrollY > 28);
+    // Browsers without CSS scroll timelines get the progress line from this listener instead.
+    const cssProgress = typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()");
+    const onScroll = () => {
+      if (scrollLockedRef.current) return;
+      setHeaderCompact(window.scrollY > 28);
+      const line = progressRef.current;
+      if (!cssProgress && line) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        line.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
 
@@ -176,26 +214,75 @@ export function HomePage() {
     };
   }, []);
 
+  // While the mobile menu is open: lock page scroll (iOS-safe), close on Escape, keep focus in the menu.
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
+    if (!menuOpen) return;
+    const { body, documentElement: html } = document;
+    const scrollY = window.scrollY;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: html.style.overflow,
+    };
+    scrollLockedRef.current = true;
+    html.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    menuRef.current?.querySelector<HTMLElement>("a")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButtonRef.current?.focus();
+    };
+    document.addEventListener("keydown", onKeyDown);
+
     return () => {
-      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onKeyDown);
+      body.style.position = previous.position;
+      body.style.top = previous.top;
+      body.style.width = previous.width;
+      html.style.overflow = previous.overflow;
+      window.scrollTo({ top: scrollY, behavior: "instant" });
+      scrollLockedRef.current = false;
+      const hash = pendingHashRef.current;
+      pendingHashRef.current = null;
+      if (hash) {
+        document.getElementById(hash.slice(1))?.scrollIntoView();
+        window.history.pushState(null, "", hash);
+      }
     };
   }, [menuOpen]);
 
   useReveal();
 
   const closeMenu = () => setMenuOpen(false);
+  // Section links scroll after the scroll lock is released, so the jump lands in the right place.
+  const goToSection = (event: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    event.preventDefault();
+    pendingHashRef.current = hash;
+    setMenuOpen(false);
+  };
 
   return (
     <div className="tlh-home min-h-screen overflow-x-clip">
-      <a href="#main-content" className="tlh-skip">
+      <a href="#main-content" className="tlh-skip" inert={menuOpen}>
         Skip to content
       </a>
 
       {/* ---------- Header ---------- */}
-      <header className={"tlh-header fixed inset-x-0 top-0 z-50 " + (headerCompact ? "is-compact" : "")}>
-        <div className={"mx-auto flex " + (headerCompact ? "h-14" : "h-16") + " max-w-[1200px] items-center justify-between px-5 transition-[height] duration-300 sm:px-8"}>
+      <header
+        className={"tlh-header fixed inset-x-0 top-0 z-50 " + (headerCompact ? "is-compact" : "")}
+      >
+        <div
+          className={
+            "mx-auto flex " +
+            (headerCompact ? "h-14" : "h-16") +
+            " max-w-[1200px] items-center justify-between px-5 transition-[height] duration-300 sm:px-8"
+          }
+        >
           <Link
             to="/"
             onClick={closeMenu}
@@ -209,7 +296,7 @@ export function HomePage() {
               <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
                 Tech <span className="text-[#3B8BFF]">Leader</span> Hub
               </span>
-              <span className="hidden text-[10px] leading-4 text-white/45 sm:block">
+              <span className="hidden text-[10px] leading-4 text-white/60 sm:block">
                 Learn. Grow. Lead.
               </span>
             </span>
@@ -233,12 +320,11 @@ export function HomePage() {
               Sign in
             </Link>
             <PrimaryCta className="tlh-btn-sm hidden lg:inline-flex">
-              Join free masterclass
+              Join the free masterclass
             </PrimaryCta>
-            <PrimaryCta className="tlh-btn-xs lg:hidden">
-              Join free
-            </PrimaryCta>
+            <PrimaryCta className="tlh-btn-xs lg:hidden">Join free</PrimaryCta>
             <button
+              ref={menuButtonRef}
               type="button"
               className="tlh-icon-btn lg:hidden"
               onClick={() => setMenuOpen((open) => !open)}
@@ -251,41 +337,51 @@ export function HomePage() {
           </div>
         </div>
 
-        <div className="tlh-progress" aria-hidden="true" />
+        <div ref={progressRef} className="tlh-progress" aria-hidden="true" />
       </header>
       {menuOpen ? (
-          <nav id="tlh-mobile-menu" className="tlh-mobile-menu lg:hidden" aria-label="Mobile">
-            <div className="tlh-mobile-menu-inner">
-              {NAV.map((item) => (
-                <a key={item.href} href={item.href} onClick={closeMenu}>
-                  {item.label}
+        <nav
+          ref={menuRef}
+          id="tlh-mobile-menu"
+          className="tlh-mobile-menu lg:hidden"
+          style={{ top: headerCompact ? 56 : 64 }}
+          aria-label="Mobile"
+        >
+          <div className="tlh-mobile-menu-inner">
+            {NAV.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={(event) => goToSection(event, item.href)}
+              >
+                {item.label}
+              </a>
+            ))}
+            <Link to="/login" onClick={closeMenu}>
+              Sign in
+            </Link>
+            <PrimaryCta onClick={closeMenu} className="mt-5 w-full">
+              Join the free masterclass
+            </PrimaryCta>
+            <div className="mt-8 flex gap-2 border-t border-white/10 pt-6">
+              {SOCIALS.map(({ label, href, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={"Tech Leader Hub on " + label}
+                  className="tlh-social"
+                >
+                  <Icon className="size-[17px]" aria-hidden="true" />
                 </a>
               ))}
-              <Link to="/login" onClick={closeMenu}>
-                Sign in
-              </Link>
-              <PrimaryCta onClick={closeMenu} className="mt-5 w-full">
-                Join the free masterclass
-              </PrimaryCta>
-              <div className="mt-8 flex gap-2 border-t border-white/10 pt-6">
-                {SOCIALS.map(({ label, href, Icon }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={"Tech Leader Hub on " + label}
-                    className="tlh-social"
-                  >
-                    <Icon className="size-[17px]" aria-hidden="true" />
-                  </a>
-                ))}
-              </div>
             </div>
-          </nav>
+          </div>
+        </nav>
       ) : null}
 
-      <main id="main-content">
+      <main id="main-content" inert={menuOpen}>
         {/* ---------- Hero ---------- */}
         <section
           ref={heroRef}
@@ -302,9 +398,9 @@ export function HomePage() {
                 You've been planning your next Android move for months. Let's finally make it.
               </h1>
               <p className="mt-6 max-w-[34rem] text-[19px] leading-[1.55] text-[var(--on-night-muted)] sm:text-[21px]">
-                Find what's really holding you back, prepare for the architecture and system-design rounds
-                product companies actually test, and move into a stronger role — guided by Nikhil Rai,
-                former Ola Maps architect.
+                Find what's really holding you back, prepare for the architecture and system-design
+                rounds product companies actually test, and move into a stronger role — guided by
+                Nikhil Rai, former Ola Maps architect.
               </p>
               <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7">
                 <PrimaryCta>Join the free masterclass</PrimaryCta>
@@ -319,14 +415,16 @@ export function HomePage() {
                 </a>
               </div>
               <div className="mt-8 flex flex-wrap gap-2.5">
-                {["13+ years in Android", "Ex-Ola Maps architect", "Founder, Droid Skool"].map((chip) => (
-                  <span
-                    key={chip}
-                    className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[12px] font-medium text-[var(--on-night-muted)]"
-                  >
-                    {chip}
-                  </span>
-                ))}
+                {["13+ years in Android", "Ex-Ola Maps architect", "Founder, Droid Skool"].map(
+                  (chip) => (
+                    <span
+                      key={chip}
+                      className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[12px] font-medium text-[var(--on-night-muted)]"
+                    >
+                      {chip}
+                    </span>
+                  ),
+                )}
               </div>
               <p className="mt-4 flex items-center gap-2.5 text-[13px] text-[var(--on-night-faint)]">
                 <span className="tlh-live-dot" aria-hidden="true" />
@@ -341,7 +439,7 @@ export function HomePage() {
                 aria-hidden="true"
               />
               <Portrait
-                base={REMOTE_PORTRAITS.hero}
+                image={PORTRAITS.hero}
                 alt="Nikhil Rai, founder of Tech Leader Hub"
                 priority
                 className="tlh-portrait-in relative z-10 mx-auto block w-[108%] max-w-none"
@@ -355,14 +453,23 @@ export function HomePage() {
         </section>
 
         {/* ---------- Trust strip ---------- */}
-        <section className="border-y border-[var(--line)] bg-white" aria-label="Founder credibility">
+        <section
+          className="border-y border-[var(--line)] bg-white"
+          aria-label="Founder credibility"
+        >
           <div className="mx-auto max-w-[1200px] px-5 sm:px-8">
             <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3 py-5 text-[13px] font-medium text-[var(--slate)] sm:py-6">
-              <span className="text-[var(--ink)]"><strong>13+ years</strong> in Android</span>
+              <span className="text-[var(--ink)]">
+                <strong>13+ years</strong> in Android
+              </span>
               <span className="hidden h-4 w-px bg-[var(--line)] sm:block" aria-hidden="true" />
-              <span className="text-[var(--ink)]"><strong>Ola Maps architect</strong></span>
+              <span className="text-[var(--ink)]">
+                <strong>Ola Maps architect</strong>
+              </span>
               <span className="hidden h-4 w-px bg-[var(--line)] sm:block" aria-hidden="true" />
-              <span className="text-[var(--ink)]"><strong>Founder</strong>, Droid Skool</span>
+              <span className="text-[var(--ink)]">
+                <strong>Founder</strong>, Droid Skool
+              </span>
               <span className="hidden h-4 w-px bg-[var(--line)] sm:block" aria-hidden="true" />
               <span>Ola · Gameskraft · PayU · Synchronoss</span>
             </div>
@@ -381,7 +488,7 @@ export function HomePage() {
               Does this sound like you?
             </h2>
             <p className="mt-4 text-[17px] text-[var(--slate)]">
-              Tap the one that sounds most like you.
+              Choose the one that sounds most like you.
             </p>
 
             <div
@@ -392,10 +499,15 @@ export function HomePage() {
               {recognition.map((item, i) => (
                 <button
                   key={item.quote}
+                  ref={(element) => {
+                    cardRefs.current[i] = element;
+                  }}
                   type="button"
                   role="radio"
                   aria-checked={picked === i}
+                  tabIndex={picked === i || (picked === null && i === 0) ? 0 : -1}
                   onClick={() => setPicked(i)}
+                  onKeyDown={(event) => onCardKeyDown(event, i)}
                   className={"tlh-pain tlh-lift " + (picked === i ? "is-picked" : "")}
                 >
                   <span className="block text-[13px] font-semibold text-[#8a6a2f]">
@@ -412,10 +524,13 @@ export function HomePage() {
             </div>
 
             <div aria-live="polite" className="mt-8">
-              {picked !== null ? (
-                <div key={picked} className="tlh-pain-answer rounded-[24px] bg-[var(--night)] p-7 text-white sm:p-9">
+              {pickedItem ? (
+                <div
+                  key={picked}
+                  className="tlh-pain-answer rounded-[24px] bg-[var(--night)] p-7 text-white sm:p-9"
+                >
                   <p className="text-[21px] font-semibold leading-[1.4] tracking-[-0.01em]">
-                    {recognition[picked].response}
+                    {pickedItem.response}
                   </p>
                   <div className="mt-6 flex flex-wrap items-center gap-5">
                     <PrimaryCta>Join the free masterclass</PrimaryCta>
@@ -437,7 +552,8 @@ export function HomePage() {
         <section data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="truth-title">
           <div className="mx-auto max-w-[900px] px-5 text-center sm:px-8">
             <h2 id="truth-title" className="tlh-statement text-[var(--ink)]">
-              You don't need another course. You need a <span className="tlh-gradient-text">system.</span>
+              You don't need another course. You need a{" "}
+              <span className="tlh-gradient-text">system.</span>
             </h2>
             <p className="mx-auto mt-7 max-w-[40rem] text-[19px] leading-[1.6] text-[var(--slate)] sm:text-[21px]">
               Too many experienced developers walk into 2026 interviews with 2021 preparation. More
@@ -448,7 +564,12 @@ export function HomePage() {
         </section>
 
         {/* ---------- How it works ---------- */}
-        <section id="approach" data-reveal className="tlh-section bg-white" aria-labelledby="approach-title">
+        <section
+          id="approach"
+          data-reveal
+          className="tlh-section bg-white"
+          aria-labelledby="approach-title"
+        >
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <div className="max-w-[40rem]">
               <h2 id="approach-title" className="tlh-h2 text-[var(--ink)]">
@@ -494,15 +615,20 @@ export function HomePage() {
 
             <div className="mt-12 grid items-start gap-10 lg:grid-cols-[.72fr_1.28fr] lg:gap-14">
               <div className="relative mx-auto w-full max-w-[420px] lg:mx-0">
-                <div className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square" aria-hidden="true" />
+                <div
+                  className="tlh-portrait-glow absolute inset-x-[10%] top-[8%] aspect-square"
+                  aria-hidden="true"
+                />
                 <Portrait
-                  base={REMOTE_PORTRAITS.story}
+                  image={PORTRAITS.story}
                   alt="Nikhil Rai, Founder of Droid Skool and Tech Leader Hub"
                   className="relative mx-auto block w-full"
                 />
                 <div className="tlh-glass absolute bottom-5 left-4 right-4 sm:bottom-7 sm:left-6 sm:right-auto">
                   <p className="text-[15px] font-semibold text-white">Nikhil Rai</p>
-                  <p className="text-[13px] text-[var(--on-night-muted)]">Founder, Droid Skool & Tech Leader Hub</p>
+                  <p className="text-[13px] text-[var(--on-night-muted)]">
+                    Founder, Droid Skool & Tech Leader Hub
+                  </p>
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3">
                   {[
@@ -510,11 +636,20 @@ export function HomePage() {
                     { value: "Ola", label: "Maps architect" },
                     { value: "Droid Skool", label: "Founder" },
                   ].map((stat) => (
-                    <div key={stat.label} className="rounded-[18px] border border-white/10 bg-white/[0.035] px-3 py-4 text-center">
+                    <div
+                      key={stat.label}
+                      className="rounded-[18px] border border-white/10 bg-white/[0.035] px-3 py-4 text-center"
+                    >
                       <p className="text-[18px] font-semibold tracking-[-0.02em] text-white">
-                        {stat.value === "13+" ? <CountUpValue target={13} suffix="+" /> : stat.value}
+                        {stat.value === "13+" ? (
+                          <CountUpValue target={13} suffix="+" />
+                        ) : (
+                          stat.value
+                        )}
                       </p>
-                      <p className="mt-1 text-[11px] leading-4 text-[var(--on-night-faint)]">{stat.label}</p>
+                      <p className="mt-1 text-[11px] leading-4 text-[var(--on-night-faint)]">
+                        {stat.label}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -523,21 +658,31 @@ export function HomePage() {
               <div>
                 <div className="grid gap-4 md:grid-cols-3">
                   {authorityPillars.map((item, index) => (
-                    <article key={item.title} className="tlh-glow-card tlh-lift rounded-[22px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+                    <article
+                      key={item.title}
+                      className="tlh-glow-card tlh-lift rounded-[22px] border border-white/10 bg-white/[0.035] p-5 sm:p-6"
+                    >
                       <span className="mb-4 flex size-9 items-center justify-center rounded-full border border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[13px] font-semibold text-[var(--gold)]">
                         0{index + 1}
                       </span>
                       <h3 className="text-[18px] font-semibold text-white">{item.title}</h3>
-                      <p className="mt-2 text-[15px] leading-[1.6] text-[var(--on-night-muted)]">{item.text}</p>
+                      <p className="mt-2 text-[15px] leading-[1.6] text-[var(--on-night-muted)]">
+                        {item.text}
+                      </p>
                     </article>
                   ))}
                 </div>
 
                 <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.025] p-5 sm:p-6">
-                  <p className="text-[12px] font-semibold text-[var(--gold)]">Engineering career across</p>
+                  <p className="text-[12px] font-semibold text-[var(--gold)]">
+                    Engineering career across
+                  </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {["Ola", "Gameskraft", "PayU", "Synchronoss"].map((company) => (
-                      <span key={company} className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[12px] font-medium text-[var(--on-night-muted)]">
+                      <span
+                        key={company}
+                        className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[12px] font-medium text-[var(--on-night-muted)]"
+                      >
                         {company}
                       </span>
                     ))}
@@ -545,18 +690,42 @@ export function HomePage() {
                 </div>
 
                 <div className="mt-6 grid gap-3 text-[15px] leading-[1.65] text-[var(--on-night-muted)]">
-                  <p><span className="font-semibold text-white">A difficult start in Bangalore.</span> No campus placement — just a decision to keep learning and building.</p>
-                  <p><span className="font-semibold text-white">PayU and product engineering.</span> Real payments and product work shaped the engineering depth behind the teaching.</p>
-                  <p><span className="font-semibold text-white">Ola Maps architecture.</span> Led and architected Android mapping and navigation experiences at scale.</p>
-                  <p><span className="font-semibold text-white">Today.</span> Founder of Droid Skool and Tech Leader Hub, turning that experience into practical career systems.</p>
+                  <p>
+                    <span className="font-semibold text-white">
+                      A difficult start in Bangalore.
+                    </span>{" "}
+                    No campus placement — just a decision to keep learning and building.
+                  </p>
+                  <p>
+                    <span className="font-semibold text-white">PayU and product engineering.</span>{" "}
+                    Real payments and product work shaped the engineering depth behind the teaching.
+                  </p>
+                  <p>
+                    <span className="font-semibold text-white">Ola Maps architecture.</span> Led and
+                    architected Android mapping and navigation experiences at scale.
+                  </p>
+                  <p>
+                    <span className="font-semibold text-white">Today.</span> Founder of Droid Skool
+                    and Tech Leader Hub, turning that experience into practical career systems.
+                  </p>
                 </div>
 
                 <div className="mt-7 flex flex-wrap gap-x-7 gap-y-3">
-                  <a href={LINKS.journeyVideo} target="_blank" rel="noopener noreferrer" className="tlh-text-link-light">
+                  <a
+                    href={LINKS.journeyVideo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tlh-text-link-light"
+                  >
                     <Play className="size-4 fill-current" aria-hidden="true" />
                     Watch Nikhil's journey
                   </a>
-                  <a href={LINKS.nikhilLinkedIn} target="_blank" rel="noopener noreferrer" className="tlh-text-link-light">
+                  <a
+                    href={LINKS.nikhilLinkedIn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tlh-text-link-light"
+                  >
                     <Linkedin className="size-4" aria-hidden="true" />
                     Connect on LinkedIn
                   </a>
@@ -567,7 +736,12 @@ export function HomePage() {
         </section>
 
         {/* ---------- Stories ---------- */}
-        <section id="stories" data-reveal className="tlh-section bg-white" aria-labelledby="stories-title">
+        <section
+          id="stories"
+          data-reveal
+          className="tlh-section bg-white"
+          aria-labelledby="stories-title"
+        >
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <h2 id="stories-title" className="tlh-h2 max-w-[36rem] text-[var(--ink)]">
               Developers who've worked with Nikhil
@@ -576,7 +750,12 @@ export function HomePage() {
               Shared by Droid Skool mentees, in their own words.
             </p>
 
-            <div className="tlh-story-scroller mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Student stories"
+              className="tlh-story-scroller mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible"
+            >
               {stories.map((story) => (
                 <figure
                   key={story.name}
@@ -593,15 +772,24 @@ export function HomePage() {
         </section>
 
         {/* ---------- Fit + platform routing ---------- */}
-        <section id="fit" data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="fit-title">
+        <section
+          id="fit"
+          data-reveal
+          className="tlh-section bg-[var(--mist)]"
+          aria-labelledby="fit-title"
+        >
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <div className="mx-auto max-w-[760px] text-center">
-              <p className="text-[14px] font-semibold text-[var(--blue)]">Choose the right Android career path</p>
-              <h2 id="fit-title" className="tlh-h2 mt-3 text-[var(--ink)]">Start where you are. Grow with the right platform.</h2>
+              <p className="text-[14px] font-semibold text-[var(--blue)]">
+                Choose the right Android career path
+              </p>
+              <h2 id="fit-title" className="tlh-h2 mt-3 text-[var(--ink)]">
+                Start where you are. Grow with the right platform.
+              </h2>
               <p className="mt-5 text-[18px] leading-[1.65] text-[var(--slate)]">
-                Tech Leader Hub is designed for experienced Android engineers ready for a career move.
-                Droid Skool is the starting point when you still need to build Android fundamentals,
-                projects and job-readiness.
+                Tech Leader Hub is designed for experienced Android engineers ready for a career
+                move. Droid Skool is the starting point when you still need to build Android
+                fundamentals, projects and job-readiness.
               </p>
             </div>
 
@@ -610,44 +798,71 @@ export function HomePage() {
                 <span className="inline-flex rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[12px] font-semibold text-white/90">
                   For experienced Android engineers
                 </span>
-                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em]">Tech Leader Hub — Accelerate your career</h3>
+                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em]">
+                  Tech Leader Hub — accelerate your career
+                </h3>
                 <ul className="mt-6 space-y-4">
                   {fitFor.map((line) => (
                     <li key={line} className="flex gap-3 text-[16px] leading-[1.55] text-white/85">
-                      <Check className="mt-1 size-[18px] shrink-0 text-[var(--gold)]" aria-hidden="true" />
+                      <Check
+                        className="mt-1 size-[18px] shrink-0 text-[var(--gold)]"
+                        aria-hidden="true"
+                      />
                       {line}
                     </li>
                   ))}
                 </ul>
-                <Link to="/masterclass" className="tlh-btn tlh-btn-primary mt-8 inline-flex">Join the free masterclass</Link>
+                <Link to="/masterclass" className="tlh-btn tlh-btn-primary mt-8 inline-flex">
+                  Join the free masterclass
+                </Link>
               </article>
 
               <article className="tlh-glow-card tlh-lift relative overflow-hidden rounded-[30px] border border-[var(--line)] bg-white p-7 sm:p-9">
                 <span className="inline-flex rounded-full border border-[var(--line)] bg-[var(--mist)] px-3 py-1.5 text-[12px] font-semibold text-[var(--slate)]">
                   For beginners, freshers & early-career developers
                 </span>
-                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em] text-[var(--ink)]">Droid Skool — Learn, Build & Get Job-Ready</h3>
+                <h3 className="mt-6 text-[28px] font-semibold tracking-[-0.025em] text-[var(--ink)]">
+                  Droid Skool — learn, build and get job-ready
+                </h3>
                 <ul className="mt-6 space-y-4">
-                  {droidSkoolPath.droidSkool.points.map((point) => (
-                    <li key={point} className="flex gap-3 text-[16px] leading-[1.55] text-[var(--ink)]">
-                      <Check className="mt-1 size-[18px] shrink-0 text-[var(--blue)]" aria-hidden="true" />
+                  {droidSkoolPoints.map((point) => (
+                    <li
+                      key={point}
+                      className="flex gap-3 text-[16px] leading-[1.55] text-[var(--ink)]"
+                    >
+                      <Check
+                        className="mt-1 size-[18px] shrink-0 text-[var(--blue)]"
+                        aria-hidden="true"
+                      />
                       {point}
                     </li>
                   ))}
                 </ul>
-                <a href={LINKS.droidSkool} target="_blank" rel="noopener noreferrer" className="tlh-btn tlh-btn-secondary mt-8 inline-flex">Join Droid Skool</a>
+                <a
+                  href={LINKS.droidSkool}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tlh-btn tlh-btn-secondary mt-8 inline-flex"
+                >
+                  Join Droid Skool
+                </a>
               </article>
             </div>
 
             <p className="mx-auto mt-8 max-w-[760px] text-center text-[14px] leading-6 text-[var(--slate)]">
-              Already have solid Android production experience? Start with the free Tech Leader Hub masterclass.
-              Still building your foundation? Start with Droid Skool.
+              Already have solid Android production experience? Start with the free Tech Leader Hub
+              masterclass. Still building your foundation? Start with Droid Skool.
             </p>
-                  {/* ---------- Readiness check ---------- */}
-        <section data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="readiness-title">
+          </div>
+        </section>
+
+        {/* ---------- Readiness check ---------- */}
+        <section data-reveal className="tlh-section bg-white" aria-labelledby="readiness-title">
           <div className="mx-auto max-w-[980px] px-5 sm:px-8">
             <div className="mx-auto max-w-[720px] text-center">
-              <p className="text-[14px] font-semibold text-[var(--blue)]">30-second career readiness check</p>
+              <p className="text-[14px] font-semibold text-[var(--blue)]">
+                30-second career readiness check
+              </p>
               <h2 id="readiness-title" className="tlh-h2 mt-3 text-[var(--ink)]">
                 How ready are you for your next Android move?
               </h2>
@@ -659,11 +874,13 @@ export function HomePage() {
           </div>
         </section>
 
-</div>
-        </section>
-
         {/* ---------- FAQ ---------- */}
-        <section id="faq" data-reveal className="tlh-section bg-white" aria-labelledby="faq-title">
+        <section
+          id="faq"
+          data-reveal
+          className="tlh-section bg-[var(--mist)]"
+          aria-labelledby="faq-title"
+        >
           <div className="mx-auto max-w-[820px] px-5 sm:px-8">
             <h2 id="faq-title" className="tlh-h2 text-[var(--ink)]">
               Questions developers ask
@@ -729,13 +946,13 @@ export function HomePage() {
             <p className="mt-4 text-[13px] text-[var(--on-night-faint)]">
               Free · 90 minutes · Live on Zoom · Every Sunday, 11:00 AM IST
             </p>
-            <PrimaryCta className="mt-10">Reserve my free seat</PrimaryCta>
+            <PrimaryCta className="mt-10">Join the free masterclass</PrimaryCta>
           </div>
         </section>
       </main>
 
       {/* ---------- Footer ---------- */}
-      <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0">
+      <footer className="tlh-night border-t border-white/10 pb-24 lg:pb-0" inert={menuOpen}>
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
@@ -751,7 +968,9 @@ export function HomePage() {
             <Link to="/masterclass">Free masterclass</Link>
             <Link to="/about">About</Link>
             <Link to="/contact">Contact</Link>
-            <a href={LINKS.droidSkool} target="_blank" rel="noopener noreferrer">Droid Skool</a>
+            <a href={LINKS.droidSkool} target="_blank" rel="noopener noreferrer">
+              Droid Skool
+            </a>
             <Link to="/login">Sign in</Link>
           </FooterColumn>
 
@@ -779,7 +998,10 @@ export function HomePage() {
           </div>
         </div>
         <div className="mx-auto max-w-[1200px] border-t border-white/10 px-5 py-6 text-[12px] leading-5 text-[var(--on-night-faint)] sm:px-8">
-          <p>© {new Date().getFullYear()} Nikhil Rai. Tech Leader Hub and Droid Skool are brands founded by Nikhil Rai.</p>
+          <p>
+            © {new Date().getFullYear()} Nikhil Rai. Tech Leader Hub and Droid Skool are brands
+            founded by Nikhil Rai.
+          </p>
           <p className="mt-1">
             Android is a trademark of Google LLC. Company names are mentioned only to describe
             Nikhil Rai's work history and do not imply endorsement.
@@ -790,8 +1012,8 @@ export function HomePage() {
       {/* ---------- Mobile join bar (appears after the hero) ---------- */}
       <div
         className={`tlh-mobile-bar lg:hidden ${showMobileBar ? "is-visible" : ""}`}
-        aria-hidden={!showMobileBar}
-        inert={!showMobileBar}
+        aria-hidden={!showMobileBar || menuOpen}
+        inert={!showMobileBar || menuOpen}
       >
         <PrimaryCta className="w-full" onClick={closeMenu}>
           Join the free masterclass
@@ -801,13 +1023,22 @@ export function HomePage() {
   );
 }
 
+/**
+ * Fades sections in as they scroll into view. Content is only hidden after this runs
+ * (the html class is added here), so the page stays fully visible without JavaScript.
+ */
 function useReveal() {
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>("[data-reveal], .tlh-glow-card");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || typeof IntersectionObserver === "undefined") {
       elements.forEach((element) => element.classList.add("is-in"));
       return;
     }
+    // Anything already on screen stays visible, so nothing flickers out and back in.
+    elements.forEach((element) => {
+      if (element.getBoundingClientRect().top < window.innerHeight) element.classList.add("is-in");
+    });
     document.documentElement.classList.add("tlh-reveal-ready");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -820,7 +1051,9 @@ function useReveal() {
       },
       { rootMargin: "0px 0px -10% 0px" },
     );
-    elements.forEach((element) => observer.observe(element));
+    elements.forEach((element) => {
+      if (!element.classList.contains("is-in")) observer.observe(element);
+    });
     return () => {
       observer.disconnect();
       document.documentElement.classList.remove("tlh-reveal-ready");
@@ -828,39 +1061,55 @@ function useReveal() {
   }, []);
 }
 
+/**
+ * Shows the final number on the server, without JavaScript and until it scrolls into view;
+ * only then counts up from zero.
+ */
 function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setValue(target);
+    if (
+      !element ||
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
 
+    let frame = 0;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
+        if (!entry?.isIntersecting) return;
         const start = performance.now();
         const duration = 900;
         const tick = (now: number) => {
           const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
           setValue(Math.round(target * eased));
-          if (progress < 1) window.requestAnimationFrame(tick);
+          if (progress < 1) frame = window.requestAnimationFrame(tick);
         };
-        window.requestAnimationFrame(tick);
+        frame = window.requestAnimationFrame(tick);
         observer.disconnect();
       },
       { threshold: 0.6 },
     );
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+      setValue(target);
+    };
   }, [target]);
 
-  return <span ref={ref}>{value}{suffix}</span>;
+  return (
+    <span ref={ref}>
+      {value}
+      {suffix}
+    </span>
+  );
 }
 
 function ApproachSteps() {
@@ -939,6 +1188,7 @@ const READINESS_QUESTIONS = [
   "I can handle Android architecture and system-design follow-up questions without losing structure.",
 ] as const;
 
+/** Answers live only in component state: nothing is stored, sent or tracked. */
 function ReadinessScorecard() {
   const [answers, setAnswers] = useState<Array<boolean | null>>(
     Array(READINESS_QUESTIONS.length).fill(null),
@@ -960,8 +1210,16 @@ function ReadinessScorecard() {
         <div className="p-7 sm:p-9">
           <div className="space-y-4">
             {READINESS_QUESTIONS.map((question, index) => (
-              <div key={question} className="rounded-[20px] border border-[var(--line)] bg-[var(--mist)] p-4 sm:p-5">
-                <p className="text-[15px] font-medium leading-[1.5] text-[var(--ink)]">
+              <div
+                key={question}
+                role="group"
+                aria-labelledby={`readiness-q${index}`}
+                className="rounded-[20px] border border-[var(--line)] bg-[var(--mist)] p-4 sm:p-5"
+              >
+                <p
+                  id={`readiness-q${index}`}
+                  className="text-[15px] font-medium leading-[1.5] text-[var(--ink)]"
+                >
                   {index + 1}. {question}
                 </p>
                 <div className="mt-3 flex gap-2">
@@ -1002,41 +1260,39 @@ function ReadinessScorecard() {
           <div
             className="tlh-score-ring"
             style={{ "--score": percentage + "%" } as React.CSSProperties}
+            role="img"
             aria-label={score + " of " + READINESS_QUESTIONS.length + " readiness signals"}
           >
-            <div>
-              <strong>{score}/{READINESS_QUESTIONS.length}</strong>
+            <div aria-hidden="true">
+              <strong>
+                {score}/{READINESS_QUESTIONS.length}
+              </strong>
               <span>readiness signals</span>
             </div>
           </div>
-          <p className="mt-7 max-w-[20rem] text-[16px] leading-[1.6] text-white/75">
+          <p
+            aria-live="polite"
+            className="mt-7 max-w-[20rem] text-[16px] leading-[1.6] text-white/75"
+          >
             {complete ? result : answered + " of " + READINESS_QUESTIONS.length + " answered"}
           </p>
-          <PrimaryCta className="mt-7">
-            {complete ? "Get your career plan in the masterclass" : "Join the free masterclass"}
-          </PrimaryCta>
+          <PrimaryCta className="mt-7">Join the free masterclass</PrimaryCta>
         </div>
       </div>
     </div>
   );
 }
 
-function StoryAuthor({
-  story,
-  large = false,
-}: {
-  story: (typeof stories)[number];
-  large?: boolean;
-}) {
+function StoryAuthor({ story }: { story: (typeof stories)[number] }) {
   return (
-    <figcaption className={`flex items-center gap-3.5 ${large ? "mt-8" : "mt-5"}`}>
+    <figcaption className="mt-5 flex items-center gap-3.5">
       <img
         src={story.photo}
         alt=""
-        width={large ? 52 : 44}
-        height={large ? 52 : 44}
+        width={44}
+        height={44}
         loading="lazy"
-        className={`${large ? "size-[52px]" : "size-11"} rounded-full bg-[var(--mist)] object-cover`}
+        className="size-11 rounded-full bg-[var(--mist)] object-cover"
       />
       <span>
         <span className="block text-[15px] font-semibold text-[var(--ink)]">{story.name}</span>

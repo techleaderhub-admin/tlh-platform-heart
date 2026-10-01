@@ -19,12 +19,6 @@ export const LINKS = {
   linkedin: "https://www.linkedin.com/company/techleaderhub",
 } as const;
 
-export const PORTRAITS = {
-  hero: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be05580af9.29314886_Nikhil-Rai-LinkedIn.png",
-  story: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
-  headshot: "https://d1yei2z3i6k35z.cloudfront.net/14545770/6a36be055d6675.68723283_black.png",
-} as const;
-
 export const recognition = [
   {
     persona: "The one who keeps delaying",
@@ -114,32 +108,14 @@ export const fitFor = [
   "You're ready to change how you prepare, not just prepare more.",
 ] as const;
 
-export const droidSkoolPath = {
-  eyebrow: "Recommended starting point",
-  title: "Build first. Then accelerate.",
-  description:
-    "Not every Android developer needs Tech Leader Hub today. If you're still building your Kotlin and Android foundation, creating real projects, or working toward job-readiness, Droid Skool is the place to start. Once you have real production experience and you're ready for stronger product-company opportunities, Tech Leader Hub is built for that next step.",
-  droidSkool: {
-    title: "Droid Skool",
-    badge: "For beginners & early-career developers",
-    points: [
-      "Learn Kotlin and Android through practical, structured training.",
-      "Build real apps and portfolio-ready projects.",
-      "Get mentorship, feedback and interview preparation.",
-    ],
-  },
-  techLeaderHub: {
-    title: "Tech Leader Hub",
-    badge: "For experienced Android engineers",
-    points: [
-      "Find and close the gaps holding your career move back.",
-      "Build the architecture, system-design and interview skills product companies test.",
-      "Position yourself for stronger roles and technical leadership.",
-    ],
-  },
-} as const;
+/** Shown on the Droid Skool card for developers still building their foundation. */
+export const droidSkoolPoints = [
+  "Learn Kotlin and Android through practical, structured training.",
+  "Build real apps and portfolio-ready projects.",
+  "Get mentorship, feedback and interview preparation.",
+] as const;
 
-export type Faq = {
+type Faq = {
   id: string;
   question: string;
   /** First sentence answers the question on its own; that's the part AI tools quote. */
@@ -211,6 +187,6 @@ export const faqs: Faq[] = [
     question: "How do I get started with Tech Leader Hub?",
     answer:
       "Join the free 90-minute live masterclass. You'll see the gaps that keep experienced Android developers stuck, and leave knowing what to work on next.",
-    link: { label: "Reserve your seat", href: LINKS.masterclass },
+    link: { label: "Join the free masterclass", href: LINKS.masterclass },
   },
 ];
