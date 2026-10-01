@@ -129,6 +129,7 @@ export function HomePage() {
   const [showMobileBar, setShowMobileBar] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
   const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
+  const [picked, setPicked] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
@@ -180,6 +181,8 @@ export function HomePage() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  useReveal();
 
   const closeMenu = () => setMenuOpen(false);
 
@@ -324,7 +327,8 @@ export function HomePage() {
                   </span>
                 ))}
               </div>
-              <p className="mt-4 text-[13px] text-[var(--on-night-faint)]">
+              <p className="mt-4 flex items-center gap-2.5 text-[13px] text-[var(--on-night-faint)]">
+                <span className="tlh-live-dot" aria-hidden="true" />
                 Free · 90 minutes · Live on Zoom · Next session Sunday, 11:00 AM IST
               </p>
             </div>
@@ -367,6 +371,7 @@ export function HomePage() {
         {/* ---------- Recognition ---------- */}
         <section
           id="recognition"
+          data-reveal
           className="tlh-section bg-white"
           aria-labelledby="recognition-title"
         >
@@ -374,31 +379,61 @@ export function HomePage() {
             <h2 id="recognition-title" className="tlh-h2 text-[var(--ink)]">
               Does this sound like you?
             </h2>
-            <div className="mt-12 border-t border-[var(--line)] sm:mt-16">
-              {recognition.map((item) => (
-                <div
+            <p className="mt-4 text-[17px] text-[var(--slate)]">
+              Tap the one that sounds most like you.
+            </p>
+
+            <div
+              role="radiogroup"
+              aria-label="Which one sounds like you?"
+              className="mt-10 grid gap-4 md:grid-cols-3"
+            >
+              {recognition.map((item, i) => (
+                <button
                   key={item.quote}
-                  className="grid gap-3 border-b border-[var(--line)] py-8 sm:py-10 md:grid-cols-[1.15fr_.85fr] md:gap-12"
+                  type="button"
+                  role="radio"
+                  aria-checked={picked === i}
+                  onClick={() => setPicked(i)}
+                  className={"tlh-pain tlh-lift " + (picked === i ? "is-picked" : "")}
                 >
-                  <p className="text-[24px] font-semibold leading-[1.25] tracking-[-0.02em] text-[var(--ink)] sm:text-[30px]">
+                  <span className="block text-[13px] font-semibold text-[#8a6a2f]">
+                    {item.persona}
+                  </span>
+                  <span className="mt-3 block text-[21px] font-semibold leading-[1.3] tracking-[-0.015em] text-[var(--ink)]">
                     “{item.quote}”
-                  </p>
-                  <p className="text-[17px] leading-[1.6] text-[var(--slate)] md:pt-1.5">
+                  </span>
+                  <span className="mt-3 block text-[15px] leading-[1.6] text-[var(--slate)]">
                     {item.detail}
-                  </p>
-                </div>
+                  </span>
+                </button>
               ))}
             </div>
-            <p className="mt-12 text-[21px] font-medium leading-[1.45] text-[var(--ink)] sm:text-[24px]">
-              None of these is a talent problem. Each one is a system problem.
-            </p>            <a href="#approach" className="tlh-text-link mt-5">
-              See the system
-            </a>
+
+            <div aria-live="polite" className="mt-8">
+              {picked !== null ? (
+                <div key={picked} className="tlh-pain-answer rounded-[24px] bg-[var(--night)] p-7 text-white sm:p-9">
+                  <p className="text-[21px] font-semibold leading-[1.4] tracking-[-0.01em]">
+                    {recognition[picked].response}
+                  </p>
+                  <div className="mt-6 flex flex-wrap items-center gap-5">
+                    <PrimaryCta>Join the free masterclass</PrimaryCta>
+                    <a href="#approach" className="tlh-text-link-light">
+                      See the system
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[21px] font-medium leading-[1.45] text-[var(--ink)] sm:text-[24px]">
+                  None of these is a talent problem. Each one is a system problem.
+                </p>
+              )}
+            </div>
           </div>
         </section>
 
         {/* ---------- The truth ---------- */}
-        <section className="tlh-section bg-[var(--mist)]" aria-labelledby="truth-title">
+        <section data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="truth-title">
           <div className="mx-auto max-w-[900px] px-5 text-center sm:px-8">
             <h2 id="truth-title" className="tlh-statement text-[var(--ink)]">
               You don't need another course. You need a <span className="tlh-gradient-text">system.</span>
@@ -412,7 +447,7 @@ export function HomePage() {
         </section>
 
         {/* ---------- How it works ---------- */}
-        <section id="approach" className="tlh-section bg-white" aria-labelledby="approach-title">
+        <section id="approach" data-reveal className="tlh-section bg-white" aria-labelledby="approach-title">
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <div className="max-w-[40rem]">
               <h2 id="approach-title" className="tlh-h2 text-[var(--ink)]">
@@ -423,21 +458,8 @@ export function HomePage() {
               </p>
             </div>
 
-            <ol className="tlh-steps mt-14 grid gap-10 sm:mt-20 md:grid-cols-3 md:gap-8">
-              {steps.map((step, index) => (
-                <li key={step.title} className="relative md:pt-12">
-                  <span className="tlh-step-dot" aria-hidden="true">
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-5 text-[24px] font-semibold tracking-[-0.015em] text-[var(--ink)] md:mt-0">
-                    {step.title}
-                  </h3>
-                  <p className="mt-3 max-w-[22rem] text-[17px] leading-[1.6] text-[var(--slate)]">
-                    {step.text}
-                  </p>
-                </li>
-              ))}
-            </ol>
+            <ApproachSteps />
+l>
 
             <div className="mt-16 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
               <PrimaryCta>Join the free masterclass</PrimaryCta>
@@ -451,6 +473,7 @@ export function HomePage() {
         {/* ---------- Nikhil ---------- */}
         <section
           id="nikhil"
+          data-reveal
           className="tlh-night tlh-section relative overflow-hidden"
           aria-labelledby="nikhil-title"
         >
@@ -498,7 +521,7 @@ export function HomePage() {
               <div>
                 <div className="grid gap-4 md:grid-cols-3">
                   {authorityPillars.map((item, index) => (
-                    <article key={item.title} className="tlh-glow-card rounded-[22px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
+                    <article key={item.title} className="tlh-glow-card tlh-lift rounded-[22px] border border-white/10 bg-white/[0.035] p-5 sm:p-6">
                       <span className="mb-4 flex size-9 items-center justify-center rounded-full border border-[var(--gold)]/35 bg-[var(--gold)]/10 text-[13px] font-semibold text-[var(--gold)]">
                         0{index + 1}
                       </span>
@@ -542,7 +565,7 @@ export function HomePage() {
         </section>
 
         {/* ---------- Stories ---------- */}
-        <section id="stories" className="tlh-section bg-white" aria-labelledby="stories-title">
+        <section id="stories" data-reveal className="tlh-section bg-white" aria-labelledby="stories-title">
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <h2 id="stories-title" className="tlh-h2 max-w-[36rem] text-[var(--ink)]">
               Developers who've worked with Nikhil
@@ -568,7 +591,7 @@ export function HomePage() {
         </section>
 
         {/* ---------- Fit + platform routing ---------- */}
-        <section id="fit" className="tlh-section bg-[var(--mist)]" aria-labelledby="fit-title">
+        <section id="fit" data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="fit-title">
           <div className="mx-auto max-w-[1100px] px-5 sm:px-8">
             <div className="mx-auto max-w-[760px] text-center">
               <p className="text-[14px] font-semibold text-[var(--blue)]">Choose the right Android career path</p>
@@ -581,7 +604,7 @@ export function HomePage() {
             </div>
 
             <div className="mt-12 grid gap-6 lg:grid-cols-2">
-              <article className="tlh-glow-card relative overflow-hidden rounded-[30px] border border-[var(--blue)]/25 bg-[var(--ink)] p-7 text-white sm:p-9">
+              <article className="tlh-glow-card tlh-beam relative overflow-hidden rounded-[30px] border border-[var(--blue)]/25 bg-[var(--ink)] p-7 text-white sm:p-9">
                 <span className="inline-flex rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-[12px] font-semibold text-white/90">
                   For experienced Android engineers
                 </span>
@@ -597,7 +620,7 @@ export function HomePage() {
                 <Link to="/masterclass" className="tlh-btn tlh-btn-primary mt-8 inline-flex">Join the free masterclass</Link>
               </article>
 
-              <article className="tlh-glow-card relative overflow-hidden rounded-[30px] border border-[var(--line)] bg-white p-7 sm:p-9">
+              <article className="tlh-glow-card tlh-lift relative overflow-hidden rounded-[30px] border border-[var(--line)] bg-white p-7 sm:p-9">
                 <span className="inline-flex rounded-full border border-[var(--line)] bg-[var(--mist)] px-3 py-1.5 text-[12px] font-semibold text-[var(--slate)]">
                   For beginners, freshers & early-career developers
                 </span>
@@ -618,11 +641,27 @@ export function HomePage() {
               Already have solid Android production experience? Start with the free Tech Leader Hub masterclass.
               Still building your foundation? Start with Droid Skool.
             </p>
+                  {/* ---------- Readiness check ---------- */}
+        <section data-reveal className="tlh-section bg-[var(--mist)]" aria-labelledby="readiness-title">
+          <div className="mx-auto max-w-[980px] px-5 sm:px-8">
+            <div className="mx-auto max-w-[720px] text-center">
+              <p className="text-[14px] font-semibold text-[var(--blue)]">30-second career readiness check</p>
+              <h2 id="readiness-title" className="tlh-h2 mt-3 text-[var(--ink)]">
+                How ready are you for your next Android move?
+              </h2>
+              <p className="mt-5 text-[18px] leading-[1.65] text-[var(--slate)]">
+                Answer five quick questions. Nothing is saved, and there is no login.
+              </p>
+            </div>
+            <ReadinessScorecard />
           </div>
         </section>
 
+</div>
+        </section>
+
         {/* ---------- FAQ ---------- */}
-        <section id="faq" className="tlh-section bg-white" aria-labelledby="faq-title">
+        <section id="faq" data-reveal className="tlh-section bg-white" aria-labelledby="faq-title">
           <div className="mx-auto max-w-[820px] px-5 sm:px-8">
             <h2 id="faq-title" className="tlh-h2 text-[var(--ink)]">
               Questions developers ask
@@ -666,6 +705,7 @@ export function HomePage() {
 
         {/* ---------- Final call ---------- */}
         <section
+          data-reveal
           className="tlh-night relative overflow-hidden py-28 sm:py-36"
           aria-labelledby="final-title"
         >
@@ -754,6 +794,191 @@ export function HomePage() {
         <PrimaryCta className="w-full" onClick={closeMenu}>
           Join the free masterclass
         </PrimaryCta>
+      </div>
+    </div>
+  );
+}
+
+function useReveal() {
+  useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>("[data-reveal], .tlh-glow-card");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elements.forEach((element) => element.classList.add("is-in"));
+      return;
+    }
+    document.documentElement.classList.add("tlh-reveal-ready");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-in");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: "0px 0px -10% 0px" },
+    );
+    elements.forEach((element) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("tlh-reveal-ready");
+    };
+  }, []);
+}
+
+function ApproachSteps() {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [inView, setInView] = useState(false);
+  const ref = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      ([entry]) => entry && setInView(entry.isIntersecting),
+      { threshold: 0.4 },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView || paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+    const id = window.setInterval(() => setActive((i) => (i + 1) % steps.length), 2600);
+    return () => window.clearInterval(id);
+  }, [inView, paused]);
+
+  const progress = active === steps.length - 1 ? 1 : active / steps.length;
+  const select = (i: number) => {
+    setActive(i);
+    setPaused(true);
+  };
+
+  return (
+    <ol
+      ref={ref}
+      className="tlh-steps mt-14 grid gap-10 sm:mt-20 md:grid-cols-3 md:gap-8"
+      style={{ "--tlh-step-progress": progress } as React.CSSProperties}
+      onMouseLeave={() => setPaused(false)}
+    >
+      {steps.map((step, i) => (
+        <li
+          key={step.title}
+          tabIndex={0}
+          aria-current={i === active ? "step" : undefined}
+          onMouseEnter={() => select(i)}
+          onFocus={() => select(i)}
+          onBlur={() => setPaused(false)}
+          onClick={() => select(i)}
+          className={
+            "tlh-step relative md:pt-12 " +
+            (i === active ? "is-active " : "") +
+            (i < active ? "is-done" : "")
+          }
+        >
+          <span className="tlh-step-dot" aria-hidden="true">
+            {i + 1}
+          </span>
+          <h3 className="mt-5 text-[24px] font-semibold tracking-[-0.015em] text-[var(--ink)] md:mt-0">
+            {step.title}
+          </h3>
+          <p className="mt-3 max-w-[22rem] text-[17px] leading-[1.6] text-[var(--slate)]">
+            {step.text}
+          </p>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+const READINESS_QUESTIONS = [
+  "I can explain my app's architecture trade-offs clearly in a senior interview.",
+  "I can design a mobile system and defend the major technical trade-offs.",
+  "I can explain Kotlin coroutines and concurrency beyond API-level usage.",
+  "My resume and LinkedIn show measurable ownership, impact and senior-level scope.",
+  "I can handle Android architecture and system-design follow-up questions without losing structure.",
+] as const;
+
+function ReadinessScorecard() {
+  const [answers, setAnswers] = useState<Array<boolean | null>>(
+    Array(READINESS_QUESTIONS.length).fill(null),
+  );
+  const answered = answers.filter((answer) => answer !== null).length;
+  const score = answers.filter(Boolean).length;
+  const percentage = Math.round((score / READINESS_QUESTIONS.length) * 100);
+  const complete = answered === READINESS_QUESTIONS.length;
+  const result =
+    score >= 4
+      ? "You have a strong foundation. Your next step is sharpening how you present and defend it in product-company interviews."
+      : score >= 2
+        ? "You have useful experience, but there are clear gaps to close before your next senior-career move."
+        : "Your experience may be ahead of your interview readiness. Start by finding the exact gaps instead of preparing everywhere at once.";
+
+  return (
+    <div className="mt-10 overflow-hidden rounded-[30px] border border-[var(--line)] bg-white shadow-[0_24px_70px_-45px_rgba(7,17,31,.35)]">
+      <div className="grid lg:grid-cols-[1.15fr_.85fr]">
+        <div className="p-7 sm:p-9">
+          <div className="space-y-4">
+            {READINESS_QUESTIONS.map((question, index) => (
+              <div key={question} className="rounded-[20px] border border-[var(--line)] bg-[var(--mist)] p-4 sm:p-5">
+                <p className="text-[15px] font-medium leading-[1.5] text-[var(--ink)]">
+                  {index + 1}. {question}
+                </p>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    type="button"
+                    aria-pressed={answers[index] === true}
+                    className={"tlh-score-btn " + (answers[index] === true ? "is-yes" : "")}
+                    onClick={() =>
+                      setAnswers((current) => {
+                        const next = [...current];
+                        next[index] = true;
+                        return next;
+                      })
+                    }
+                  >
+                    Yes
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={answers[index] === false}
+                    className={"tlh-score-btn " + (answers[index] === false ? "is-no" : "")}
+                    onClick={() =>
+                      setAnswers((current) => {
+                        const next = [...current];
+                        next[index] = false;
+                        return next;
+                      })
+                    }
+                  >
+                    Not yet
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center border-t border-[var(--line)] bg-[var(--ink)] p-8 text-center text-white lg:border-l lg:border-t-0 sm:p-10">
+          <div
+            className="tlh-score-ring"
+            style={{ "--score": percentage + "%" } as React.CSSProperties}
+            aria-label={score + " of " + READINESS_QUESTIONS.length + " readiness signals"}
+          >
+            <div>
+              <strong>{score}/{READINESS_QUESTIONS.length}</strong>
+              <span>readiness signals</span>
+            </div>
+          </div>
+          <p className="mt-7 max-w-[20rem] text-[16px] leading-[1.6] text-white/75">
+            {complete ? result : answered + " of " + READINESS_QUESTIONS.length + " answered"}
+          </p>
+          <PrimaryCta className="mt-7">
+            {complete ? "Get your career plan in the masterclass" : "Join the free masterclass"}
+          </PrimaryCta>
+        </div>
       </div>
     </div>
   );
