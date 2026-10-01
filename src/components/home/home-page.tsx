@@ -38,6 +38,12 @@ const PORTRAITS = {
   story: { base: "/images/nikhil/nikhil-rai-standing", width: 1200, height: 1623 },
 } as const;
 
+// Small WebP copies of the TLH mark (the 500px tlh-icon.png is ~400KB), sized for 2x screens.
+const BRAND_ICON = {
+  small: "/images/brand/tlh-icon-72.webp",
+  large: "/images/brand/tlh-icon-112.webp",
+} as const;
+
 const SOCIALS = [
   { label: "Instagram", href: LINKS.instagram, Icon: Instagram },
   { label: "Facebook", href: LINKS.facebook, Icon: Facebook },
@@ -290,7 +296,7 @@ export function HomePage() {
             aria-label="Tech Leader Hub home"
           >
             <span className="tlh-logo-mark">
-              <img src="/tlh-icon.png" alt="" width={36} height={36} className="size-9" />
+              <img src={BRAND_ICON.small} alt="" width={36} height={36} className="size-9" />
             </span>
             <span className="min-w-0">
               <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
@@ -933,7 +939,14 @@ export function HomePage() {
         >
           <div className="tlh-final-light absolute inset-0" aria-hidden="true" />
           <div className="relative mx-auto max-w-[760px] px-5 text-center sm:px-8">
-            <img src="/tlh-icon.png" alt="" width={56} height={56} className="mx-auto size-14" />
+            <img
+              src={BRAND_ICON.large}
+              alt=""
+              width={56}
+              height={56}
+              loading="lazy"
+              className="mx-auto size-14"
+            />
             <h2 id="final-title" className="tlh-statement mt-8 text-white">
               Stop waiting for the right time. Start with a clear plan.
             </h2>
@@ -959,7 +972,14 @@ export function HomePage() {
         <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Link to="/" className="flex items-center gap-2.5" aria-label="Tech Leader Hub home">
-              <img src="/tlh-icon.png" alt="" width={32} height={32} className="size-8" />
+              <img
+                src={BRAND_ICON.small}
+                alt=""
+                width={32}
+                height={32}
+                loading="lazy"
+                className="size-8"
+              />
               <span className="text-[16px] font-semibold text-white">Tech Leader Hub</span>
             </Link>
             <p className="mt-4 max-w-[18rem] text-[14px] leading-6 text-[var(--on-night-faint)]">
