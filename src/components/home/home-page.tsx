@@ -138,6 +138,26 @@ export function HomePage() {
   const scrollLockedRef = useRef(false);
   const pendingHashRef = useRef<string | null>(null);
   const pickedItem = picked === null ? undefined : recognition[picked];
+  const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  // Radio-group keyboard pattern: arrows move and select, Home/End jump, one Tab stop.
+  const onCardKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const count = recognition.length;
+    const moves: Record<string, number> = {
+      ArrowRight: index + 1,
+      ArrowDown: index + 1,
+      ArrowLeft: index - 1,
+      ArrowUp: index - 1,
+      Home: 0,
+      End: count - 1,
+    };
+    const target = moves[event.key];
+    if (target === undefined) return;
+    event.preventDefault();
+    const next = (target + count) % count;
+    setPicked(next);
+    cardRefs.current[next]?.focus();
+  };
 
   // Show the mobile "join" bar only once the hero's own button has scrolled away.
   useEffect(() => {
@@ -466,7 +486,7 @@ export function HomePage() {
               Does this sound like you?
             </h2>
             <p className="mt-4 text-[17px] text-[var(--slate)]">
-              Tap the one that sounds most like you.
+              Choose the one that sounds most like you.
             </p>
 
             <div
@@ -477,10 +497,15 @@ export function HomePage() {
               {recognition.map((item, i) => (
                 <button
                   key={item.quote}
+                  ref={(element) => {
+                    cardRefs.current[i] = element;
+                  }}
                   type="button"
                   role="radio"
                   aria-checked={picked === i}
+                  tabIndex={picked === i || (picked === null && i === 0) ? 0 : -1}
                   onClick={() => setPicked(i)}
+                  onKeyDown={(event) => onCardKeyDown(event, i)}
                   className={"tlh-pain tlh-lift " + (picked === i ? "is-picked" : "")}
                 >
                   <span className="block text-[13px] font-semibold text-[#8a6a2f]">
@@ -821,32 +846,34 @@ export function HomePage() {
               Already have solid Android production experience? Start with the free Tech Leader Hub
               masterclass. Still building your foundation? Start with Droid Skool.
             </p>
-            {/* ---------- Readiness check ---------- */}
-            <section
-              data-reveal
-              className="tlh-section bg-[var(--mist)]"
-              aria-labelledby="readiness-title"
-            >
-              <div className="mx-auto max-w-[980px] px-5 sm:px-8">
-                <div className="mx-auto max-w-[720px] text-center">
-                  <p className="text-[14px] font-semibold text-[var(--blue)]">
-                    30-second career readiness check
-                  </p>
-                  <h2 id="readiness-title" className="tlh-h2 mt-3 text-[var(--ink)]">
-                    How ready are you for your next Android move?
-                  </h2>
-                  <p className="mt-5 text-[18px] leading-[1.65] text-[var(--slate)]">
-                    Answer five quick questions. Nothing is saved, and there is no login.
-                  </p>
-                </div>
-                <ReadinessScorecard />
-              </div>
-            </section>
+          </div>
+        </section>
+
+        {/* ---------- Readiness check ---------- */}
+        <section data-reveal className="tlh-section bg-white" aria-labelledby="readiness-title">
+          <div className="mx-auto max-w-[980px] px-5 sm:px-8">
+            <div className="mx-auto max-w-[720px] text-center">
+              <p className="text-[14px] font-semibold text-[var(--blue)]">
+                30-second career readiness check
+              </p>
+              <h2 id="readiness-title" className="tlh-h2 mt-3 text-[var(--ink)]">
+                How ready are you for your next Android move?
+              </h2>
+              <p className="mt-5 text-[18px] leading-[1.65] text-[var(--slate)]">
+                Answer five quick questions. Nothing is saved, and there is no login.
+              </p>
+            </div>
+            <ReadinessScorecard />
           </div>
         </section>
 
         {/* ---------- FAQ ---------- */}
-        <section id="faq" data-reveal className="tlh-section bg-white" aria-labelledby="faq-title">
+        <section
+          id="faq"
+          data-reveal
+          className="tlh-section bg-[var(--mist)]"
+          aria-labelledby="faq-title"
+        >
           <div className="mx-auto max-w-[820px] px-5 sm:px-8">
             <h2 id="faq-title" className="tlh-h2 text-[var(--ink)]">
               Questions developers ask
@@ -1152,6 +1179,7 @@ const READINESS_QUESTIONS = [
   "I can handle Android architecture and system-design follow-up questions without losing structure.",
 ] as const;
 
+/** Answers live only in component state: nothing is stored, sent or tracked. */
 function ReadinessScorecard() {
   const [answers, setAnswers] = useState<Array<boolean | null>>(
     Array(READINESS_QUESTIONS.length).fill(null),
@@ -1175,9 +1203,14 @@ function ReadinessScorecard() {
             {READINESS_QUESTIONS.map((question, index) => (
               <div
                 key={question}
+                role="group"
+                aria-labelledby={`readiness-q${index}`}
                 className="rounded-[20px] border border-[var(--line)] bg-[var(--mist)] p-4 sm:p-5"
               >
-                <p className="text-[15px] font-medium leading-[1.5] text-[var(--ink)]">
+                <p
+                  id={`readiness-q${index}`}
+                  className="text-[15px] font-medium leading-[1.5] text-[var(--ink)]"
+                >
                   {index + 1}. {question}
                 </p>
                 <div className="mt-3 flex gap-2">
@@ -1218,21 +1251,23 @@ function ReadinessScorecard() {
           <div
             className="tlh-score-ring"
             style={{ "--score": percentage + "%" } as React.CSSProperties}
+            role="img"
             aria-label={score + " of " + READINESS_QUESTIONS.length + " readiness signals"}
           >
-            <div>
+            <div aria-hidden="true">
               <strong>
                 {score}/{READINESS_QUESTIONS.length}
               </strong>
               <span>readiness signals</span>
             </div>
           </div>
-          <p className="mt-7 max-w-[20rem] text-[16px] leading-[1.6] text-white/75">
+          <p
+            aria-live="polite"
+            className="mt-7 max-w-[20rem] text-[16px] leading-[1.6] text-white/75"
+          >
             {complete ? result : answered + " of " + READINESS_QUESTIONS.length + " answered"}
           </p>
-          <PrimaryCta className="mt-7">
-            {complete ? "Get your career plan in the masterclass" : "Join the free masterclass"}
-          </PrimaryCta>
+          <PrimaryCta className="mt-7">Join the free masterclass</PrimaryCta>
         </div>
       </div>
     </div>
