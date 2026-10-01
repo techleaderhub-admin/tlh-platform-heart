@@ -989,13 +989,22 @@ export function HomePage() {
   );
 }
 
+/**
+ * Fades sections in as they scroll into view. Content is only hidden after this runs
+ * (the html class is added here), so the page stays fully visible without JavaScript.
+ */
 function useReveal() {
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>("[data-reveal], .tlh-glow-card");
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced || typeof IntersectionObserver === "undefined") {
       elements.forEach((element) => element.classList.add("is-in"));
       return;
     }
+    // Anything already on screen stays visible, so nothing flickers out and back in.
+    elements.forEach((element) => {
+      if (element.getBoundingClientRect().top < window.innerHeight) element.classList.add("is-in");
+    });
     document.documentElement.classList.add("tlh-reveal-ready");
     const observer = new IntersectionObserver(
       (entries) => {
@@ -1008,7 +1017,9 @@ function useReveal() {
       },
       { rootMargin: "0px 0px -10% 0px" },
     );
-    elements.forEach((element) => observer.observe(element));
+    elements.forEach((element) => {
+      if (!element.classList.contains("is-in")) observer.observe(element);
+    });
     return () => {
       observer.disconnect();
       document.documentElement.classList.remove("tlh-reveal-ready");
@@ -1016,18 +1027,23 @@ function useReveal() {
   }, []);
 }
 
+/** Renders the final number on the server and without JavaScript; counts up on the client. */
 function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(target);
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const element = ref.current;
-    if (!element) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setValue(target);
+    if (
+      !element ||
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
       return;
     }
 
+    let frame = 0;
+    setValue(0);
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
@@ -1037,15 +1053,19 @@ function CountUpValue({ target, suffix = "" }: { target: number; suffix?: string
           const progress = Math.min((now - start) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
           setValue(Math.round(target * eased));
-          if (progress < 1) window.requestAnimationFrame(tick);
+          if (progress < 1) frame = window.requestAnimationFrame(tick);
         };
-        window.requestAnimationFrame(tick);
+        frame = window.requestAnimationFrame(tick);
         observer.disconnect();
       },
       { threshold: 0.6 },
     );
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.cancelAnimationFrame(frame);
+      setValue(target);
+    };
   }, [target]);
 
   return (

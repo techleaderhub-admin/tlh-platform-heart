@@ -452,7 +452,7 @@
   position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
   transform-origin: left; transform: scaleX(0);
   background: linear-gradient(90deg, #3b8bff, #f2b544);
-  animation: tlh-grow linear both;
+  animation: tlh-grow auto linear both;
   animation-timeline: scroll(root);
 }
 @keyframes tlh-spin { to { --tlh-angle: 360deg; } }
@@ -516,11 +516,6 @@
 .tlh-story-scroller { scrollbar-width: none; }
 .tlh-story-scroller::-webkit-scrollbar { display: none; }
 
-@media (prefers-reduced-motion: reduce) {
-  .tlh-logo-mark::after,
-  .tlh-glow-card::after,
-  .tlh-progress { animation: none !important; }
-}
 /* ---------- Interaction layer v2 ---------- */
 .tlh-beam { position: relative; }
 .tlh-beam::before {
@@ -664,12 +659,29 @@
 .tlh-score-ring strong { font-size: 34px; letter-spacing: -0.04em; }
 .tlh-score-ring span { font-size: 11px; color: rgba(255,255,255,.62); }
 
+/*
+ * Reduced motion: every decorative animation is switched off and shown in its final state.
+ * The scroll progress line stays, because it only moves with the visitor's own scrolling.
+ */
 @media (prefers-reduced-motion: reduce) {
-  .tlh-beam::before, .tlh-live-dot::after { animation: none !important; }
-  .tlh-lift, .tlh-steps::after, .tlh-pain-answer { transition: none !important; animation: none !important; }
+  .tlh-ring-draw { animation: none !important; stroke-dashoffset: 0; }
+  .tlh-portrait-in,
+  .tlh-pain-answer,
+  .tlh-logo-mark::after,
+  .tlh-glow-card::after,
+  .tlh-beam::before,
+  .tlh-live-dot::after { animation: none !important; }
+  .tlh-btn-primary::after { display: none; }
+  .tlh-btn-primary:active,
+  .tlh-lift:hover,
+  .tlh-score-btn:hover { transform: none !important; }
+  .tlh-step.is-active .tlh-step-dot { transform: none; }
+  .tlh-lift, .tlh-steps::after, .tlh-step, .tlh-step-dot, .tlh-mobile-bar, .tlh-header,
+  .tlh-btn, .tlh-score-btn { transition: none !important; }
   .tlh-reveal-ready [data-reveal], .tlh-reveal-ready .tlh-glow-card {
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
   }
 }
 
