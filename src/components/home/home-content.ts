@@ -105,10 +105,6 @@ export const fitFor = [
   "You're ready to change how you prepare, not just prepare more.",
 ] as const;
 
-export const fitNotFor = [
-  "You're still learning Kotlin or Android, or you don't yet have meaningful production experience.",
-] as const;
-
 export const droidSkoolPath = {
   eyebrow: "Recommended starting point",
   title: "Build first. Then accelerate.",
@@ -116,7 +112,6 @@ export const droidSkoolPath = {
     "Not every Android developer needs Tech Leader Hub today. If you're still building your Kotlin and Android foundation, creating real projects, or working toward job-readiness, Droid Skool is the place to start. Once you have real production experience and you're ready for stronger product-company opportunities, Tech Leader Hub is built for that next step.",
   droidSkool: {
     title: "Droid Skool",
-    subtitle: "Build & become job-ready",
     badge: "For beginners & early-career developers",
     points: [
       "Learn Kotlin and Android through practical, structured training.",
@@ -126,7 +121,6 @@ export const droidSkoolPath = {
   },
   techLeaderHub: {
     title: "Tech Leader Hub",
-    subtitle: "Accelerate your career",
     badge: "For experienced Android engineers",
     points: [
       "Find and close the gaps holding your career move back.",
