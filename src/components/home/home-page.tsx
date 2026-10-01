@@ -263,6 +263,7 @@ export function HomePage() {
   }, [menuOpen]);
 
   useReveal();
+  useInViewEffects();
 
   const closeMenu = () => setMenuOpen(false);
   // Section links scroll after the scroll lock is released, so the jump lands in the right place.
@@ -1080,6 +1081,75 @@ function useReveal() {
     return () => {
       observer.disconnect();
       document.documentElement.classList.remove("tlh-reveal-ready");
+    };
+  }, []);
+}
+
+const GLOW_MS = 2600;
+const GLOW_STAGGER_MS = 220;
+
+/**
+ * Plays the decorative effects when they reach the screen, with no hover needed:
+ * glow borders and the logo ring sweep once, buttons shine once, and looping effects
+ * (border beam, live dot) run only while visible. Skipped entirely for reduced motion.
+ */
+function useInViewEffects() {
+  useEffect(() => {
+    if (
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const timers: number[] = [];
+    const glowOnce = (element: Element, delay: number) => {
+      timers.push(
+        window.setTimeout(() => {
+          element.classList.add("is-glowing");
+          timers.push(window.setTimeout(() => element.classList.remove("is-glowing"), GLOW_MS));
+        }, delay),
+      );
+    };
+
+    const looping = ".tlh-beam, .tlh-live-dot";
+    const once = ".tlh-glow-card, .tlh-logo-mark, .tlh-btn-primary";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const element = entry.target;
+          if (element.matches(looping)) {
+            element.classList.toggle("is-visible", entry.isIntersecting);
+          }
+          if (
+            !entry.isIntersecting ||
+            !element.matches(once) ||
+            element.hasAttribute("data-fx-done")
+          ) {
+            return;
+          }
+          element.setAttribute("data-fx-done", "");
+          if (element.matches(".tlh-btn-primary")) {
+            element.classList.add("is-shine");
+          } else {
+            const index = element.parentElement
+              ? Array.prototype.indexOf.call(element.parentElement.children, element)
+              : 0;
+            glowOnce(element, 300 + Math.max(index, 0) * GLOW_STAGGER_MS);
+          }
+          if (!element.matches(looping)) observer.unobserve(element);
+        });
+      },
+      { rootMargin: "0px 0px -12% 0px" },
+    );
+
+    document.documentElement.classList.add("tlh-fx-ready");
+    document
+      .querySelectorAll(`.tlh-home :is(${looping}, ${once})`)
+      .forEach((element) => observer.observe(element));
+    return () => {
+      observer.disconnect();
+      timers.forEach((timer) => window.clearTimeout(timer));
+      document.documentElement.classList.remove("tlh-fx-ready");
     };
   }, []);
 }
