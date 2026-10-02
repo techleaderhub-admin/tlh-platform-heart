@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ProtectedPlaceholder } from "@/components/auth/protected-placeholder";
+import { StudentDashboardPage } from "@/components/dashboard/student-dashboard-page";
 import { requireRole } from "@/lib/route-auth";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -20,5 +20,5 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function StudentDashboard() {
   const identity = Route.useRouteContext();
-  return <ProtectedPlaceholder area="Student Dashboard" name={identity.profile.full_name} />;
+  return <StudentDashboardPage name={identity.profile.full_name} />;
 }
