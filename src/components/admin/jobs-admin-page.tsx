@@ -47,7 +47,7 @@ export function JobsAdminPage() {
       : await supabase.from("jobs").insert(payload);
     if (result.error) setMessage(result.error.message);
     else {
-      setMessage(editingId ? "Job updated." : "Job published to the student job board.");
+      setMessage(editingId ? "Job updated." : "Job published to the Leader job board.");
       setForm(emptyForm);
       setEditingId(null);
       await load();
@@ -80,7 +80,7 @@ export function JobsAdminPage() {
   };
 
   return (
-    <AdminShell title="Jobs Management" subtitle="Create and maintain the roles that appear in the TLH student job board. No external jobs are invented or imported automatically.">
+    <AdminShell title="Jobs Management" subtitle="Create and maintain the roles that appear in the TLH Leader job board. No external jobs are invented or imported automatically.">
       <div className="space-y-6">
         {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
 

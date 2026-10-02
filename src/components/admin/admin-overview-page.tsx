@@ -33,7 +33,7 @@ export function AdminOverviewPage() {
 
   const cards = [
     { label: "Total users", value: stats.users, icon: UserPlus },
-    { label: "Students", value: stats.students, icon: GraduationCap },
+    { label: "Leaders", value: stats.students, icon: GraduationCap },
     { label: "Admins", value: stats.admins, icon: UserPlus },
     { label: "Masterclass leads", value: stats.registrations, icon: Video },
   ];
@@ -76,11 +76,11 @@ export function AdminOverviewPage() {
         <Card className="border-border/80 bg-card/80">
           <CardContent className="p-6">
             <p className="text-sm font-bold uppercase tracking-[0.14em] text-primary">User management</p>
-            <h2 className="mt-2 font-heading text-xl font-bold">Students</h2>
+            <h2 className="mt-2 font-heading text-xl font-bold">Leaders</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Review registered platform users and open their career workspace in future phases.
             </p>
-            <div className="mt-5 flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/admin/students">Manage students <ArrowRight /></Link></Button><Button asChild><Link to="/admin/admin-360"><LayoutDashboard />Open Admin 360</Link></Button></div>
+            <div className="mt-5 flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/admin/students">Manage leaders <ArrowRight /></Link></Button><Button asChild><Link to="/admin/admin-360"><LayoutDashboard />Open Admin 360</Link></Button></div>
           </CardContent>
         </Card>
       </div>

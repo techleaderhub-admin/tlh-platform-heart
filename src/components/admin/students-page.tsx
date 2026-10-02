@@ -140,7 +140,7 @@ export function StudentsPage() {
       .single();
 
     if (membershipError || !data) {
-      setSaveError("Could not change membership for this student. " + (membershipError?.message ?? ""));
+      setSaveError("Could not change membership for this Leader. " + (membershipError?.message ?? ""));
       setSavingStudentId(null);
       return;
     }
@@ -152,7 +152,7 @@ export function StudentsPage() {
 
   return (
     <AdminShell
-      title="Students"
+      title="Leaders"
       subtitle="Review registered TLH users and manage their membership access. Membership changes are enforced by the database."
     >
       <Card className="border-border/80 bg-card/80">
@@ -192,7 +192,7 @@ export function StudentsPage() {
             <Users className="mx-auto size-8 text-muted-foreground" aria-hidden="true" />
             <h2 className="mt-4 font-heading text-lg font-semibold">No students found</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {search ? "Try a different search." : "Students will appear here after they create a TLH account."}
+              {search ? "Try a different search." : "Leaders will appear here after they create a TLH account."}
             </p>
           </div>
         ) : (
@@ -200,7 +200,7 @@ export function StudentsPage() {
             <table className="w-full min-w-[980px] text-left text-sm">
               <thead className="border-b border-border bg-muted/30 text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Student</th>
+                  <th className="px-5 py-3 font-semibold">Leader</th>
                   <th className="px-5 py-3 font-semibold">Phone</th>
                   <th className="px-5 py-3 font-semibold">Joined</th>
                   <th className="px-5 py-3 font-semibold">Role</th>
@@ -218,14 +218,14 @@ export function StudentsPage() {
                   return (
                     <tr key={student.id} className="hover:bg-muted/20">
                       <td className="px-5 py-4">
-                        <p className="font-semibold">{student.full_name || "Unnamed student"}</p>
+                        <p className="font-semibold">{student.full_name || "Unnamed leader"}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">User ID: {student.id.slice(0, 8)}…</p>
                       </td>
                       <td className="px-5 py-4 text-muted-foreground">{student.phone || "—"}</td>
                       <td className="px-5 py-4 text-muted-foreground">
                         {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(student.created_at))}
                       </td>
-                      <td className="px-5 py-4"><Badge variant="outline">Student</Badge></td>
+                      <td className="px-5 py-4"><Badge variant="outline">Leader</Badge></td>
                       <td className="px-5 py-4">
                         <div className="flex min-w-[210px] items-center gap-2">
                           <Badge variant="outline" className={membershipBadgeClass(level)}>

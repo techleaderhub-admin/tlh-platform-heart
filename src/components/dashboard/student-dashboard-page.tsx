@@ -356,7 +356,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       if (data.foundation.total === 0) {
         return {
           title: "Foundation content is being prepared",
-          description: "Your student dashboard is ready. Foundation resources will appear here when an admin publishes them.",
+          description: "Your Leader dashboard is ready. Foundation resources will appear here when an admin publishes them.",
           href: null,
           label: "Content pending",
         };
@@ -506,7 +506,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
     <StudentShell
       title={`Welcome back, ${firstName}`}
       subtitle="Your TLH home is one clear journey: complete the next action, track real progress and keep your career evidence current."
-      membershipLabel={data ? `${LEVEL_LABEL[data.membership]} Membership` : "Student workspace"}
+      membershipLabel={data ? `${LEVEL_LABEL[data.membership]} Membership` : "Leader workspace"}
     >
       <div className="space-y-6">
         {error && (

@@ -183,7 +183,7 @@ export function L1LearningAdminPage() {
   };
 
   return (
-    <AdminShell title="L1 Silver Learning" subtitle="Build and publish the L1 course structure, lessons and assignments, then review student submissions from one admin workspace.">
+    <AdminShell title="L1 Silver Learning" subtitle="Build and publish the L1 course structure, lessons and assignments, then review Leader submissions from one admin workspace.">
       <div className="space-y-6">
         {error && <Card className="border-destructive/30 bg-destructive/5"><CardContent className="p-4 text-sm text-destructive">{error}</CardContent></Card>}
 
@@ -319,7 +319,7 @@ export function L1LearningAdminPage() {
             </section>
 
             <Card>
-              <CardHeader><CardTitle>L1 student progress</CardTitle><p className="text-sm text-muted-foreground">Lesson completion for active L1 students, plus required assignment submission counts.</p></CardHeader>
+              <CardHeader><CardTitle>L1 Leader progress</CardTitle><p className="text-sm text-muted-foreground">Lesson completion for active L1 Leaders, plus required assignment submission counts.</p></CardHeader>
               <CardContent className="space-y-3">
                 {activeL1Students.map((membership) => {
                   const profile = profiles[membership.student_id];
@@ -334,12 +334,12 @@ export function L1LearningAdminPage() {
                     </div>
                   </div>;
                 })}
-                {activeL1Students.length === 0 && <p className="text-sm text-muted-foreground">No active L1 students yet.</p>}
+                {activeL1Students.length === 0 && <p className="text-sm text-muted-foreground">No active L1 Leaders yet.</p>}
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader><CardTitle>Student assignment submissions</CardTitle><p className="text-sm text-muted-foreground">Central review queue for every L1 assignment submission.</p></CardHeader>
+              <CardHeader><CardTitle>Leader assignment submissions</CardTitle><p className="text-sm text-muted-foreground">Central review queue for every L1 Leader assignment submission.</p></CardHeader>
               <CardContent className="space-y-3">
                 {submissions.map((submission) => {
                   const assignment = assignments.find((item) => item.id === submission.assignment_id);
@@ -363,7 +363,7 @@ export function L1LearningAdminPage() {
                     </div>
                   );
                 })}
-                {submissions.length === 0 && <p className="text-sm text-muted-foreground">No student submissions yet.</p>}
+                {submissions.length === 0 && <p className="text-sm text-muted-foreground">No Leader submissions yet.</p>}
               </CardContent>
             </Card>
           </>

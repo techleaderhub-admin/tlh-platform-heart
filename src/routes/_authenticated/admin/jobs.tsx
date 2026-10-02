@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/admin/jobs")({
   head: () => ({
     meta: [
       { title: "Jobs Management | TLH Admin" },
-      { name: "description", content: "Publish and maintain jobs in the TLH student job board." },
+      { name: "description", content: "Publish and maintain jobs in the TLH Leader job board." },
     ],
   }),
   component: JobsAdminPage,

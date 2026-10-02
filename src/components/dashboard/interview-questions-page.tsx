@@ -259,9 +259,9 @@ export function InterviewQuestionsPage() {
         <section className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
           <Card className="border-primary/20 bg-primary/[0.03]">
             <CardContent className="p-6">
-              <Badge variant="outline" className="border-primary/30 text-primary">Student interview recording</Badge>
+              <Badge variant="outline" className="border-primary/30 text-primary">Leader interview recording</Badge>
               <h2 className="mt-3 font-heading text-2xl font-bold">Capture the real questions you faced.</h2>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">Create an interview experience, then add each question in order. Your records stay tied to your student account and are visible to admins for curation.</p>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">Create an interview experience, then add each question in order. Your records stay tied to your Leader account and are visible to admins for curation.</p>
             </CardContent>
           </Card>
           <Card>

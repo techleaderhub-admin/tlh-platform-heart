@@ -80,7 +80,7 @@ export function ApplicationsAdminPage() {
   };
 
   return (
-    <AdminShell title="Application Oversight" subtitle="Central view of every student's saved roles, applications, statuses, notes and linked interview activity.">
+    <AdminShell title="Application Oversight" subtitle="Central view of every Leader's saved roles, applications, statuses, notes and linked interview activity.">
       <div className="space-y-6">
         {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
         <section className="grid gap-4 md:grid-cols-3">
@@ -92,9 +92,9 @@ export function ApplicationsAdminPage() {
         <Card>
           <CardHeader>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div><CardTitle className="flex items-center gap-2"><ClipboardList className="size-5 text-primary" /> All student applications</CardTitle><p className="mt-1 text-sm text-muted-foreground">Search by student, company or role and update the tracked status.</p></div>
+              <div><CardTitle className="flex items-center gap-2"><ClipboardList className="size-5 text-primary" /> All Leader applications</CardTitle><p className="mt-1 text-sm text-muted-foreground">Search by leader, company or role and update the tracked status.</p></div>
               <div className="flex flex-wrap gap-2">
-                <div className="relative"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input className="pl-9" placeholder="Search student, company, role…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+                <div className="relative"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input className="pl-9" placeholder="Search leader, company, role…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
                 <select className="h-10 rounded-md border border-input bg-background px-3 text-sm" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}><option value="all">All statuses</option>{statuses.map((status) => <option key={status} value={status}>{status}</option>)}</select>
               </div>
             </div>
@@ -106,7 +106,7 @@ export function ApplicationsAdminPage() {
               return (
                 <div key={application.id} className="rounded-2xl border p-5">
                   <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div><p className="font-semibold">{job?.job_title ?? "Unknown job"}</p><p className="mt-1 text-sm text-muted-foreground">{job?.company_name ?? "Unknown company"} · {student?.full_name ?? "Unknown student"}{student?.email ? " · " + student.email : ""}</p></div>
+                    <div><p className="font-semibold">{job?.job_title ?? "Unknown job"}</p><p className="mt-1 text-sm text-muted-foreground">{job?.company_name ?? "Unknown company"} · {student?.full_name ?? "Unknown leader"}{student?.email ? " · " + student.email : ""}</p></div>
                     <Badge>{application.status}</Badge>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">{statuses.map((status) => <Button key={status} size="sm" variant={application.status === status ? "default" : "outline"} disabled={busy === application.id} onClick={() => void updateStatus(application, status)}>{status}</Button>)}</div>

@@ -154,7 +154,7 @@ export function MasterclassRegistrationsPage() {
               <Link to="/admin/masterclass">Masterclass</Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to="/admin/students">Students</Link>
+              <Link to="/admin/students">Leaders</Link>
             </Button>
             <Button
               variant="outline"
