@@ -1070,10 +1070,6 @@
 .mc-stats dd { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
 .mc-stats dt { margin-top: 4px; font-size: 13px; line-height: 1.4; color: var(--silver-dim); }
 .mc-chips { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
-.mc-marks { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
-.mc-marks div { display: flex; align-items: baseline; gap: 8px; padding: 8px 14px; border-radius: 12px; border: 1px dashed rgba(229,228,226,.25); }
-.mc-marks dt { font-size: 13px; color: var(--silver-dim); }
-.mc-marks dd { font-size: 16px; font-weight: 700; color: #fff; }
 
 /* Case studies */
 .mc-cases { margin-top: 32px; display: grid; gap: 18px; }

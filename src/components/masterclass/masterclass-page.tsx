@@ -560,14 +560,6 @@ export function MasterclassPage() {
 
               <h3 className="mc-h3">{SPEAKER.missionTitle}</h3>
               <p className="mc-body">{SPEAKER.mission}</p>
-              <dl className="mc-marks" aria-label="Academic marks">
-                {SPEAKER.marks.map((mark) => (
-                  <div key={mark.label}>
-                    <dt>{mark.label}</dt>
-                    <dd>{mark.value}</dd>
-                  </div>
-                ))}
-              </dl>
 
               <CtaButton onClick={() => register("speaker")} className="mt-9">
                 Learn the system from Nikhil, free
