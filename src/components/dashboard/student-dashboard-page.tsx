@@ -263,6 +263,13 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                             Open profile
                           </Link>
                         </Button>
+                      ) : module.title === "Career Assessments" && unlocked ? (
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to="/dashboard/assessment">
+                            <ArrowRight />
+                            Take assessment
+                          </Link>
+                        </Button>
                       ) : (
                         <span className="text-xs font-medium text-muted-foreground">
                           {unlocked ? "Access will be connected next" : "Locked"}
