@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { BriefcaseBusiness, LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import { ClipboardCheck, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -64,8 +64,14 @@ export function StudentShell({
               Career Profile
             </Link>
           </Button>
+          <Button variant={location.pathname === "/dashboard/assessment" ? "secondary" : "ghost"} size="sm" asChild>
+            <Link to="/dashboard/assessment">
+              <ClipboardCheck aria-hidden="true" />
+              Assessment
+            </Link>
+          </Button>
           <span className="px-3 py-2 text-xs font-medium text-muted-foreground">
-            Learning · Interviews · Jobs · Assessments — coming next
+            Learning · Interviews · Jobs — coming next
           </span>
         </nav>
       </div>
