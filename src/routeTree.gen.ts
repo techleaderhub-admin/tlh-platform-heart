@@ -23,6 +23,8 @@ import { Route as ProgramsRouteImport } from './routes/programs'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
+import { Route as BlogRouteImport } from './routes/blog'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
@@ -44,6 +46,7 @@ import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +115,16 @@ const TermsRoute = TermsRouteImport.update({
 const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   id: '/update-password',
   path: '/update-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -222,6 +235,11 @@ const AuthenticatedAdminAdmin360Route = AuthenticatedAdminAdmin360RouteImport.up
   path: '/admin-360',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -237,6 +255,8 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
+  '/blog': typeof BlogRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
@@ -309,6 +329,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/_authenticated/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
 }
 export interface FileRouteTypes {
@@ -327,6 +348,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/update-password'
+    | '/blog'
+    | '/blog/$slug'
     | '/admin'
     | '/dashboard'
     | '/dashboard/profile'
@@ -343,6 +366,7 @@ export interface FileRouteTypes {
     | '/admin/interview-questions'
     | '/admin/career-os'
     | '/admin/admin-360'
+    | '/admin/blog'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -406,6 +430,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
+  BlogRoute: typeof BlogRoute
+  BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -592,6 +618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAdmin360RouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/career-os': {
       id: '/_authenticated/admin/career-os'
       path: '/career-os'
@@ -647,6 +680,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
   AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
   AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -660,6 +694,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
   AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
   AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
+  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -693,6 +728,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
+  BlogRoute: BlogRoute,
+  BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
