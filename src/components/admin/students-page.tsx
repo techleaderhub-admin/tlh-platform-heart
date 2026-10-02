@@ -20,23 +20,23 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type Membership = Database["public"]["Tables"]["student_memberships"]["Row"];
 type MembershipLevel = Database["public"]["Enums"]["membership_level"];
 
-const MEMBERSHIP_LEVELS: MembershipLevel[] = ["free", "l0", "l1", "l2", "l3", "l4"];
+const MEMBERSHIP_LEVELS: MembershipLevel[] = ["free", "l0", "l1", "l2", "l3"];
 
 const MEMBERSHIP_LABELS: Record<MembershipLevel, string> = {
   free: "Free",
-  l0: "L0",
-  l1: "L1",
-  l2: "L2",
-  l3: "L3",
+  l0: "Bronz",
+  l1: "Silver",
+  l2: "Gold",
+  l3: "Diamond",
   l4: "L4",
 };
 
 const MEMBERSHIP_DESCRIPTIONS: Record<MembershipLevel, string> = {
   free: "Free access",
-  l0: "L0 access",
-  l1: "L1 access",
-  l2: "L2 access",
-  l3: "L3 access",
+  l0: "Bronz access",
+  l1: "Silver access",
+  l2: "Gold access",
+  l3: "Diamond access",
   l4: "L4 access",
 };
 
