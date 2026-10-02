@@ -43,6 +43,7 @@ import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
+import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -216,6 +217,11 @@ const AuthenticatedAdminCareerOsRoute = AuthenticatedAdminCareerOsRouteImport.up
   path: '/career-os',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAdmin360Route = AuthenticatedAdminAdmin360RouteImport.update({
+  id: '/admin-360',
+  path: '/admin-360',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
   '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -301,6 +308,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/_authenticated/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
 }
 export interface FileRouteTypes {
@@ -334,6 +342,7 @@ export interface FileRouteTypes {
     | '/admin/l1-learning'
     | '/admin/interview-questions'
     | '/admin/career-os'
+    | '/admin/admin-360'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
     | '/_authenticated/admin/career-os'
+    | '/_authenticated/admin/admin-360'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -575,6 +585,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/admin-360': {
+      id: '/_authenticated/admin/admin-360'
+      path: '/admin-360'
+      fullPath: '/admin/admin-360'
+      preLoaderRoute: typeof AuthenticatedAdminAdmin360RouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/career-os': {
       id: '/_authenticated/admin/career-os'
       path: '/career-os'
@@ -629,6 +646,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
   AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
+  AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -641,6 +659,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
   AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
+  AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
 }
 
 const AuthenticatedAdminRouteWithChildren =
