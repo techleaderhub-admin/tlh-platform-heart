@@ -128,14 +128,22 @@ export function StudentsPage() {
     setActionStudentId(editingStudent.id);
     setSaveError(null);
     setSuccess(null);
+    const profileUpdate: Database["public"]["Tables"]["profiles"]["Update"] = {
+      full_name: editName.trim() || null,
+      phone: editPhone.trim() || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    // LinkedIn is optional. Do not touch the column when the field is empty,
+    // so Name/Phone edits remain usable even in an environment where the
+    // optional linkedin_url migration has not reached the database yet.
+    if (editLinkedIn.trim()) {
+      profileUpdate.linkedin_url = editLinkedIn.trim();
+    }
+
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({
-        full_name: editName.trim() || null,
-        phone: editPhone.trim() || null,
-        linkedin_url: editLinkedIn.trim() || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(profileUpdate)
       .eq("id", editingStudent.id);
 
     if (updateError) {
