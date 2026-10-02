@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/admin/applications")({
   head: () => ({
     meta: [
       { title: "Application Oversight | TLH Admin" },
-      { name: "description", content: "Review and manage student job applications." },
+      { name: "description", content: "Review and manage Leader job applications." },
     ],
   }),
   component: ApplicationsAdminPage,
