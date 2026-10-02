@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PhoneCountryField, findCountryByIso } from "@/components/auth/phone-country-field";
 import { supabase } from "@/integrations/supabase/client";
 import { signupSchema } from "@/lib/auth-validation";
 
@@ -33,13 +34,16 @@ function SignupPage() {
   const [complete, setComplete] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [phoneCountryCode, setPhoneCountryCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   function validateField(event: React.FocusEvent<HTMLInputElement>) {
     const fieldName = event.currentTarget.name;
     const form = event.currentTarget.form;
     if (!form) return;
 
-    const values = Object.fromEntries(new FormData(form));
+    const formValues = Object.fromEntries(new FormData(form));
+    const values = { ...formValues, phone: `${findDialCode(phoneCountryCode)}${String(formValues.phone ?? "")}` };
     const parsed = signupSchema.safeParse(values);
     const message = parsed.success
       ? undefined
@@ -97,7 +101,8 @@ function SignupPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    const values = Object.fromEntries(new FormData(event.currentTarget));
+    const formValues = Object.fromEntries(new FormData(event.currentTarget));
+    const values = { ...formValues, phone: `${findDialCode(phoneCountryCode)}${String(formValues.phone ?? "")}` };
     const parsed = signupSchema.safeParse(values);
     if (!parsed.success) {
       const flattened = parsed.error.flatten().fieldErrors;
@@ -151,7 +156,6 @@ function SignupPage() {
   const fields = [
     { id: "fullName", label: "Full Name", type: "text", autoComplete: "name", inputMode: undefined },
     { id: "email", label: "Email", type: "email", autoComplete: "email", inputMode: "email" as const },
-    { id: "phone", label: "Phone Number", type: "tel", autoComplete: "tel", inputMode: "tel" as const },
   ];
 
   return (
@@ -169,6 +173,14 @@ function SignupPage() {
               {fieldErrors[field.id] ? <p id={`${field.id}-error`} className="text-sm text-destructive">{fieldErrors[field.id]}</p> : null}
             </div>
           ))}
+          <PhoneCountryField
+            id="phone"
+            value={phoneNumber}
+            onChange={(value) => { setPhoneNumber(value); clearFieldError("phone"); }}
+            countryCode={phoneCountryCode}
+            onCountryCodeChange={setPhoneCountryCode}
+            error={fieldErrors["phone"]}
+          />
           <PasswordField id="password" label="Password" autoComplete="new-password" error={fieldErrors["password"]} onBlur={validateField} onChange={() => clearFieldError("password")} />
           <PasswordField id="confirmPassword" label="Confirm Password" autoComplete="new-password" error={fieldErrors["confirmPassword"]} onBlur={validateField} onChange={() => clearFieldError("confirmPassword")} />
           <Button type="submit" className="h-11 w-full" disabled={submitting}>
