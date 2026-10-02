@@ -22,8 +22,7 @@ export function InterviewQuestionsPage() {
   const [bank, setBank] = useState<BankQuestion[]>([]);
   const [similarQuestions, setSimilarQuestions] = useState<Record<string, Array<{ id: string; question: string; category: string; difficulty: string | null; technology: string | null; similarity: number }>>>({});
   const [loadingSimilar, setLoadingSimilar] = useState<string | null>(null);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [jobs, setJobs] = useState<Record<string, Job>>({});
+
   const [selectedInterview, setSelectedInterview] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [historyCompany, setHistoryCompany] = useState("");
@@ -38,27 +37,24 @@ export function InterviewQuestionsPage() {
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [editingQuestion, setEditingQuestion] = useState({ text: "", category: "Android", difficulty: "medium" });
   const [message, setMessage] = useState<string | null>(null);
-  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_id: "", job_application_url: "" });
+  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_url: "" });
 
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
-    const [interviewResult, questionResult, bankResult, applicationResult, jobResult] = await Promise.all([
+    const [interviewResult, questionResult, bankResult] = await Promise.all([
       supabase.from("interviews").select("*").eq("student_id", userData.user.id).order("interview_date", { ascending: false }),
       supabase.from("interview_questions").select("*"),
       supabase.from("question_bank").select("*").eq("is_active", true).order("created_at", { ascending: false }),
-      supabase.from("job_applications").select("*").eq("student_id", userData.user.id).order("updated_at", { ascending: false }),
-      supabase.from("jobs").select("*"),
     ]);
-    if (interviewResult.error || questionResult.error || bankResult.error || applicationResult.error || jobResult.error) {
+    if (interviewResult.error || questionResult.error || bankResult.error) {
       setMessage("Interview data could not be loaded. Please refresh.");
       return;
     }
     setInterviews(interviewResult.data ?? []);
     setQuestions(questionResult.data ?? []);
     setBank(bankResult.data ?? []);
-    setApplications(applicationResult.data ?? []);
-    setJobs(Object.fromEntries((jobResult.data ?? []).map((job) => [job.id, job])));
+
     if (!selectedInterview && interviewResult.data?.[0]) setSelectedInterview(interviewResult.data[0].id);
   };
 
@@ -94,7 +90,7 @@ export function InterviewQuestionsPage() {
       interview_round: interviewForm.interview_round.trim() || null,
       interview_date: interviewForm.interview_date ? new Date(interviewForm.interview_date).toISOString() : null,
       student_notes: interviewForm.student_notes.trim() || null,
-      job_application_id: interviewForm.job_application_id || null,
+      job_application_id: null,
       job_application_url: interviewForm.job_application_url.trim() || null,
       status: "submitted",
     }).select("*").single();
@@ -104,7 +100,7 @@ export function InterviewQuestionsPage() {
       setInterviews((current) => [data, ...current]);
       setSelectedInterview(data.id);
       setShowInterviewForm(false);
-      setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_id: "", job_application_url: "" });
+      setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_url: "" });
     }
   };
 
