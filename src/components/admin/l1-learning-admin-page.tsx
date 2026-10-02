@@ -1,4 +1,4 @@
-import { BookOpen, CheckCircle2, Layers3, Plus, RefreshCw, Save, Video } from "lucide-react";
+import { BookOpen, CheckCircle2, Layers3, Plus, Save, Video } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/admin/admin-shell";
