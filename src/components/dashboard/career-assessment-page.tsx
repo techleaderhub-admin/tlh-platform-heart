@@ -110,7 +110,7 @@ export function CareerAssessmentPage() {
       if (gapError) {
         setError("Assessment saved, but the skill-gap snapshot could not be updated. " + gapError.message);
       } else {
-        setSkillGaps(gapRows.map((row, index) => ({ id: skillGaps[index]?.id ?? "", ...row })));
+        await load();
       }
       setSaved(true);
       setPreviousAssessment(assessment);
