@@ -31,7 +31,7 @@ export function StudentShell({
             <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
             <div className="hidden min-w-0 sm:block">
               <p className="font-heading text-sm font-bold">Tech Leader Hub</p>
-              <p className="text-xs text-muted-foreground">Student workspace</p>
+              <p className="text-xs text-muted-foreground">Leader workspace</p>
             </div>
           </div>
 
@@ -58,7 +58,7 @@ export function StudentShell({
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <nav
           className="flex gap-1 overflow-x-auto border-b border-border py-2"
-          aria-label="Student navigation"
+          aria-label="Leader navigation"
         >
           <Button variant={location.pathname === "/dashboard" ? "secondary" : "ghost"} size="sm" asChild>
             <Link to="/dashboard">
@@ -91,7 +91,7 @@ export function StudentShell({
 
       <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">Student workspace</p>
+          <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">Leader workspace</p>
           <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">{subtitle}</p>
         </div>
