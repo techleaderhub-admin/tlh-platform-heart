@@ -94,7 +94,7 @@ export function InterviewQuestionsAdminPage() {
   const pending = questions.filter((item) => !item.question_bank_id).length;
 
   return (
-    <AdminShell title="Interview Question Bank" subtitle="Central admin workspace for every student interview experience, every submitted question and the curated question bank.">
+    <AdminShell title="Interview Question Bank" subtitle="Central admin workspace for every Leader interview experience, every submitted question and the curated question bank.">
       <div className="space-y-6">
         {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
 
@@ -107,9 +107,9 @@ export function InterviewQuestionsAdminPage() {
         <Card>
           <CardHeader>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div><CardTitle className="flex items-center gap-2"><Database className="size-5 text-primary" /> All student interview questions</CardTitle><p className="mt-1 text-sm text-muted-foreground">This is the central place to see questions submitted by every student.</p></div>
+              <div><CardTitle className="flex items-center gap-2"><Database className="size-5 text-primary" /> All Leader interview questions</CardTitle><p className="mt-1 text-sm text-muted-foreground">This is the central place to see questions submitted by every Leader.</p></div>
               <div className="flex flex-wrap gap-2">
-                <div className="relative"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input className="pl-9" placeholder="Search company, student, round, question…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
+                <div className="relative"><Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" /><Input className="pl-9" placeholder="Search company, leader, round, question…" value={search} onChange={(e) => setSearch(e.target.value)} /></div>
                 <select className="h-10 rounded-md border border-input bg-background px-3 text-sm" value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}><option value="all">All</option><option value="pending">Needs curation</option><option value="curated">Curated</option></select>
               </div>
             </div>
@@ -125,7 +125,7 @@ export function InterviewQuestionsAdminPage() {
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap gap-2"><Badge variant="outline">{question.category ?? "Other"}</Badge><Badge>{question.difficulty ?? "medium"}</Badge>{question.question_bank_id ? <Badge><CheckCircle2 /> Curated</Badge> : <Badge variant="outline">Needs curation</Badge>}</div>
                       <h3 className="mt-3 font-semibold leading-6">{question.question_text}</h3>
-                      <p className="mt-2 text-xs text-muted-foreground">{student?.full_name ?? interview?.student_id ?? "Unknown student"} · {interview?.company_name ?? "Company not specified"} · {interview?.job_title ?? "Role not specified"} · {interview?.interview_round ?? "Round not specified"}</p>
+                      <p className="mt-2 text-xs text-muted-foreground">{student?.full_name ?? interview?.student_id ?? "Unknown leader"} · {interview?.company_name ?? "Company not specified"} · {interview?.job_title ?? "Role not specified"} · {interview?.interview_round ?? "Round not specified"}</p>
                       {interview?.student_notes && <p className="mt-3 whitespace-pre-wrap rounded-lg bg-muted/40 p-3 text-sm">{interview.student_notes}</p>}
                     </div>
                     {!question.question_bank_id && <Button size="sm" disabled={busy === question.id} onClick={() => void promote(question)}><Upload /> Promote to question bank</Button>}
@@ -139,7 +139,7 @@ export function InterviewQuestionsAdminPage() {
                 </div>
               );
             })}
-            {filteredQuestions.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No student interview questions match the current filters.</p>}
+            {filteredQuestions.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No Leader interview questions match the current filters.</p>}
           </CardContent>
         </Card>
       </div>
