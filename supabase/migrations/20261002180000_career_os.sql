@@ -1,21 +1,34 @@
 -- Career OS / personalized roadmap security and student workflow.
 -- Reuses existing career_profiles, career_skill_gaps, career_roadmaps and roadmap_items tables.
 
-do $$
-begin
-  if not exists (select 1 from pg_policies where schemaname='public' and tablename='career_roadmaps' and policyname='Admins manage career roadmaps') then
-    create policy "Admins manage career roadmaps"
-      on public.career_roadmaps for all to authenticated
-      using (public.has_role(auth.uid(),'admin'::public.app_role))
-      with check (public.has_role(auth.uid(),'admin'::public.app_role));
-  end if;
-  if not exists (select 1 from pg_policies where schemaname='public' and tablename='roadmap_items' and policyname='Admins manage roadmap items') then
-    create policy "Admins manage roadmap items"
-      on public.roadmap_items for all to authenticated
-      using (public.has_role(auth.uid(),'admin'::public.app_role))
-      with check (public.has_role(auth.uid(),'admin'::public.app_role));
-  end if;
-end $$;
+alter table public.career_roadmaps enable row level security;
+alter table public.roadmap_items enable row level security;
+
+drop policy if exists "roadmaps_owner" on public.career_roadmaps;
+drop policy if exists "roadmap_items_owner" on public.roadmap_items;
+drop policy if exists "Admins manage career roadmaps" on public.career_roadmaps;
+drop policy if exists "Admins manage roadmap items" on public.roadmap_items;
+
+create policy "Students read own career roadmaps"
+  on public.career_roadmaps for select to authenticated
+  using (student_id = auth.uid());
+
+create policy "Admins manage career roadmaps"
+  on public.career_roadmaps for all to authenticated
+  using (public.has_role(auth.uid(),'admin'::public.app_role))
+  with check (public.has_role(auth.uid(),'admin'::public.app_role));
+
+create policy "Students read own roadmap items"
+  on public.roadmap_items for select to authenticated
+  using (exists (
+    select 1 from public.career_roadmaps r
+    where r.id = roadmap_items.roadmap_id and r.student_id = auth.uid()
+  ));
+
+create policy "Admins manage roadmap items"
+  on public.roadmap_items for all to authenticated
+  using (public.has_role(auth.uid(),'admin'::public.app_role))
+  with check (public.has_role(auth.uid(),'admin'::public.app_role));
 
 create or replace function public.get_my_career_os()
 returns jsonb
@@ -80,5 +93,7 @@ begin
 end;
 $$;
 
+revoke execute on function public.get_my_career_os() from public;
+revoke execute on function public.update_my_roadmap_item_status(uuid,text) from public;
 grant execute on function public.get_my_career_os() to authenticated;
 grant execute on function public.update_my_roadmap_item_status(uuid,text) to authenticated;
