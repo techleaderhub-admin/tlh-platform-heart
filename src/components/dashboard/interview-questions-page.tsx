@@ -13,8 +13,6 @@ import type { Database } from "@/integrations/supabase/types";
 type Interview = Database["public"]["Tables"]["interviews"]["Row"];
 type InterviewQuestion = Database["public"]["Tables"]["interview_questions"]["Row"];
 type BankQuestion = Database["public"]["Tables"]["question_bank"]["Row"];
-type Application = Database["public"]["Tables"]["job_applications"]["Row"];
-type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
 export function InterviewQuestionsPage() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
