@@ -12,6 +12,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Question = Database["public"]["Tables"]["l1_assessment_questions"]["Row"];
 type Attempt = Database["public"]["Tables"]["l1_assessment_attempts"]["Row"];
 type Answer = Database["public"]["Tables"]["l1_assessment_answers"]["Row"];
+type CategoryResult = Database["public"]["Functions"]["get_l1_assessment_category_results"]["Returns"][number];
 
 const options = ["a", "b", "c", "d"] as const;
 type Option = (typeof options)[number];
@@ -23,6 +24,7 @@ export function L1KnowledgeCheckPage() {
   const [answers, setAnswers] = useState<Record<string, Option>>({});
   const [attempt, setAttempt] = useState<Attempt | null>(null);
   const [result, setResult] = useState<Attempt | null>(null);
+  const [categoryResults, setCategoryResults] = useState<CategoryResult[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [starting, setStarting] = useState(false);
@@ -63,6 +65,13 @@ export function L1KnowledgeCheckPage() {
     if (latest?.status === "submitted") {
       setResult(latest);
       setAttempt(null);
+      const categoryResult = await supabase.rpc("get_l1_assessment_category_results", { p_attempt_id: latest.id });
+      if (categoryResult.error) {
+        setError("Your assessment result loaded, but category insights could not be calculated.");
+        setCategoryResults([]);
+      } else {
+        setCategoryResults(categoryResult.data ?? []);
+      }
     } else if (latest?.status === "in_progress") {
       setAttempt(latest);
       const { data: answerRows, error: answerError } = await supabase
@@ -108,6 +117,7 @@ export function L1KnowledgeCheckPage() {
     } else {
       setAttempt(data);
       setResult(null);
+      setCategoryResults([]);
       setAnswers({});
       setCurrentIndex(0);
     }
@@ -142,6 +152,13 @@ export function L1KnowledgeCheckPage() {
     } else {
       setResult(data);
       setAttempt(null);
+      const categoryResult = await supabase.rpc("get_l1_assessment_category_results", { p_attempt_id: data.id });
+      if (categoryResult.error) {
+        setError("Your assessment was submitted, but category insights could not be calculated.");
+        setCategoryResults([]);
+      } else {
+        setCategoryResults(categoryResult.data ?? []);
+      }
     }
     setSubmitting(false);
   };
@@ -151,6 +168,19 @@ export function L1KnowledgeCheckPage() {
     questions.forEach((q) => counts.set(q.category, (counts.get(q.category) ?? 0) + 1));
     return Array.from(counts.entries());
   }, [questions]);
+
+  const categoryStatus = (score: number) => {
+    if (score < 60) return { label: "Needs review", className: "text-destructive" };
+    if (score < 80) return { label: "Developing", className: "text-primary" };
+    return { label: "Strong", className: "text-primary" };
+  };
+
+  const weakestCategory = categoryResults[0];
+  const nextGuidance = result
+    ? result.passed
+      ? "Review the categories marked Needs review or Developing, then continue with your L1 learning plan."
+      : "Focus on the categories marked Needs review first, revisit the related L1 lessons, then retake the knowledge check."
+    : "";
 
   if (loading) {
     return <StudentShell title="L1 Knowledge Check" subtitle="Loading your assessment…" membershipLabel="L1 Silver Membership"><Card><CardContent className="p-6 text-sm text-muted-foreground">Loading questions and saved progress…</CardContent></Card></StudentShell>;
@@ -180,8 +210,49 @@ export function L1KnowledgeCheckPage() {
               <p className="mt-6 max-w-2xl text-sm leading-6 text-muted-foreground">
                 This result is a readiness signal for the TLH journey. It does not automatically change your membership level.
               </p>
+
+              {categoryResults.length > 0 && (
+                <div className="mt-7">
+                  <div>
+                    <p className="font-semibold">Category breakdown</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Use this to decide which L1 topics need more practice before your next attempt.
+                    </p>
+                  </div>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {categoryResults.map((item) => {
+                      const status = categoryStatus(item.score);
+                      return (
+                        <div key={item.category} className="rounded-xl border bg-background p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-semibold">{item.category}</p>
+                              <p className={"mt-1 text-xs font-medium " + status.className}>{status.label}</p>
+                            </div>
+                            <span className="font-heading text-xl font-bold">{item.score}%</span>
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            {item.correct_answers} / {item.total_questions} correct
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-4 rounded-xl border border-primary/20 bg-primary/[0.04] p-4">
+                    <p className="text-sm font-semibold">Next step</p>
+                    <p className="mt-1 text-sm leading-6 text-muted-foreground">{nextGuidance}</p>
+                    {weakestCategory && (
+                      <Badge variant="outline" className="mt-3 border-primary/30 text-primary">
+                        Start with: {weakestCategory.category}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-6 flex flex-wrap gap-3">
-                <Button variant="outline" onClick={() => { setResult(null); setAnswers({}); setCurrentIndex(0); void start(); }} disabled={starting}>
+                <Button variant="outline" onClick={() => { setResult(null); setCategoryResults([]); setAnswers({}); setCurrentIndex(0); void start(); }} disabled={starting}>
                   <RotateCcw />
                   Retake assessment
                 </Button>

@@ -42,3 +42,19 @@ The result is stored as a readiness signal. It does **not** automatically upgrad
 6. Student sees the result and can retake.
 
 The V1 question set is stored in l1_assessment_questions so the question content can later be managed from an admin workspace without changing the student UI.
+
+
+## Progression insights
+
+After submission, the student sees a server-calculated category breakdown.
+
+Category guidance is:
+- below 60%: Needs review
+- 60–79%: Developing
+- 80% or higher: Strong
+
+The weakest category is highlighted as the suggested starting point for review. Students are guided to revisit relevant L1 learning content and retake the knowledge check when appropriate.
+
+These insights are guidance only. They do not change membership, unlock paid levels, or create a career outcome automatically.
+
+Category scores are calculated by the database function `get_l1_assessment_category_results`, so the client does not calculate the answer key.

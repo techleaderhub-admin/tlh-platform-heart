@@ -1315,6 +1315,17 @@ export type Database = {
         }
         Returns: Database["public"]["Tables"]["l1_assessment_attempts"]["Row"]
       }
+      get_l1_assessment_category_results: {
+        Args: {
+          p_attempt_id: string
+        }
+        Returns: {
+          category: string
+          total_questions: number
+          correct_answers: number
+          score: number
+        }[]
+      }
     }
     Enums: {
       membership_level: "free" | "l0" | "l1" | "l2" | "l3" | "l4"
