@@ -4,6 +4,7 @@ import { AlertCircle, ArrowRight, KeyRound, LoaderCircle } from "lucide-react";
 
 import { AuthShell } from "@/components/auth/auth-shell";
 import { PasswordField } from "@/components/auth/password-field";
+import { PhoneCountryField, findCountryByIso } from "@/components/auth/phone-country-field";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,9 @@ function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [loginMethod, setLoginMethod] = useState<"email" | "phone">("email");
+  const [phoneCountryCode, setPhoneCountryCode] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -57,7 +61,11 @@ function LoginPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    const values = Object.fromEntries(new FormData(event.currentTarget));
+    const formValues = Object.fromEntries(new FormData(event.currentTarget));
+    const identifier = loginMethod === "phone"
+      ? `${findCountryByIso(phoneCountryCode).dialCode}${phoneNumber}`
+      : String(formValues.identifier ?? "");
+    const values = { ...formValues, identifier };
     const parsed = loginSchema.safeParse(values);
     if (!parsed.success) {
       const flattened = parsed.error.flatten().fieldErrors;
@@ -98,10 +106,46 @@ function LoginPage() {
         {error ? <Alert variant="destructive" className="mt-6"><AlertCircle aria-hidden="true" /><AlertDescription>{error}</AlertDescription></Alert> : null}
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit} noValidate>
-          <div className="space-y-2">
-            <Label htmlFor="identifier">Email or Phone Number</Label>
-            <Input id="identifier" name="identifier" autoComplete="username" inputMode="email" className="h-11" aria-invalid={Boolean(fieldErrors["identifier"])} aria-describedby={fieldErrors["identifier"] ? "identifier-error" : undefined} required />
-            {fieldErrors["identifier"] ? <p id="identifier-error" className="text-sm text-destructive">{fieldErrors["identifier"]}</p> : null}
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 rounded-lg border border-border bg-muted/40 p-1" role="tablist" aria-label="Sign in method">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={loginMethod === "email"}
+                className={loginMethod === "email" ? "rounded-md bg-background px-3 py-2 text-sm font-semibold text-foreground shadow-sm" : "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"}
+                onClick={() => { setLoginMethod("email"); setFieldErrors({}); }}
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={loginMethod === "phone"}
+                className={loginMethod === "phone" ? "rounded-md bg-background px-3 py-2 text-sm font-semibold text-foreground shadow-sm" : "rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"}
+                onClick={() => { setLoginMethod("phone"); setFieldErrors({}); }}
+              >
+                Phone Number
+              </button>
+            </div>
+
+            {loginMethod === "email" ? (
+              <div className="space-y-2">
+                <Label htmlFor="identifier">Email</Label>
+                <Input id="identifier" name="identifier" type="email" autoComplete="username" inputMode="email" className="h-11" aria-invalid={Boolean(fieldErrors["identifier"])} aria-describedby={fieldErrors["identifier"] ? "identifier-error" : undefined} required />
+                {fieldErrors["identifier"] ? <p id="identifier-error" className="text-sm text-destructive">{fieldErrors["identifier"]}</p> : null}
+              </div>
+            ) : (
+              <PhoneCountryField
+                id="identifier"
+                label="Phone Number"
+                value={phoneNumber}
+                onChange={(value) => { setPhoneNumber(value); setFieldErrors((current) => { const next = { ...current }; delete next.identifier; return next; }); }}
+                countryCode={phoneCountryCode}
+                onCountryCodeChange={setPhoneCountryCode}
+                error={fieldErrors["identifier"]}
+                autoComplete="username"
+              />
+            )}
           </div>
           <PasswordField id="password" label="Password" autoComplete="current-password" error={fieldErrors["password"]} />
           <Button type="submit" className="h-11 w-full" disabled={submitting}>
