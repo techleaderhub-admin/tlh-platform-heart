@@ -272,6 +272,7 @@ export interface FileRoutesByTo {
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
@@ -296,8 +297,10 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/_authenticated/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
+  '/_authenticated/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
 }
 export interface FileRouteTypes {
@@ -329,6 +332,7 @@ export interface FileRouteTypes {
     | '/admin/foundation'
     | '/admin/l1-learning'
     | '/admin/interview-questions'
+    | '/admin/career-os'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
