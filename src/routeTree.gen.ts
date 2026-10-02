@@ -46,6 +46,7 @@ import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_
 import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './routes/_authenticated/dashboard/interview-questions'
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard/jobs'
 import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
+import { Route as AuthenticatedDashboardL2KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l2-knowledge-check'
 import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 
@@ -250,6 +251,12 @@ const AuthenticatedDashboardL1KnowledgeCheckRoute =
     path: '/l1-knowledge-check',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardL2KnowledgeCheckRoute =
+  AuthenticatedDashboardL2KnowledgeCheckRouteImport.update({
+    id: '/l2-knowledge-check',
+    path: '/l2-knowledge-check',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardL1LearningRoute =
   AuthenticatedDashboardL1LearningRouteImport.update({
     id: '/l1-learning',
@@ -300,6 +307,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
   '/dashboard/l1-knowledge-check': typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  '/dashboard/l2-knowledge-check': typeof AuthenticatedDashboardL2KnowledgeCheckRoute
   '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
 }
@@ -847,6 +855,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardInterviewQuestionsRoute: typeof AuthenticatedDashboardInterviewQuestionsRoute
   AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRoute
   AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  AuthenticatedDashboardL2KnowledgeCheckRoute: typeof AuthenticatedDashboardL2KnowledgeCheckRoute
   AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
 }
@@ -865,6 +874,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardJobsRoute: AuthenticatedDashboardJobsRoute,
     AuthenticatedDashboardL1KnowledgeCheckRoute:
       AuthenticatedDashboardL1KnowledgeCheckRoute,
+    AuthenticatedDashboardL2KnowledgeCheckRoute:
+      AuthenticatedDashboardL2KnowledgeCheckRoute,
     AuthenticatedDashboardL1LearningRoute:
       AuthenticatedDashboardL1LearningRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,

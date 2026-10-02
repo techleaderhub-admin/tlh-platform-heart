@@ -79,8 +79,8 @@ function getStage(level: MembershipLevel) {
       eyebrow: "L2 Advanced",
       title: "Advance your Android skills",
       description: "The L2 knowledge-check journey is the next checkpoint for this membership level.",
-      href: null,
-      cta: "L2 knowledge check",
+      href: "/dashboard/l2-knowledge-check",
+      cta: "Take L2 knowledge check",
     };
   }
   if (level === "l3") {
