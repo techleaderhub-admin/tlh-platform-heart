@@ -69,17 +69,17 @@ revoke all on function public.submit_l1_assessment(uuid) from anon, public;
 grant execute on function public.submit_l1_assessment(uuid) to authenticated;
 
 -- Payment event ingestion is reserved for trusted server-side/webhook execution.
-revoke all on function public.record_payment_event(text, text, text, jsonb, uuid) from public, authenticated;
+revoke all on function public.record_payment_event(text, text, text, jsonb, uuid) from anon, authenticated, public;
 
 -- Trigger-only functions are not RPC APIs.
-revoke all on function public.apply_successful_payment_membership() from public, authenticated;
-revoke all on function public.ensure_free_membership() from public, authenticated;
-revoke all on function public.record_membership_change() from public, authenticated;
-revoke all on function public.touch_career_skill_gap() from public, authenticated;
-revoke all on function public.touch_foundation_resource_updated_at() from public, authenticated;
-revoke all on function public.touch_payment_products_updated_at() from public, authenticated;
-revoke all on function public.touch_student_membership() from public, authenticated;
-revoke all on function public.touch_updated_at() from public, authenticated;
+revoke all on function public.apply_successful_payment_membership() from anon, authenticated, public;
+revoke all on function public.ensure_free_membership() from anon, authenticated, public;
+revoke all on function public.record_membership_change() from anon, authenticated, public;
+revoke all on function public.touch_career_skill_gap() from anon, authenticated, public;
+revoke all on function public.touch_foundation_resource_updated_at() from anon, authenticated, public;
+revoke all on function public.touch_payment_products_updated_at() from anon, authenticated, public;
+revoke all on function public.touch_student_membership() from anon, authenticated, public;
+revoke all on function public.touch_updated_at() from anon, authenticated, public;
 
 -- 3) Policies using auth.uid() should not be exposed to anonymous callers.
 alter policy "career_assessments_owner"
