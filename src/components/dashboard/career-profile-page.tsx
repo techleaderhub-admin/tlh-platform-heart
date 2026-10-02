@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { ArrowLeft, CheckCircle2, FileText, Plus, Save, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -26,13 +27,6 @@ const DEFAULT_FORM = {
   primary_skills: [] as string[],
   preferred_locations: [] as string[],
 };
-
-function splitList(value: string) {
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
 
 function ProfileListEditor({
   label,
@@ -96,12 +90,13 @@ function ProfileListEditor({
   );
 }
 
-export function CareerProfilePage({ name }: { name: string | null }) {
+export function CareerProfilePage() {
   const [form, setForm] = useState(DEFAULT_FORM);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [membershipLabel, setMembershipLabel] = useState("Free Membership");
 
   const load = async () => {
     setLoading(true);
@@ -114,11 +109,14 @@ export function CareerProfilePage({ name }: { name: string | null }) {
       return;
     }
 
-    const { data, error: profileError } = await supabase
-      .from("career_profiles")
-      .select("*")
-      .eq("student_id", userData.user.id)
-      .maybeSingle();
+    const [{ data, error: profileError }, { data: membership }] = await Promise.all([
+      supabase.from("career_profiles").select("*").eq("student_id", userData.user.id).maybeSingle(),
+      supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
+    ]);
+
+    if (membership?.is_active !== false && membership?.level) {
+      setMembershipLabel(membership.level === "free" ? "Free Membership" : membership.level.toUpperCase() + " Membership");
+    }
 
     if (profileError) {
       setError("We could not load your career profile. Please refresh and try again.");
@@ -150,7 +148,7 @@ export function CareerProfilePage({ name }: { name: string | null }) {
     setForm((current) => ({ ...current, [key]: value }));
   };
 
-  const save = async (event: React.FormEvent<HTMLFormElement>) => {
+  const save = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSaving(true);
     setSaved(false);
@@ -230,7 +228,7 @@ export function CareerProfilePage({ name }: { name: string | null }) {
     <StudentShell
       title="Career Profile"
       subtitle="Create the career profile that TLH will use as the foundation for assessments, roadmap planning, learning and job workflows."
-      membershipLabel="Career Profile"
+      membershipLabel={membershipLabel}
     >
       <form onSubmit={save} className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
