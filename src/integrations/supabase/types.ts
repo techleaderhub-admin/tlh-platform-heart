@@ -15,6 +15,108 @@ export type Database = {
   public: {
     Tables: {
 
+      l2_assessment_questions: {
+        Row: {
+          id: string
+          question_text: string
+          category: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          correct_option: string
+          explanation: string | null
+          sort_order: number
+          is_active: boolean
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          question_text: string
+          category: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          correct_option: string
+          explanation?: string | null
+          sort_order?: number
+          is_active?: boolean
+          created_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<{
+          question_text: string
+          category: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          correct_option: string
+          explanation: string | null
+          sort_order: number
+          is_active: boolean
+          created_by: string | null
+          updated_at: string
+        }>
+        Relationships: []
+      }
+      l2_assessment_attempts: {
+        Row: {
+          id: string
+          student_id: string
+          status: string
+          score: number | null
+          total_questions: number | null
+          passed: boolean | null
+          started_at: string
+          submitted_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          student_id: string
+          status?: string
+          score?: number | null
+          total_questions?: number | null
+          passed?: boolean | null
+          started_at?: string
+          submitted_at?: string | null
+          created_at?: string
+        }
+        Update: Partial<{
+          status: string
+          score: number | null
+          total_questions: number | null
+          passed: boolean | null
+          started_at: string
+          submitted_at: string | null
+        }>
+        Relationships: []
+      }
+      l2_assessment_answers: {
+        Row: {
+          id: string
+          attempt_id: string
+          question_id: string
+          selected_option: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          attempt_id: string
+          question_id: string
+          selected_option?: string | null
+          created_at?: string
+        }
+        Update: {
+          selected_option?: string | null
+        }
+        Relationships: []
+      }
       l1_assignment_submissions: {
         Row: {
           assignment_id: string
@@ -1411,6 +1513,45 @@ export type Database = {
           sort_order: number
           is_active: boolean
         }[]
+      }
+
+      get_l2_assessment_questions: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          question_text: string
+          category: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          explanation: string | null
+          sort_order: number
+          is_active: boolean
+        }[]
+      }
+      get_l2_assessment_category_results: {
+        Args: { p_attempt_id: string }
+        Returns: {
+          category: string
+          correct_answers: number
+          total_questions: number
+          score: number
+        }[]
+      }
+      submit_l2_assessment: {
+        Args: { p_attempt_id: string }
+        Returns: {
+          id: string
+          student_id: string
+          status: string
+          score: number | null
+          total_questions: number | null
+          passed: boolean | null
+          started_at: string
+          submitted_at: string | null
+          created_at: string
+        }
       }
 
       record_payment_event: {
