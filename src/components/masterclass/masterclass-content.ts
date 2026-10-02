@@ -22,12 +22,10 @@ export const EVENT = {
 } as const;
 
 /**
- * Hero video. Replace with the 2-minute VSL's YouTube ID when it is ready.
- * Until then it plays Nikhil's existing journey video.
+ * Hero video (2-minute VSL) on YouTube. Loads only when the visitor presses play.
  */
 export const VSL = {
-  youtubeId: "TnDhnKljrqo",
-  isPlaceholder: true,
+  youtubeId: "fAg36WhbQyc",
   label: "Watch the 2-minute overview",
 } as const;
 
@@ -196,11 +194,11 @@ export const BONUSES = [
 /* ---------- Section 2: About the speaker ---------- */
 
 export const SPEAKER = {
-  name: "Nikhil Kumar Rai",
+  name: "Nikhil Rai",
   title: "India's #1 Android Career Coach & Founder of Tech Leader Hub",
   experienceTitle: "My Experience & Expertise",
   experience:
-    "I am Nikhil Kumar Rai, India’s #1 Android Career Coach and the founder of Tech Leader Hub and Droid Skool. Over the past 13+ years, I have served as a Lead and Architect for top-tier product companies including OLA, PayU, Gameskraft, and Verizon. I have architected and scaled platforms like Ola Maps, LazyPay, Pocket52, and Verizon Messages that are actively used by more than 100 million users on a daily basis.",
+    "I am Nikhil Rai, India’s #1 Android Career Coach and the founder of Tech Leader Hub and Droid Skool. Over the past 13+ years, I have served as a Lead and Architect for top-tier product companies including OLA, PayU, Gameskraft, and Verizon. I have architected and scaled platforms like Ola Maps, LazyPay, Pocket52, and Verizon Messages that are actively used by more than 100 million users on a daily basis.",
   missionTitle: "My Mission",
   mission:
     'I am living proof that the "Degree Myth" is a lie. I graduated with second-division marks—59% in 10th, 53% in 12th, and 59% in my B.Tech—yet I scaled to a ₹60 LPA base package plus lucrative ESOPs. My concrete mission is to help 100,000 Android developers completely escape low-paying service roles, eradicate layoff anxiety, and command premium compensation packages ranging from ₹16 LPA to ₹60+ LPA. Together, we are reviving the Nalanda spirit to build a legacy of Sovereign Tech Leaders who achieve absolute financial freedom.',
