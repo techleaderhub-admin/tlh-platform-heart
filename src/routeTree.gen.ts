@@ -40,6 +40,7 @@ import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
 import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
+import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -198,6 +199,11 @@ const AuthenticatedAdminApplicationsRoute = AuthenticatedAdminApplicationsRouteI
   path: '/applications',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminAssessmentsRoute = AuthenticatedAdminAssessmentsRouteImport.update({
+  id: '/assessments',
+  path: '/assessments',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -229,6 +235,7 @@ export interface FileRoutesByFullPath {
   '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -539,6 +546,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/assessments': {
+      id: '/_authenticated/admin/assessments'
+      path: '/assessments'
+      fullPath: '/admin/assessments'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -575,6 +589,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
   AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
+  AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -585,6 +600,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminInterviewQuestionsRoute: AuthenticatedAdminInterviewQuestionsRoute,
   AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
+  AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
