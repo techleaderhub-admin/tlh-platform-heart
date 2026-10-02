@@ -15,6 +15,93 @@ export type Database = {
   public: {
     Tables: {
 
+      interview_questions: {
+        Row: {
+          admin_notes: string | null
+          asked_at: string | null
+          candidate_experience_years: number | null
+          company_name: string | null
+          created_at: string
+          difficulty: string
+          id: string
+          interview_round: string | null
+          interview_stage: string | null
+          is_public: boolean
+          question_text: string
+          question_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          role_title: string | null
+          source_type: string
+          status: string
+          submission_notes: string | null
+          submitted_by: string | null
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          asked_at?: string | null
+          candidate_experience_years?: number | null
+          company_name?: string | null
+          created_at?: string
+          difficulty?: string
+          id?: string
+          interview_round?: string | null
+          interview_stage?: string | null
+          is_public?: boolean
+          question_text: string
+          question_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role_title?: string | null
+          source_type?: string
+          status?: string
+          submission_notes?: string | null
+          submitted_by?: string | null
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          asked_at?: string | null
+          candidate_experience_years?: number | null
+          company_name?: string | null
+          created_at?: string
+          difficulty?: string
+          id?: string
+          interview_round?: string | null
+          interview_stage?: string | null
+          is_public?: boolean
+          question_text?: string
+          question_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role_title?: string | null
+          source_type?: string
+          status?: string
+          submission_notes?: string | null
+          submitted_by?: string | null
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_questions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interview_questions_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       l1_assignment_submissions: {
         Row: {
           assignment_id: string
