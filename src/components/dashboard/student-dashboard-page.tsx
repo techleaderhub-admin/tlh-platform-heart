@@ -59,10 +59,10 @@ type DashboardData = {
 
 const LEVEL_LABEL: Record<MembershipLevel, string> = {
   free: "Free",
-  l0: "L0 Foundation",
-  l1: "L1 Silver",
-  l2: "L2 Advanced",
-  l3: "L3 Career Track",
+  l0: "Bronz",
+  l1: "Silver",
+  l2: "Gold",
+  l3: "Diamond",
   l4: "L4",
 };
 
@@ -76,10 +76,10 @@ const LEVEL_RANK: Record<MembershipLevel, number> = {
 };
 
 const STAGES = [
-  { key: "foundation", label: "Free / L0", description: "Foundation reading", rank: 1 },
-  { key: "l1", label: "L1 Silver", description: "Learning + knowledge check", rank: 2 },
-  { key: "l2", label: "L2 Advanced", description: "Advanced knowledge check", rank: 3 },
-  { key: "l3", label: "L3 Career Track", description: "Course + assignments + live sessions", rank: 4 },
+  { key: "foundation", label: "Free", description: "Foundation reading", rank: 1 },
+  { key: "l1", label: "Silver", description: "Learning + knowledge check", rank: 2 },
+  { key: "l2", label: "Gold", description: "Advanced knowledge check", rank: 3 },
+  { key: "l3", label: "Diamond", description: "Course + assignments + live sessions", rank: 4 },
 ] as const;
 
 function pct(done: number, total: number) {
@@ -98,27 +98,27 @@ function stageFor(level: MembershipLevel) {
   }
   if (level === "l1") {
     return {
-      eyebrow: "L1 Silver",
+      eyebrow: "Silver",
       title: "Build stronger Android fundamentals",
-      description: "Learn, practice through assignments and use the L1 knowledge check as your next checkpoint.",
+      description: "Learn, practice through assignments and use the Silver knowledge check as your next checkpoint.",
       href: "/dashboard/l1-learning",
       cta: "Continue L1 learning",
     };
   }
   if (level === "l2") {
     return {
-      eyebrow: "L2 Advanced",
+      eyebrow: "Gold",
       title: "Advance your Android engineering depth",
-      description: "Use the L2 knowledge check to measure advanced Android readiness and identify areas to strengthen.",
+      description: "Use the Gold knowledge check to measure advanced Android readiness and identify areas to strengthen.",
       href: "/dashboard/l2-knowledge-check",
       cta: "Open L2 knowledge check",
     };
   }
   if (level === "l3") {
     return {
-      eyebrow: "L3 Career Track",
+      eyebrow: "Diamond",
       title: "Execute your career track",
-      description: "Move through the L3 course, assignments and live sessions while building real interview evidence.",
+      description: "Move through the Diamond course, assignments and live sessions while building real interview evidence.",
       href: "/dashboard/l3-course",
       cta: "Continue L3 track",
     };
@@ -388,15 +388,15 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       if (!data.l1.published) {
         return {
-          title: "L1 learning content is not published yet",
-          description: "Your L1 workspace is ready. An admin needs to publish the course content.",
+          title: "Silver learning content is not published yet",
+          description: "Your Silver workspace is ready. An admin needs to publish the course content.",
           href: null,
           label: "Content pending",
         };
       }
       if (data.l1.lessonsCompleted < data.l1.lessonsTotal) {
         return {
-          title: "Continue L1 learning",
+          title: "Continue Silver learning",
           description: `${data.l1.lessonsCompleted} of ${data.l1.lessonsTotal} lessons completed.`,
           href: "/dashboard/l1-learning",
           label: "Continue learning",
@@ -404,7 +404,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       if (data.l1.assignmentsSubmitted < data.l1.assignmentsTotal) {
         return {
-          title: "Submit your required L1 assignments",
+          title: "Submit your required Silver assignments",
           description: `${data.l1.assignmentsSubmitted} of ${data.l1.assignmentsTotal} required assignments submitted.`,
           href: "/dashboard/l1-learning",
           label: "Open assignments",
@@ -412,14 +412,14 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       if (!data.l1.latestAttempt || data.l1.latestAttempt.status !== "submitted") {
         return {
-          title: "Take your L1 knowledge check",
-          description: "Use the checkpoint to measure your current L1 readiness.",
+          title: "Take your Silver knowledge check",
+          description: "Use the checkpoint to measure your current Silver readiness.",
           href: "/dashboard/l1-knowledge-check",
           label: "Take knowledge check",
         };
       }
       return {
-        title: data.l1.latestAttempt.passed ? "Review your L1 result" : "Review and retake your L1 knowledge check",
+        title: data.l1.latestAttempt.passed ? "Review your Silver result" : "Review and retake your Silver knowledge check",
         description: `Latest score: ${data.l1.latestAttempt.score ?? 0}%. The result is a readiness signal and does not automatically change membership.`,
         href: "/dashboard/l1-knowledge-check",
         label: data.l1.latestAttempt.passed ? "View result" : "Review result",
@@ -464,18 +464,18 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       if (!data.l3.published) {
         return {
-          title: "L3 career-track content is being prepared",
-          description: "Your L3 area is ready. An admin needs to publish the program and course content.",
+          title: "Diamond career-track content is being prepared",
+          description: "Your Diamond area is ready. An admin needs to publish the program and course content.",
           href: null,
           label: "Content pending",
         };
       }
       if (data.l3.lessonsCompleted < data.l3.lessonsTotal || data.l3.requiredAssignmentsSubmitted < data.l3.requiredAssignmentsTotal) {
         return {
-          title: "Continue your L3 career track",
+          title: "Continue your Diamond career track",
           description: `${data.l3.lessonsCompleted}/${data.l3.lessonsTotal} lessons and ${data.l3.requiredAssignmentsSubmitted}/${data.l3.requiredAssignmentsTotal} required assignments complete.`,
           href: "/dashboard/l3-course",
-          label: "Continue L3",
+          label: "Continue Diamond",
         };
       }
       if (data.l3.sessionsResponded < data.l3.sessionsTotal) {
@@ -675,8 +675,8 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
             ) : data.membership === "l1" ? (
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2"><BookOpen className="size-5 text-primary" /><CardTitle>L1 Progress</CardTitle></div>
-                  <p className="text-sm text-muted-foreground">Learning, assignments and knowledge-check status.</p>
+                  <div className="flex items-center gap-2"><BookOpen className="size-5 text-primary" /><CardTitle>Silver Progress</CardTitle></div>
+                  <p className="text-sm text-muted-foreground">Learning, assignments and knowledge-check status for Silver.</p>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-3">
                   <div className="rounded-xl border p-4">
@@ -706,8 +706,8 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
             ) : data.membership === "l2" ? (
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2"><ClipboardCheck className="size-5 text-primary" /><CardTitle>L2 Progress</CardTitle></div>
-                  <p className="text-sm text-muted-foreground">Your latest advanced knowledge-check state.</p>
+                  <div className="flex items-center gap-2"><ClipboardCheck className="size-5 text-primary" /><CardTitle>Gold Progress</CardTitle></div>
+                  <p className="text-sm text-muted-foreground">Your latest Gold knowledge-check state.</p>
                 </CardHeader>
                 <CardContent className="flex flex-wrap items-center justify-between gap-4">
                   <div>
@@ -728,8 +728,8 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
             ) : data.membership === "l3" ? (
               <Card>
                 <CardHeader>
-                  <div className="flex items-center gap-2"><GraduationCap className="size-5 text-primary" /><CardTitle>L3 Career Track Progress</CardTitle></div>
-                  <p className="text-sm text-muted-foreground">Course, assignments and weekly live-session participation.</p>
+                  <div className="flex items-center gap-2"><GraduationCap className="size-5 text-primary" /><CardTitle>Diamond Career Track Progress</CardTitle></div>
+                  <p className="text-sm text-muted-foreground">Diamond course, assignments and weekly live-session participation.</p>
                 </CardHeader>
                 <CardContent className="space-y-5">
                   <div>
