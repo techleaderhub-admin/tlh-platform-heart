@@ -1301,6 +1301,8 @@ export type Database = {
           id: string
           linkedin_url: string | null
           phone: string | null
+          is_blocked: boolean
+          deleted_at: string | null
           updated_at: string
         }
         Insert: {
@@ -1319,6 +1321,8 @@ export type Database = {
           id?: string
           linkedin_url?: string | null
           phone?: string | null
+          is_blocked?: boolean
+          deleted_at?: string | null
           updated_at?: string
         }
         Relationships: []
