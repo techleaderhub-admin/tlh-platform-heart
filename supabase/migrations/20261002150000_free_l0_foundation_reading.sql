@@ -39,7 +39,7 @@ on public.foundation_resources for select to authenticated
 using (
   is_active
   and (
-    public.has_role('admin'::public.app_role, auth.uid())
+    public.has_role(auth.uid(), 'admin'::public.app_role)
     or public.has_membership(minimum_membership)
   )
 );
@@ -47,29 +47,29 @@ using (
 drop policy if exists "Admins manage foundation resources" on public.foundation_resources;
 create policy "Admins manage foundation resources"
 on public.foundation_resources for all to authenticated
-using (public.has_role('admin'::public.app_role, auth.uid()))
-with check (public.has_role('admin'::public.app_role, auth.uid()));
+using (public.has_role(auth.uid(), 'admin'::public.app_role))
+with check (public.has_role(auth.uid(), 'admin'::public.app_role));
 
 drop policy if exists "Students view own reading progress" on public.student_resource_progress;
 create policy "Students view own reading progress"
 on public.student_resource_progress for select to authenticated
-using (student_id = auth.uid() or public.has_role('admin'::public.app_role, auth.uid()));
+using (student_id = auth.uid() or public.has_role(auth.uid(), 'admin'::public.app_role));
 
 drop policy if exists "Students create own reading progress" on public.student_resource_progress;
 create policy "Students create own reading progress"
 on public.student_resource_progress for insert to authenticated
-with check (student_id = auth.uid() or public.has_role('admin'::public.app_role, auth.uid()));
+with check (student_id = auth.uid() or public.has_role(auth.uid(), 'admin'::public.app_role));
 
 drop policy if exists "Students update own reading progress" on public.student_resource_progress;
 create policy "Students update own reading progress"
 on public.student_resource_progress for update to authenticated
-using (student_id = auth.uid() or public.has_role('admin'::public.app_role, auth.uid()))
-with check (student_id = auth.uid() or public.has_role('admin'::public.app_role, auth.uid()));
+using (student_id = auth.uid() or public.has_role(auth.uid(), 'admin'::public.app_role))
+with check (student_id = auth.uid() or public.has_role(auth.uid(), 'admin'::public.app_role));
 
 drop policy if exists "Admins delete reading progress" on public.student_resource_progress;
 create policy "Admins delete reading progress"
 on public.student_resource_progress for delete to authenticated
-using (public.has_role('admin'::public.app_role, auth.uid()));
+using (public.has_role(auth.uid(), 'admin'::public.app_role));
 
 create or replace function public.touch_foundation_resource_updated_at()
 returns trigger
