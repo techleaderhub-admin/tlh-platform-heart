@@ -3,10 +3,10 @@
 ## Levels
 
 - **Free** — default for every new signup; lead/limited-access user.
-- **L0** — entry paid membership.
-- **L1** — membership level 1.
-- **L2** — membership level 2.
-- **L3** — membership level 3.
+- **Bronz (L0)** — entry paid membership.
+- **Silver (L1)** — membership level 1.
+- **Gold (L2)** — membership level 2.
+- **Diamond (L3)** — membership level 3.
 - **L4** — highest membership level.
 - **Admin** — platform role; not a membership level.
 
@@ -26,7 +26,7 @@
 - user_roles controls **Admin vs Student** platform role.
 - student_memberships stores the student's current membership level and status.
 - membership_history records level changes.
-- membership_level is the allowed set: free, l0, l1, l2, l3, l4.
+- membership_level is the internal allowed set: free, l0, l1, l2, l3, l4. User-facing membership names are Free, Bronz, Silver, Gold, and Diamond; L4 remains internal until a public name is defined.
 
 ## Access helpers
 
