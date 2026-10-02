@@ -27,6 +27,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
+import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
@@ -119,6 +120,11 @@ const AuthenticatedDashboardProfileRoute = AuthenticatedDashboardProfileRouteImp
 const AuthenticatedDashboardAssessmentRoute = AuthenticatedDashboardAssessmentRouteImport.update({
   id: '/assessment',
   path: '/assessment',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
+const AuthenticatedDashboardL1KnowledgeCheckRoute = AuthenticatedDashboardL1KnowledgeCheckRouteImport.update({
+  id: '/l1-knowledge-check',
+  path: '/l1-knowledge-check',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
 const AuthenticatedDashboardFoundationRoute = AuthenticatedDashboardFoundationRouteImport.update({
@@ -232,6 +238,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/profile'
     | '/dashboard/assessment'
+    | '/dashboard/l1-knowledge-check'
     | '/dashboard/foundation'
     | '/admin/masterclass'
     | '/admin/students'
@@ -445,12 +452,14 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
+  AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
   AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren = {
   AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
   AuthenticatedDashboardAssessmentRoute: AuthenticatedDashboardAssessmentRoute,
+  AuthenticatedDashboardL1KnowledgeCheckRoute: AuthenticatedDashboardL1KnowledgeCheckRoute,
   AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
 }
 
