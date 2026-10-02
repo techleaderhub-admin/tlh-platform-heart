@@ -26,6 +26,7 @@ import { Route as UpdatePasswordRouteImport } from './routes/update-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
+import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 
@@ -113,6 +114,11 @@ const AuthenticatedDashboardProfileRoute = AuthenticatedDashboardProfileRouteImp
   path: '/profile',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
+const AuthenticatedDashboardAssessmentRoute = AuthenticatedDashboardAssessmentRouteImport.update({
+  id: '/assessment',
+  path: '/assessment',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
 const AuthenticatedAdminMasterclassRoute =
   AuthenticatedAdminMasterclassRouteImport.update({
     id: '/masterclass',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
@@ -207,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/dashboard/profile'
+    | '/dashboard/assessment'
     | '/admin/masterclass'
     | '/admin/students'
   fileRoutesByTo: FileRoutesByTo
@@ -248,6 +256,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/assessment'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
   fileRoutesById: FileRoutesById
@@ -390,6 +399,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/assessment': {
+      id: '/_authenticated/dashboard/assessment'
+      path: '/assessment'
+      fullPath: '/dashboard/assessment'
+      preLoaderRoute: typeof AuthenticatedDashboardAssessmentRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/admin/masterclass': {
       id: '/_authenticated/admin/masterclass'
       path: '/masterclass'
@@ -409,10 +425,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren = {
   AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+  AuthenticatedDashboardAssessmentRoute: AuthenticatedDashboardAssessmentRoute,
 }
 
 const AuthenticatedDashboardRouteWithChildren =
