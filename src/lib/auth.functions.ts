@@ -143,3 +143,54 @@ export const getMyIdentity = createServerFn({ method: "GET" })
       role,
     };
   });
+
+
+export const getLeaderEmail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({ userId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: adminRole, error: roleError } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError || !adminRole) throw new Error("Admin access required.");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    if (userError || !userData.user) throw new Error("Leader account could not be loaded.");
+
+    return { email: userData.user.email ?? "" };
+  });
+
+export const updateLeaderEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) => z.object({
+    userId: z.string().uuid(),
+    email: z.string().trim().email(),
+  }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: adminRole, error: roleError } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError || !adminRole) throw new Error("Admin access required.");
+
+    const email = data.email.toLowerCase();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
+      email,
+      email_confirm: true,
+    });
+
+    if (updateError || !updatedUser.user) {
+      throw new Error(updateError?.message ?? "Could not update the Leader email.");
+    }
+
+    return { email: updatedUser.user.email ?? email };
+  });
