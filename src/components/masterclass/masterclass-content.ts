@@ -210,11 +210,6 @@ export const SPEAKER = {
   ],
   companies: ["OLA", "PayU", "Gameskraft", "Verizon"],
   platforms: ["Ola Maps", "LazyPay", "Pocket52", "Verizon Messages"],
-  marks: [
-    { label: "10th", value: "59%" },
-    { label: "12th", value: "53%" },
-    { label: "B.Tech", value: "59%" },
-  ],
 } as const;
 
 /* ---------- Section 6: Case studies ---------- */
