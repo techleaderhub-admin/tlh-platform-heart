@@ -1245,18 +1245,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_l1_learning_summary: {
-        Args: {
-          p_student_id: string
-        }
-        Returns: {
-          total_lessons: number
-          completed_lessons: number
-          required_assignments: number
-          submitted_assignments: number
-          completion_percent: number
-        }[]
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
