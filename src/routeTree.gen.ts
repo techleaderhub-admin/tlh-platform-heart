@@ -28,10 +28,12 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
 import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
+import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
+import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -127,6 +129,11 @@ const AuthenticatedDashboardL1KnowledgeCheckRoute = AuthenticatedDashboardL1Know
   path: '/l1-knowledge-check',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
+const AuthenticatedDashboardL1LearningRoute = AuthenticatedDashboardL1LearningRouteImport.update({
+  id: '/l1-learning',
+  path: '/l1-learning',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
 const AuthenticatedDashboardFoundationRoute = AuthenticatedDashboardFoundationRouteImport.update({
   id: '/foundation',
   path: '/foundation',
@@ -144,6 +151,11 @@ const AuthenticatedAdminStudentsRoute =
     path: '/students',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminL1LearningRoute = AuthenticatedAdminL1LearningRouteImport.update({
+  id: '/l1-learning',
+  path: '/l1-learning',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminFoundationRoute =
   AuthenticatedAdminFoundationRouteImport.update({
     id: '/foundation',
@@ -169,10 +181,12 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
+  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
+  '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -191,6 +205,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
@@ -214,6 +229,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
@@ -239,10 +255,12 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/dashboard/assessment'
     | '/dashboard/l1-knowledge-check'
+    | '/dashboard/l1-learning'
     | '/dashboard/foundation'
     | '/admin/masterclass'
     | '/admin/students'
     | '/admin/foundation'
+    | '/admin/l1-learning'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -453,6 +471,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
   AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
   AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
 }
 
@@ -460,6 +479,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
   AuthenticatedDashboardAssessmentRoute: AuthenticatedDashboardAssessmentRoute,
   AuthenticatedDashboardL1KnowledgeCheckRoute: AuthenticatedDashboardL1KnowledgeCheckRoute,
+  AuthenticatedDashboardL1LearningRoute: AuthenticatedDashboardL1LearningRoute,
   AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
 }
 
@@ -470,12 +490,14 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
   AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
+  AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
   AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
+  AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

@@ -31,7 +31,7 @@ const LEVEL_RANK: Record<MembershipLevel, number> = {
 
 function journeyTitle(level: MembershipLevel) {
   if (level === "free" || level === "l0") return "Complete your foundation reading";
-  if (level === "l1") return "Complete your L1 knowledge check";
+  if (level === "l1") return "Continue your L1 Silver learning";
   if (level === "l2") return "Complete your L2 knowledge check";
   if (level === "l3") return "Continue your weekly L3 career track";
   return "Continue your L4 journey";
@@ -39,7 +39,7 @@ function journeyTitle(level: MembershipLevel) {
 
 function journeyDescription(level: MembershipLevel) {
   if (level === "free" || level === "l0") return "Read the assigned foundation material. Video learning starts with L1 Silver Membership.";
-  if (level === "l1") return "Check what you know across Kotlin, Android fundamentals, Jetpack and application development. Compose is not part of L1.";
+  if (level === "l1") return "Complete the L1 Silver video course, lessons and assignments. Compose is not part of L1.";
   if (level === "l2") return "Check your advanced Android, Kotlin, architecture and production-development knowledge.";
   if (level === "l3") return "Keep the weekly rhythm: course progress, assignments, live session attendance and interview-question recording.";
   return "Continue the advanced career journey assigned to your membership.";
@@ -47,7 +47,7 @@ function journeyDescription(level: MembershipLevel) {
 
 function journeyCta(level: MembershipLevel) {
   if (level === "free" || level === "l0") return "Foundation reading";
-  if (level === "l1") return "L1 knowledge check";
+  if (level === "l1") return "L1 Silver learning";
   if (level === "l2") return "L2 knowledge check";
   if (level === "l3") return "Weekly journey";
   return "Current journey";
@@ -147,7 +147,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                   </Button>
                 ) : membership === "l1" ? (
                   <Button variant="outline" asChild>
-                    <a href="/dashboard/l1-knowledge-check">
+                    <a href="/dashboard/l1-learning">
                       {journeyCta(membership)}
                       <ArrowRight />
                     </a>
@@ -162,7 +162,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                   {membership === "free" || membership === "l0"
                     ? "Complete the assigned reading before moving to the next stage."
                     : membership === "l1"
-                      ? "Complete the 20-question knowledge check. 40% is the defined checkpoint."
+                      ? "Continue your L1 Silver course, complete lessons and submit assignments."
                       : "This journey module will connect when it is built."}
                 </span>
               </div>
