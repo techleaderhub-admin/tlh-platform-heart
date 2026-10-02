@@ -19,15 +19,7 @@ create table if not exists public.blog_posts (
   canonical_url text,
   og_image_url text,
   noindex boolean not null default false,
-  search_vector tsvector generated always as (
-    to_tsvector('english',
-      coalesce(title,'') || ' ' ||
-      coalesce(excerpt,'') || ' ' ||
-      coalesce(content,'') || ' ' ||
-      coalesce(category,'') || ' ' ||
-      coalesce(array_to_string(tags,' '),'')
-    )
-  ) stored,
+  search_vector tsvector,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -38,9 +30,14 @@ create index if not exists blog_posts_category_idx on public.blog_posts(category
 create index if not exists blog_posts_slug_idx on public.blog_posts(slug);
 create index if not exists blog_posts_title_trgm_idx on public.blog_posts using gin(title gin_trgm_ops);
 
-create or replace function public.touch_blog_posts_updated_at()
-returns trigger language plpgsql set search_path = public as $$
+create or replace function public.prepare_blog_post()
+returns trigger language plpgsql set search_path = public as $
 begin
+  new.search_vector := to_tsvector('english',
+    coalesce(new.title,'') || ' ' || coalesce(new.excerpt,'') || ' ' ||
+    coalesce(new.content,'') || ' ' || coalesce(new.category,'') || ' ' ||
+    coalesce(array_to_string(new.tags,' '),'')
+  );
   new.updated_at = now();
   if new.status = 'published' and new.published_at is null then
     new.published_at = now();
@@ -51,10 +48,10 @@ begin
 end;
 $$;
 
-drop trigger if exists blog_posts_updated_at on public.blog_posts;
-create trigger blog_posts_updated_at
-before update on public.blog_posts
-for each row execute function public.touch_blog_posts_updated_at();
+drop trigger if exists blog_posts_prepare on public.blog_posts;
+create trigger blog_posts_prepare
+before insert or update on public.blog_posts
+for each row execute function public.prepare_blog_post();
 
 alter table public.blog_posts enable row level security;
 
