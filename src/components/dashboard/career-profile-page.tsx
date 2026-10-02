@@ -112,7 +112,10 @@ export function CareerProfilePage() {
       return;
     }
 
-    setAccountEmail(userData.user.email ?? "");\n    const metadataName = typeof userData.user.user_metadata?.full_name === "string"\n      ? userData.user.user_metadata.full_name.trim()\n      : "";
+    setAccountEmail(userData.user.email ?? "");
+    const metadataName = typeof userData.user.user_metadata?.full_name === "string"
+      ? userData.user.user_metadata.full_name.trim()
+      : "";
     const [{ data, error: profileError }, { data: membership }, { data: accountProfile, error: accountProfileError }] = await Promise.all([
       supabase.from("career_profiles").select("*").eq("student_id", userData.user.id).maybeSingle(),
       supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
