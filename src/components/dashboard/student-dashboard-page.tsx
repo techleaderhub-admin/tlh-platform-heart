@@ -1,5 +1,5 @@
 import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, MessageSquareText, RefreshCw } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { StudentShell } from "@/components/dashboard/student-shell";
 import { Badge } from "@/components/ui/badge";
@@ -97,18 +97,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
 
   const rank = LEVEL_RANK[membership];
   const firstName = name?.trim().split(/\s+/)[0] || "there";
-  const currentJourneyIndex = Math.min(
-    Math.max(LEVELS.findIndex((level) => LEVEL_RANK[level] >= rank), 0),
-    LEVELS.length - 1,
-  );
 
-  const journeyProgress = useMemo(() => {
-    if (membership === "free") return 0;
-    if (membership === "l0") return 25;
-    if (membership === "l1") return 50;
-    if (membership === "l2") return 75;
-    return 100;
-  }, [membership]);
 
   return (
     <StudentShell
@@ -145,12 +134,11 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                   </p>
                 </div>
                 <div className="rounded-2xl border border-border bg-background px-5 py-4 text-center">
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Journey</p>
-                  <p className="mt-1 text-2xl font-bold text-primary">{journeyProgress}%</p>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground">Stage</p>
+                  <p className="mt-1 text-lg font-bold text-primary">{LEVEL_LABEL[membership]}</p>
                 </div>
               </div>
-              <Progress value={journeyProgress} className="mt-6 h-2" />
-              <div className="mt-5 flex flex-wrap items-center gap-3">
+                            <div className="mt-5 flex flex-wrap items-center gap-3">
                 <Button variant="outline" disabled>
                   {journeyCta(membership)}
                   <ArrowRight />
