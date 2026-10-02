@@ -113,7 +113,7 @@ export function FoundationResourcesAdminPage() {
             </div>
             <div className="space-y-2 md:col-span-2">
               <label className="text-sm font-medium">Description</label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What should the student read or understand?" />
+              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="What should the Leader read or understand?" />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Minimum membership</label>
@@ -139,7 +139,7 @@ export function FoundationResourcesAdminPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <CardTitle>Published resources</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">Students only see active resources allowed by their membership.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Leaders only see active resources allowed by their membership.</p>
               </div>
               <Button variant="outline" size="sm" onClick={() => void load()} disabled={loading}><RefreshCw className={loading ? "animate-spin" : ""} />Refresh</Button>
             </div>
