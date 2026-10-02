@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, MessageSquareText, RefreshCw } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, MessageSquareText, RefreshCw, BriefcaseBusiness } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { StudentShell } from "@/components/dashboard/student-shell";
@@ -209,6 +209,20 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
           </Card>
         )}
 
+        {rank >= LEVEL_RANK.l1 && (
+          <Card className="border-primary/20 bg-primary/[0.03]">
+            <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+              <div>
+                <p className="font-semibold">Jobs & Applications</p>
+                <p className="mt-1 text-sm text-muted-foreground">Browse verified TLH opportunities, save roles and track every application through interviews.</p>
+              </div>
+              <Button variant="outline" asChild>
+                <a href="/dashboard/jobs">Open job board <BriefcaseBusiness /></a>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Your TLH Journey</CardTitle>
@@ -295,11 +309,13 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                 Whenever you attend an interview, record the company, role, date, round, result and every question you remember. You will later be able to search and filter your interview history.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button variant="outline" disabled>
-                  Record an interview
-                  <ArrowRight />
+                <Button variant="outline" asChild>
+                  <a href="/dashboard/interview-questions">
+                    Record an interview
+                    <ArrowRight />
+                  </a>
                 </Button>
-                <span className="self-center text-xs text-muted-foreground">Interview workspace coming next</span>
+                <span className="self-center text-xs text-muted-foreground">Record the interview and add the questions you faced.</span>
               </div>
             </CardContent>
           </Card>
