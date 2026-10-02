@@ -1,11 +1,13 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LayoutDashboard, LogOut, MessageSquareText, UserRound } from "lucide-react";
+import { BookOpen, LayoutDashboard, LogOut, MessageSquareText, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { signOutAndReturnToLogin } from "@/lib/auth-client";
 import { TLHLogo } from "@/components/brand/tlh-logo";
+
+const COURSES_URL = "https://app.techleaderhub.com/web/courses";
 
 export function StudentShell({
   children,
@@ -75,6 +77,12 @@ export function StudentShell({
               <UserRound />
               Profile
             </Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
+            <a href={COURSES_URL} target="_blank" rel="noopener noreferrer">
+              <BookOpen />
+              Courses
+            </a>
           </Button>
           <Button
             variant={location.pathname.startsWith("/dashboard/interview-questions") ? "secondary" : "ghost"}
