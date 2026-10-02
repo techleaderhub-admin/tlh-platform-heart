@@ -1,4 +1,4 @@
-import { BookOpen, Plus, Search, Send } from "lucide-react";
+import { BookOpen, Plus, Search, Send, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { StudentShell } from "@/components/dashboard/student-shell";
@@ -20,6 +20,8 @@ export function InterviewQuestionsPage() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [bank, setBank] = useState<BankQuestion[]>([]);
+  const [similarQuestions, setSimilarQuestions] = useState<Record<string, Array<{ id: string; question: string; category: string; difficulty: string | null; technology: string | null; similarity: number }>>>({});
+  const [loadingSimilar, setLoadingSimilar] = useState<string | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [jobs, setJobs] = useState<Record<string, Job>>({});
   const [selectedInterview, setSelectedInterview] = useState<string | null>(null);
@@ -59,6 +61,21 @@ export function InterviewQuestionsPage() {
   };
 
   useEffect(() => { void load(); }, []);
+
+  const findSimilarQuestions = async (questionId: string) => {
+    if (similarQuestions[questionId]) return;
+    setLoadingSimilar(questionId);
+    const { data, error } = await supabase.rpc("get_similar_question_bank", {
+      p_question_id: questionId,
+      p_limit: 5,
+    });
+    if (error) {
+      setMessage("Similar questions could not be loaded. Please try again.");
+    } else {
+      setSimilarQuestions((current) => ({ ...current, [questionId]: data ?? [] }));
+    }
+    setLoadingSimilar(null);
+  };
 
   const createInterview = async () => {
     if (!interviewForm.company_name.trim()) {
@@ -282,7 +299,31 @@ export function InterviewQuestionsPage() {
         <Card>
           <CardHeader><CardTitle className="flex items-center gap-2"><BookOpen className="size-5 text-primary" /> Shared curated question bank</CardTitle><p className="text-sm text-muted-foreground">Questions approved by admin for study.</p></CardHeader>
           <CardContent className="space-y-3">
-            {bank.map((item) => <div key={item.id} className="rounded-xl border border-border p-4"><div className="flex flex-wrap items-start justify-between gap-3"><p className="font-semibold">{item.question}</p><Badge>{item.difficulty ?? "medium"}</Badge></div><p className="mt-2 text-xs text-muted-foreground">{item.category}{item.technology ? " · " + item.technology : ""}</p></div>)}
+            {bank.map((item) => (
+              <div key={item.id} className="rounded-xl border border-border p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <p className="font-semibold">{item.question}</p>
+                  <Badge>{item.difficulty ?? "medium"}</Badge>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{item.category}{item.technology ? " · " + item.technology : ""}</p>
+                <Button className="mt-3" variant="outline" size="sm" onClick={() => void findSimilarQuestions(item.id)} disabled={loadingSimilar === item.id}>
+                  <Sparkles /> {loadingSimilar === item.id ? "Finding similar questions…" : "Find similar questions"}
+                </Button>
+                {similarQuestions[item.id] && (
+                  <div className="mt-4 space-y-2 rounded-lg bg-muted/30 p-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Similar interview questions</p>
+                    {similarQuestions[item.id].length > 0 ? similarQuestions[item.id].map((similar) => (
+                      <div key={similar.id} className="rounded-lg border border-border bg-background p-3">
+                        <p className="text-sm font-medium">{similar.question}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {similar.category}{similar.technology ? " · " + similar.technology : ""}{similar.difficulty ? " · " + similar.difficulty : ""} · {(similar.similarity * 100).toFixed(0)}% text similarity
+                        </p>
+                      </div>
+                    )) : <p className="text-sm text-muted-foreground">No related curated questions are available yet.</p>}
+                  </div>
+                )}
+              </div>
+            ))}
             {bank.length === 0 && <p className="p-4 text-sm text-muted-foreground">No curated questions have been published yet.</p>}
           </CardContent>
         </Card>
