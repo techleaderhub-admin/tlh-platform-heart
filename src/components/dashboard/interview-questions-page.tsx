@@ -34,7 +34,7 @@ export function InterviewQuestionsPage() {
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
-    const [interviewResult, questionResult, bankResult] = await Promise.all([
+    const [interviewResult, questionResult, bankResult, applicationResult, jobResult] = await Promise.all([
       supabase.from("interviews").select("*").eq("student_id", userData.user.id).order("interview_date", { ascending: false }),
       supabase.from("interview_questions").select("*"),
       supabase.from("question_bank").select("*").eq("is_active", true).order("created_at", { ascending: false }),
