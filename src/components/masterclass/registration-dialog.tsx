@@ -79,7 +79,7 @@ function googleCalendarUrl(startMs: number) {
     text: "Tech Leader Hub Masterclass (Live on Zoom)",
     dates: `${fmt(startMs)}/${fmt(end)}`,
     details:
-      "Free live masterclass with Nikhil Kumar Rai. The Zoom link is sent to your email and WhatsApp.",
+      "Free live masterclass with Nikhil Rai. The Zoom link is sent to your email and WhatsApp.",
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }

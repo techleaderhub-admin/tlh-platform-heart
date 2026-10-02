@@ -5,7 +5,7 @@ import { SITE_URL } from "@/components/home/home-content";
 
 const TITLE = "Free Masterclass: Senior Android Engineers to Tech Leaders | Tech Leader Hub";
 const DESCRIPTION =
-  "Free live masterclass with Nikhil Kumar Rai. The Clean Architecture, System Design (HLD/LLD) and AI-augmented roadmap experienced Android developers use to move from service companies to tier-1 product roles.";
+  "Free live masterclass with Nikhil Rai. The Clean Architecture, System Design (HLD/LLD) and AI-augmented roadmap experienced Android developers use to move from service companies to tier-1 product roles.";
 const URL = `${SITE_URL}/masterclass`;
 const OG_IMAGE = `${SITE_URL}/og-home.jpg`;
 
