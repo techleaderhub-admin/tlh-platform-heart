@@ -78,12 +78,14 @@ export function StudentShell({
               Profile
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" asChild>
-            <a href={COURSES_URL} target="_blank" rel="noopener noreferrer">
-              <BookOpen />
-              Courses
-            </a>
-          </Button>
+          {!membershipLabel.toLowerCase().includes("free") && (
+            <Button variant="ghost" size="sm" asChild>
+              <a href={COURSES_URL} target="_blank" rel="noopener noreferrer">
+                <BookOpen />
+                Courses
+              </a>
+            </Button>
+          )}
           <Button
             variant={location.pathname.startsWith("/dashboard/interview-questions") ? "secondary" : "ghost"}
             size="sm"
