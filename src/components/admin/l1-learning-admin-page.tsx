@@ -42,7 +42,7 @@ export function L1LearningAdminPage() {
   const load = async () => {
     setLoading(true);
     setError(null);
-    const [courseResult, moduleResult, lessonResult, assignmentResult, submissionResult, profileResult] = await Promise.all([
+    const [courseResult, moduleResult, lessonResult, assignmentResult, submissionResult, profileResult, progressResult, membershipResult] = await Promise.all([
       supabase.from("l1_courses").select("*").order("sort_order"),
       supabase.from("l1_course_modules").select("*").order("sort_order"),
       supabase.from("l1_course_lessons").select("*").order("sort_order"),
