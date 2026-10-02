@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Mail, Phone, RefreshCw, Search, Users } from "lucide-react";
+import { Edit3, Mail, Phone, RefreshCw, Search, ShieldAlert, ShieldCheck, Trash2, Users, X } from "lucide-react";
 
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
@@ -66,6 +66,11 @@ export function StudentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [editingStudent, setEditingStudent] = useState<Profile | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editLinkedIn, setEditLinkedIn] = useState("");
+  const [actionStudentId, setActionStudentId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -85,7 +90,7 @@ export function StudentsPage() {
       setMemberships({});
     } else {
       const adminIds = new Set((roles ?? []).filter((row) => row.role === "admin").map((row) => row.user_id));
-      const studentRows = (profiles ?? []).filter((profile) => !adminIds.has(profile.id));
+      const studentRows = (profiles ?? []).filter((profile) => !adminIds.has(profile.id) && !profile.deleted_at);
       const membershipMap = Object.fromEntries(
         (membershipRows ?? []).map((membership) => [membership.student_id, membership]),
       ) as Record<string, Membership>;
@@ -108,6 +113,89 @@ export function StudentsPage() {
       [student.full_name ?? "", student.phone ?? ""].some((value) => value.toLowerCase().includes(term)),
     );
   }, [search, students]);
+
+  const openEdit = (student: Profile) => {
+    setEditingStudent(student);
+    setEditName(student.full_name ?? "");
+    setEditPhone(student.phone ?? "");
+    setEditLinkedIn(student.linkedin_url ?? "");
+    setSaveError(null);
+    setSuccess(null);
+  };
+
+  const saveProfile = async () => {
+    if (!editingStudent) return;
+    setActionStudentId(editingStudent.id);
+    setSaveError(null);
+    setSuccess(null);
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        full_name: editName.trim() || null,
+        phone: editPhone.trim() || null,
+        linkedin_url: editLinkedIn.trim() || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", editingStudent.id);
+
+    if (updateError) {
+      setSaveError("Could not update this Leader. " + updateError.message);
+    } else {
+      setStudents((current) => current.map((student) =>
+        student.id === editingStudent.id
+          ? { ...student, full_name: editName.trim() || null, phone: editPhone.trim() || null, linkedin_url: editLinkedIn.trim() || null, updated_at: new Date().toISOString() }
+          : student,
+      ));
+      setSuccess("Leader information updated successfully.");
+      setEditingStudent(null);
+    }
+    setActionStudentId(null);
+  };
+
+  const toggleBlock = async (student: Profile) => {
+    const nextBlocked = !student.is_blocked;
+    if (!window.confirm(nextBlocked
+      ? "Block this Leader? They will be prevented from signing in."
+      : "Unblock this Leader and allow sign-in again?")) return;
+
+    setActionStudentId(student.id);
+    setSaveError(null);
+    setSuccess(null);
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ is_blocked: nextBlocked, updated_at: new Date().toISOString() })
+      .eq("id", student.id);
+
+    if (updateError) {
+      setSaveError("Could not change the block status. " + updateError.message);
+    } else {
+      setStudents((current) => current.map((row) =>
+        row.id === student.id ? { ...row, is_blocked: nextBlocked, updated_at: new Date().toISOString() } : row,
+      ));
+      setSuccess(nextBlocked ? "Leader has been blocked." : "Leader has been unblocked.");
+    }
+    setActionStudentId(null);
+  };
+
+  const deleteProfile = async (student: Profile) => {
+    if (!window.confirm("Delete this Leader from the admin directory? This hides the profile and prevents sign-in. The Auth account remains for safe recovery.")) return;
+
+    setActionStudentId(student.id);
+    setSaveError(null);
+    setSuccess(null);
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ deleted_at: new Date().toISOString(), is_blocked: true, updated_at: new Date().toISOString() })
+      .eq("id", student.id);
+
+    if (updateError) {
+      setSaveError("Could not delete this Leader profile. " + updateError.message);
+    } else {
+      setStudents((current) => current.filter((row) => row.id !== student.id));
+      setSuccess("Leader profile removed from the admin directory.");
+    }
+    setActionStudentId(null);
+  };
 
   const changeMembership = async (studentId: string, level: MembershipLevel) => {
     const previous = memberships[studentId]?.level ?? "free";
@@ -205,7 +293,8 @@ export function StudentsPage() {
                   <th className="px-5 py-3 font-semibold">Joined</th>
                   <th className="px-5 py-3 font-semibold">Role</th>
                   <th className="px-5 py-3 font-semibold">Membership</th>
-                  <th className="px-5 py-3 text-right font-semibold">Contact</th>
+                  <th className="px-5 py-3 font-semibold">Status</th>
+                  <th className="px-5 py-3 text-right font-semibold">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -214,6 +303,7 @@ export function StudentsPage() {
                   const level: MembershipLevel =
                     membership?.is_active === false ? "free" : (membership?.level ?? "free");
                   const saving = savingStudentId === student.id;
+                  const acting = actionStudentId === student.id;
 
                   return (
                     <tr key={student.id} className="hover:bg-muted/20">
@@ -250,19 +340,28 @@ export function StudentsPage() {
                         </div>
                         {saving && <p className="mt-1 text-xs text-muted-foreground">Saving access…</p>}
                       </td>
+                      <td className="px-5 py-4">
+                        <Badge variant="outline" className={student.is_blocked ? "border-destructive/40 bg-destructive/10 text-destructive" : "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"}>
+                          {student.is_blocked ? "Blocked" : "Active"}
+                        </Badge>
+                      </td>
                       <td className="px-5 py-4 text-right">
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="sm" disabled={acting} title="Edit Leader" onClick={() => openEdit(student)}>
+                            <Edit3 />
+                          </Button>
+                          <Button variant="ghost" size="sm" disabled={acting} title={student.is_blocked ? "Unblock Leader" : "Block Leader"} onClick={() => void toggleBlock(student)}>
+                            {student.is_blocked ? <ShieldCheck /> : <ShieldAlert />}
+                          </Button>
+                          <Button variant="ghost" size="sm" disabled={acting} title="Delete Leader profile" onClick={() => void deleteProfile(student)}>
+                            <Trash2 />
+                          </Button>
                           {student.phone && (
                             <Button asChild variant="ghost" size="sm">
                               <a href={"tel:" + student.phone}><Phone /></a>
                             </Button>
                           )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            disabled
-                            title="Email is stored in Supabase Auth and is not exposed to the profiles table."
-                          >
+                          <Button variant="ghost" size="sm" disabled title="Email is stored in Supabase Auth and is not exposed to the profiles table.">
                             <Mail />
                           </Button>
                         </div>
@@ -275,6 +374,29 @@ export function StudentsPage() {
           </div>
         )}
       </Card>
+
+      {editingStudent ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="edit-leader-title">
+          <Card className="w-full max-w-lg shadow-2xl">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 id="edit-leader-title" className="font-heading text-xl font-bold">Edit Leader</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Update the profile information visible to TLH.</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setEditingStudent(null)} aria-label="Close edit form"><X /></Button>
+              </div>
+              <div className="mt-6 space-y-4">
+                <div className="space-y-2"><label htmlFor="admin-edit-name" className="text-sm font-medium">Full Name</label><Input id="admin-edit-name" value={editName} onChange={(event) => setEditName(event.target.value)} /></div>
+                <div className="space-y-2"><label htmlFor="admin-edit-phone" className="text-sm font-medium">Phone Number</label><Input id="admin-edit-phone" value={editPhone} onChange={(event) => setEditPhone(event.target.value)} inputMode="tel" /></div>
+                <div className="space-y-2"><label htmlFor="admin-edit-linkedin" className="text-sm font-medium">LinkedIn URL</label><Input id="admin-edit-linkedin" value={editLinkedIn} onChange={(event) => setEditLinkedIn(event.target.value)} placeholder="https://www.linkedin.com/in/..." /></div>
+                {saveError ? <p className="text-sm font-medium text-destructive">{saveError}</p> : null}
+                <div className="flex justify-end gap-2 pt-2"><Button variant="outline" onClick={() => setEditingStudent(null)}>Cancel</Button><Button onClick={() => void saveProfile()} disabled={actionStudentId === editingStudent.id}>{actionStudentId === editingStudent.id ? "Saving…" : "Save changes"}</Button></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
     </AdminShell>
   );
 }
