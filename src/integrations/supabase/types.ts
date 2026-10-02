@@ -357,6 +357,83 @@ export type Database = {
           },
         ]
       }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          canonical_url: string | null
+          category: string | null
+          content: string
+          cover_image_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          noindex: boolean
+          og_image_url: string | null
+          published_at: string | null
+          search_vector: string | null
+          seo_description: string | null
+          seo_keywords: string[]
+          seo_title: string | null
+          slug: string
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          canonical_url?: string | null
+          category?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          noindex?: boolean
+          og_image_url?: string | null
+          published_at?: string | null
+          search_vector?: string | null
+          seo_description?: string | null
+          seo_keywords?: string[]
+          seo_title?: string | null
+          slug: string
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          canonical_url?: string | null
+          category?: string | null
+          content?: string
+          cover_image_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          noindex?: boolean
+          og_image_url?: string | null
+          published_at?: string | null
+          search_vector?: string | null
+          seo_description?: string | null
+          seo_keywords?: string[]
+          seo_title?: string | null
+          slug?: string
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       foundation_resources: {
         Row: {
           created_at: string
@@ -1302,6 +1379,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      search_blog_posts: {
+        Args: {
+          p_limit?: number
+          p_query?: string
+        }
+        Returns: {
+          canonical_url: string | null
+          category: string | null
+          cover_image_url: string | null
+          excerpt: string | null
+          id: string
+          noindex: boolean
+          og_image_url: string | null
+          published_at: string | null
+          relevance: number
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          tags: string[]
+          title: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
