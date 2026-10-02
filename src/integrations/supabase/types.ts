@@ -1309,6 +1309,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_my_career_os: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      update_my_roadmap_item_status: {
+        Args: {
+          p_item_id: string
+          p_status: string
+        }
+        Returns: boolean
+      }
       submit_l1_assessment: {
         Args: {
           p_attempt_id: string

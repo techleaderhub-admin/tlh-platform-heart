@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LayoutDashboard, LogOut, MessageSquareText, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut, MessageSquareText, UserRound, Map } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,9 @@ export function StudentShell({
           </Button>
           <Button variant={location.pathname === "/dashboard/profile" ? "secondary" : "ghost"} size="sm" asChild>
             <Link to="/dashboard/profile"><UserRound aria-hidden="true" />Profile</Link>
+          </Button>
+          <Button variant={location.pathname.startsWith("/dashboard/career-os") ? "secondary" : "ghost"} size="sm" asChild>
+            <Link to="/dashboard/career-os"><Map aria-hidden="true" />Career OS</Link>
           </Button>
           <Button variant={location.pathname.startsWith("/dashboard/interview-questions") ? "secondary" : "ghost"} size="sm" asChild>
             <Link to="/dashboard/interview-questions"><MessageSquareText aria-hidden="true" />Interview Questions</Link>

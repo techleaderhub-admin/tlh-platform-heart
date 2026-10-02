@@ -33,6 +33,7 @@ import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard/jobs'
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
+import { Route as AuthenticatedDashboardCareerOsRouteImport } from './routes/_authenticated/dashboard/career-os'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
@@ -41,6 +42,7 @@ import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './rout
 import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
+import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -161,6 +163,11 @@ const AuthenticatedDashboardApplicationsRoute = AuthenticatedDashboardApplicatio
   path: '/applications',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
+const AuthenticatedDashboardCareerOsRoute = AuthenticatedDashboardCareerOsRouteImport.update({
+  id: '/career-os',
+  path: '/career-os',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
 const AuthenticatedAdminMasterclassRoute =
   AuthenticatedAdminMasterclassRouteImport.update({
     id: '/masterclass',
@@ -204,6 +211,11 @@ const AuthenticatedAdminAssessmentsRoute = AuthenticatedAdminAssessmentsRouteImp
   path: '/assessments',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminCareerOsRoute = AuthenticatedAdminCareerOsRouteImport.update({
+  id: '/career-os',
+  path: '/career-os',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -228,6 +240,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
@@ -236,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
+  '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -258,6 +272,7 @@ export interface FileRoutesByTo {
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
@@ -282,8 +297,10 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/_authenticated/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
+  '/_authenticated/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
 }
 export interface FileRouteTypes {
@@ -310,11 +327,13 @@ export interface FileRouteTypes {
     | '/dashboard/l1-learning'
     | '/dashboard/interview-questions'
     | '/dashboard/foundation'
+    | '/dashboard/career-os'
     | '/admin/masterclass'
     | '/admin/students'
     | '/admin/foundation'
     | '/admin/l1-learning'
     | '/admin/interview-questions'
+    | '/admin/career-os'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -335,6 +354,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/admin/masterclass'
     | '/admin/students'
+    | '/admin/career-os'
   id:
     | '__root__'
     | '/'
@@ -354,9 +374,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/career-os'
     | '/_authenticated/dashboard/assessment'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
+    | '/_authenticated/admin/career-os'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -525,6 +547,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardJobsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/career-os': {
+      id: '/_authenticated/dashboard/career-os'
+      path: '/career-os'
+      fullPath: '/dashboard/career-os'
+      preLoaderRoute: typeof AuthenticatedDashboardCareerOsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/applications': {
       id: '/_authenticated/dashboard/applications'
       path: '/applications'
@@ -546,6 +575,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/career-os': {
+      id: '/_authenticated/admin/career-os'
+      path: '/career-os'
+      fullPath: '/admin/career-os'
+      preLoaderRoute: typeof AuthenticatedAdminCareerOsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/assessments': {
       id: '/_authenticated/admin/assessments'
       path: '/assessments'
@@ -565,6 +601,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
   AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRoute
   AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
+  AuthenticatedDashboardCareerOsRoute: typeof AuthenticatedDashboardCareerOsRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren = {
@@ -576,6 +613,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
   AuthenticatedDashboardJobsRoute: AuthenticatedDashboardJobsRoute,
   AuthenticatedDashboardApplicationsRoute: AuthenticatedDashboardApplicationsRoute,
+  AuthenticatedDashboardCareerOsRoute: AuthenticatedDashboardCareerOsRoute,
 }
 
 const AuthenticatedDashboardRouteWithChildren =
@@ -590,6 +628,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
+  AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -601,6 +640,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
+  AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
