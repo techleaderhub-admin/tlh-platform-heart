@@ -78,7 +78,12 @@ export function StudentShell({
               Profile
             </Link>
           </Button>
-          {!membershipLabel.toLowerCase().includes("free") && (
+          {membershipLabel.toLowerCase().includes("free") ? (
+            <Button variant="ghost" size="sm" disabled title="Courses are available from Bronz membership onward">
+              <BookOpen />
+              Courses
+            </Button>
+          ) : (
             <Button variant="ghost" size="sm" asChild>
               <a href={COURSES_URL} target="_blank" rel="noopener noreferrer">
                 <BookOpen />
