@@ -68,9 +68,11 @@ export function StudentsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [editingStudent, setEditingStudent] = useState<Profile | null>(null);
   const [editName, setEditName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editLinkedIn, setEditLinkedIn] = useState("");
   const [actionStudentId, setActionStudentId] = useState<string | null>(null);
+  const [emails, setEmails] = useState<Record<string, string>>({});
 
   const load = async () => {
     setLoading(true);
@@ -97,6 +99,11 @@ export function StudentsPage() {
 
       setStudents(studentRows);
       setMemberships(membershipMap);
+
+      const { data: emailData } = await supabase.functions.invoke("admin-list-user-emails", {
+        body: { user_ids: studentRows.map((profile) => profile.id) },
+      });
+      if (emailData?.emails) setEmails(emailData.emails as Record<string, string>);
     }
 
     setLoading(false);
@@ -117,6 +124,7 @@ export function StudentsPage() {
   const openEdit = (student: Profile) => {
     setEditingStudent(student);
     setEditName(student.full_name ?? "");
+    setEditEmail(emails[student.id] ?? "");
     setEditPhone(student.phone ?? "");
     setEditLinkedIn(student.linkedin_url ?? "");
     setSaveError(null);
@@ -139,6 +147,27 @@ export function StudentsPage() {
     // optional linkedin_url migration has not reached the database yet.
     if (editLinkedIn.trim()) {
       profileUpdate.linkedin_url = editLinkedIn.trim();
+    }
+
+    const normalizedEmail = editEmail.trim().toLowerCase();
+    const currentEmail = (emails[editingStudent.id] ?? "").trim().toLowerCase();
+
+    if (!normalizedEmail || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+      setSaveError("Please enter a valid email address.");
+      setActionStudentId(null);
+      return;
+    }
+
+    if (normalizedEmail !== currentEmail) {
+      const { data: emailData, error: emailError } = await supabase.functions.invoke("admin-update-user-email", {
+        body: { user_id: editingStudent.id, email: normalizedEmail },
+      });
+      if (emailError || !emailData?.email) {
+        setSaveError("Could not update this Leader's email. " + (emailError?.message ?? emailData?.error ?? "Please try again."));
+        setActionStudentId(null);
+        return;
+      }
+      setEmails((current) => ({ ...current, [editingStudent.id]: emailData.email }));
     }
 
     const { error: updateError } = await supabase
@@ -297,6 +326,7 @@ export function StudentsPage() {
               <thead className="border-b border-border bg-muted/30 text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="px-5 py-3 font-semibold">Leader</th>
+                  <th className="px-5 py-3 font-semibold">Email</th>
                   <th className="px-5 py-3 font-semibold">Phone</th>
                   <th className="px-5 py-3 font-semibold">Joined</th>
                   <th className="px-5 py-3 font-semibold">Role</th>
@@ -319,6 +349,7 @@ export function StudentsPage() {
                         <p className="font-semibold">{student.full_name || "Unnamed leader"}</p>
                         <p className="mt-0.5 text-xs text-muted-foreground">User ID: {student.id.slice(0, 8)}…</p>
                       </td>
+                      <td className="px-5 py-4 text-muted-foreground">{emails[student.id] || "—"}</td>
                       <td className="px-5 py-4 text-muted-foreground">{student.phone || "—"}</td>
                       <td className="px-5 py-4 text-muted-foreground">
                         {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(student.created_at))}
@@ -396,6 +427,7 @@ export function StudentsPage() {
               </div>
               <div className="mt-6 space-y-4">
                 <div className="space-y-2"><label htmlFor="admin-edit-name" className="text-sm font-medium">Full Name</label><Input id="admin-edit-name" value={editName} onChange={(event) => setEditName(event.target.value)} /></div>
+                <div className="space-y-2"><label htmlFor="admin-edit-email" className="text-sm font-medium">Email</label><Input id="admin-edit-email" type="email" value={editEmail} onChange={(event) => setEditEmail(event.target.value)} placeholder="leader@example.com" /><p className="text-xs text-muted-foreground">Only Admin can change a Leader email after signup verification.</p></div>
                 <div className="space-y-2"><label htmlFor="admin-edit-phone" className="text-sm font-medium">Phone Number</label><Input id="admin-edit-phone" value={editPhone} onChange={(event) => setEditPhone(event.target.value)} inputMode="tel" /></div>
                 <div className="space-y-2"><label htmlFor="admin-edit-linkedin" className="text-sm font-medium">LinkedIn URL</label><Input id="admin-edit-linkedin" value={editLinkedIn} onChange={(event) => setEditLinkedIn(event.target.value)} placeholder="https://www.linkedin.com/in/..." /></div>
                 {saveError ? <p className="text-sm font-medium text-destructive">{saveError}</p> : null}
