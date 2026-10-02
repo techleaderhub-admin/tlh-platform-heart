@@ -24,6 +24,11 @@ export function InterviewQuestionsPage() {
   const [jobs, setJobs] = useState<Record<string, Job>>({});
   const [selectedInterview, setSelectedInterview] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [historyCompany, setHistoryCompany] = useState("");
+  const [historyRole, setHistoryRole] = useState("");
+  const [historyRound, setHistoryRound] = useState("");
+  const [historyDate, setHistoryDate] = useState("");
+  const [historyCategory, setHistoryCategory] = useState("all");
   const [showInterviewForm, setShowInterviewForm] = useState(false);
   const [questionDraft, setQuestionDraft] = useState("");
   const [questionCategory, setQuestionCategory] = useState("Android");
@@ -104,6 +109,22 @@ export function InterviewQuestionsPage() {
     }
   };
 
+  const historyCategories = useMemo(() => Array.from(new Set(questions.map((item) => item.category).filter((value): value is string => Boolean(value)))).sort(), [questions]);
+
+  const filteredInterviews = useMemo(() => {
+    const company = historyCompany.trim().toLowerCase();
+    const role = historyRole.trim().toLowerCase();
+    const round = historyRound.trim().toLowerCase();
+    return interviews.filter((interview) => {
+      if (company && !interview.company_name.toLowerCase().includes(company)) return false;
+      if (role && !(interview.job_title ?? "").toLowerCase().includes(role)) return false;
+      if (round && !(interview.interview_round ?? "").toLowerCase().includes(round)) return false;
+      if (historyDate && interview.interview_date?.slice(0, 10) !== historyDate) return false;
+      if (historyCategory !== "all" && !questions.some((item) => item.interview_id === interview.id && item.category === historyCategory)) return false;
+      return true;
+    });
+  }, [interviews, questions, historyCompany, historyRole, historyRound, historyDate, historyCategory]);
+
   const visibleQuestions = useMemo(() => {
     const q = search.trim().toLowerCase();
     return questions.filter((item) => {
@@ -163,6 +184,57 @@ export function InterviewQuestionsPage() {
             </CardContent>
           </Card>
         )}
+
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <CardTitle>My Interview History</CardTitle>
+                <p className="mt-1 text-sm text-muted-foreground">Filter your recorded interviews by company, date, category, role, and round.</p>
+              </div>
+              <Badge variant="outline">{filteredInterviews.length} matching</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+              <Input placeholder="Company" value={historyCompany} onChange={(e) => setHistoryCompany(e.target.value)} />
+              <Input placeholder="Role" value={historyRole} onChange={(e) => setHistoryRole(e.target.value)} />
+              <Input placeholder="Round" value={historyRound} onChange={(e) => setHistoryRound(e.target.value)} />
+              <Input type="date" aria-label="Interview date" value={historyDate} onChange={(e) => setHistoryDate(e.target.value)} />
+              <select className="h-10 rounded-md border border-input bg-background px-3 text-sm" value={historyCategory} onChange={(e) => setHistoryCategory(e.target.value)}>
+                <option value="all">All categories</option>
+                {historyCategories.map((category) => <option key={category} value={category}>{category}</option>)}
+              </select>
+            </div>
+            {(historyCompany || historyRole || historyRound || historyDate || historyCategory !== "all") && (
+              <Button variant="ghost" size="sm" onClick={() => {
+                setHistoryCompany("");
+                setHistoryRole("");
+                setHistoryRound("");
+                setHistoryDate("");
+                setHistoryCategory("all");
+              }}>Clear filters</Button>
+            )}
+            <div className="grid gap-3 md:grid-cols-2">
+              {filteredInterviews.map((interview) => {
+                const interviewQuestions = questions.filter((item) => item.interview_id === interview.id);
+                return (
+                  <button key={interview.id} type="button" onClick={() => setSelectedInterview(interview.id)} className={"rounded-xl border p-4 text-left transition-colors " + (selectedInterview === interview.id ? "border-primary bg-primary/[0.04]" : "border-border hover:bg-muted/40")}>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold">{interview.company_name}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{interview.job_title ?? "Role not specified"}</p>
+                      </div>
+                      <Badge variant="outline">{interview.interview_round ?? "Round not specified"}</Badge>
+                    </div>
+                    <p className="mt-2 text-xs text-muted-foreground">{interview.interview_date ? new Date(interview.interview_date).toLocaleDateString() : "Date not specified"} · {interviewQuestions.length} questions</p>
+                  </button>
+                );
+              })}
+            </div>
+            {filteredInterviews.length === 0 && <p className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">No interview experiences match the selected filters.</p>}
+          </CardContent>
+        </Card>
 
         <section className="grid gap-4 lg:grid-cols-[280px_1fr]">
           <Card>
