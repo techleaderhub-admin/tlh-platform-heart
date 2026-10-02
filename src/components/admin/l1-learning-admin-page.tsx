@@ -369,7 +369,7 @@ export function L1LearningAdminPage() {
           </>
         )}
 
-        <Card><CardContent className="p-5 text-sm text-muted-foreground">Publishing is explicit: creating a course, lesson or assignment never makes it visible to students automatically. This keeps unfinished content private until you publish it.</CardContent></Card>
+        <Card><CardContent className="p-5 text-sm text-muted-foreground">Publishing is explicit: creating a course, lesson or assignment never makes it visible to Leaders automatically. This keeps unfinished content private until you publish it.</CardContent></Card>
       </div>
     </AdminShell>
   );

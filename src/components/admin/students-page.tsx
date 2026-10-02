@@ -80,7 +80,7 @@ export function StudentsPage() {
       ]);
 
     if (profileError || roleError || membershipError) {
-      setError("We could not load students and memberships. Please refresh and try again.");
+      setError("We could not load Leaders and memberships. Please refresh and try again.");
       setStudents([]);
       setMemberships({});
     } else {
@@ -190,7 +190,7 @@ export function StudentsPage() {
         ) : filtered.length === 0 ? (
           <div className="p-12 text-center">
             <Users className="mx-auto size-8 text-muted-foreground" aria-hidden="true" />
-            <h2 className="mt-4 font-heading text-lg font-semibold">No students found</h2>
+            <h2 className="mt-4 font-heading text-lg font-semibold">No Leaders found</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {search ? "Try a different search." : "Leaders will appear here after they create a TLH account."}
             </p>

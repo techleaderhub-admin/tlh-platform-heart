@@ -93,7 +93,7 @@ export function Admin360Page(){
 
  return <AdminShell title="Admin 360" subtitle="One operational view of each leader across membership, career direction, skill gaps, learning checkpoints, interviews, applications and payments.">
   <div className="space-y-6">
-   <Card><CardContent className="p-4"><div className="flex flex-col gap-3 lg:flex-row"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input className="pl-9" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search students by name or phone"/></div><Select value={level} onValueChange={setLevel}><SelectTrigger className="w-full lg:w-44"><SelectValue placeholder="Membership"/></SelectTrigger><SelectContent><SelectItem value="all">All memberships</SelectItem>{levels.map(x=><SelectItem key={x} value={x}>{levelLabel(x)}</SelectItem>)}</SelectContent></Select><Button variant="outline" onClick={()=>void loadStudents()} disabled={loading}><RefreshCw className={loading?"animate-spin":""}/>Refresh</Button></div></CardContent></Card>
+   <Card><CardContent className="p-4"><div className="flex flex-col gap-3 lg:flex-row"><div className="relative flex-1"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><Input className="pl-9" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search Leaders by name or phone"/></div><Select value={level} onValueChange={setLevel}><SelectTrigger className="w-full lg:w-44"><SelectValue placeholder="Membership"/></SelectTrigger><SelectContent><SelectItem value="all">All memberships</SelectItem>{levels.map(x=><SelectItem key={x} value={x}>{levelLabel(x)}</SelectItem>)}</SelectContent></Select><Button variant="outline" onClick={()=>void loadStudents()} disabled={loading}><RefreshCw className={loading?"animate-spin":""}/>Refresh</Button></div></CardContent></Card>
 
    <div className="grid gap-4 sm:grid-cols-3">
     <Card><CardContent className="p-5"><p className="text-xs uppercase tracking-wider text-muted-foreground">Leaders</p><p className="mt-1 text-2xl font-bold">{students.length}</p></CardContent></Card>
@@ -103,7 +103,7 @@ export function Admin360Page(){
 
    <div className="grid gap-6 lg:grid-cols-[0.9fr_1.6fr]">
     <Card className="h-fit"><CardHeader><CardTitle>Leader directory</CardTitle></CardHeader><CardContent className="space-y-2">
-     {loading?<p className="text-sm text-muted-foreground">Loading students…</p>:filtered.length===0?<p className="py-8 text-center text-sm text-muted-foreground">No matching students.</p>:filtered.map(s=>{
+     {loading?<p className="text-sm text-muted-foreground">Loading Leaders…</p>:filtered.length===0?<p className="py-8 text-center text-sm text-muted-foreground">No matching Leaders.</p>:filtered.map(s=>{
       const m=memberships[s.id];const l=m?.is_active===false?"free":(m?.level??"free");
       return <button key={s.id} type="button" onClick={()=>void openStudent(s.id)} className={"w-full rounded-xl border p-3 text-left transition hover:bg-muted/30 "+(selectedId===s.id?"border-primary bg-primary/[0.04]":"border-border")}>
        <div className="flex items-center justify-between gap-3"><span className="font-semibold">{s.full_name||"Unnamed leader"}</span><Badge variant="outline">{levelLabel(l)}</Badge></div>
