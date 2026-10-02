@@ -1,8 +1,20 @@
 -- Harden the existing interview/question-bank RLS and establish the TLH interview workflow.
 drop policy if exists "interviews_owner" on public.interviews;
+drop policy if exists "Students read own interviews" on public.interviews;
+drop policy if exists "Students create own interviews" on public.interviews;
+drop policy if exists "Students update own interviews" on public.interviews;
+drop policy if exists "Students delete own interviews" on public.interviews;
+drop policy if exists "Admins manage interviews" on public.interviews;
 drop policy if exists "interview_questions_owner_select" on public.interview_questions;
+drop policy if exists "Students read own interview questions" on public.interview_questions;
+drop policy if exists "Students add own interview questions" on public.interview_questions;
+drop policy if exists "Students update own interview questions" on public.interview_questions;
+drop policy if exists "Students delete own interview questions" on public.interview_questions;
+drop policy if exists "Admins manage interview questions" on public.interview_questions;
 drop policy if exists "interview_questions_admin_manage" on public.interview_questions;
 drop policy if exists "question_bank_admin_manage" on public.question_bank;
+drop policy if exists "L1 students read active question bank" on public.question_bank;
+drop policy if exists "Admins manage question bank" on public.question_bank;
 drop policy if exists "question_bank_authenticated_select" on public.question_bank;
 
 alter table public.interviews enable row level security;
