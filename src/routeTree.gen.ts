@@ -31,11 +31,15 @@ import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './ro
 import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
 import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './routes/_authenticated/dashboard/interview-questions'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
+import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard/jobs'
+import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
 import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
 import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
+import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
+import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -146,6 +150,16 @@ const AuthenticatedDashboardFoundationRoute = AuthenticatedDashboardFoundationRo
   path: '/foundation',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
+const AuthenticatedDashboardJobsRoute = AuthenticatedDashboardJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
+const AuthenticatedDashboardApplicationsRoute = AuthenticatedDashboardApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
 const AuthenticatedAdminMasterclassRoute =
   AuthenticatedAdminMasterclassRouteImport.update({
     id: '/masterclass',
@@ -174,6 +188,16 @@ const AuthenticatedAdminFoundationRoute =
     path: '/foundation',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminJobsRoute = AuthenticatedAdminJobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminApplicationsRoute = AuthenticatedAdminApplicationsRouteImport.update({
+  id: '/applications',
+  path: '/applications',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -196,11 +220,15 @@ export interface FileRoutesByFullPath {
   '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
+  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
   '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
   '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
+  '/admin/jobs': typeof AuthenticatedAdminJobsRoute
+  '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,6 +249,8 @@ export interface FileRoutesByTo {
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
+  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
 }
@@ -481,6 +511,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/dashboard/jobs': {
+      id: '/_authenticated/dashboard/jobs'
+      path: '/jobs'
+      fullPath: '/dashboard/jobs'
+      preLoaderRoute: typeof AuthenticatedDashboardJobsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/applications': {
+      id: '/_authenticated/dashboard/applications'
+      path: '/applications'
+      fullPath: '/dashboard/applications'
+      preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/admin/jobs': {
+      id: '/_authenticated/admin/jobs'
+      path: '/jobs'
+      fullPath: '/admin/jobs'
+      preLoaderRoute: typeof AuthenticatedAdminJobsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/applications': {
+      id: '/_authenticated/admin/applications'
+      path: '/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -491,6 +549,8 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
   AuthenticatedDashboardInterviewQuestionsRoute: typeof AuthenticatedDashboardInterviewQuestionsRoute
   AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
+  AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRoute
+  AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren = {
@@ -500,6 +560,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   AuthenticatedDashboardL1LearningRoute: AuthenticatedDashboardL1LearningRoute,
   AuthenticatedDashboardInterviewQuestionsRoute: AuthenticatedDashboardInterviewQuestionsRoute,
   AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
+  AuthenticatedDashboardJobsRoute: AuthenticatedDashboardJobsRoute,
+  AuthenticatedDashboardApplicationsRoute: AuthenticatedDashboardApplicationsRoute,
 }
 
 const AuthenticatedDashboardRouteWithChildren =
@@ -511,6 +573,8 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
   AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
   AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
+  AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
+  AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -519,6 +583,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
   AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
   AuthenticatedAdminInterviewQuestionsRoute: AuthenticatedAdminInterviewQuestionsRoute,
+  AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
+  AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
