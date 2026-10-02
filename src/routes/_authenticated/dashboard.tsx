@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { StudentDashboardPage } from "@/components/dashboard/student-dashboard-page";
 import { requireRole } from "@/lib/route-auth";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -15,10 +14,4 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: StudentDashboard,
 });
-
-function StudentDashboard() {
-  const identity = Route.useRouteContext();
-  return <StudentDashboardPage name={identity.profile.full_name} />;
-}
