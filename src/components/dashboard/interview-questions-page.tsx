@@ -35,7 +35,7 @@ export function InterviewQuestionsPage() {
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [editingQuestion, setEditingQuestion] = useState({ text: "", category: "Android", difficulty: "medium" });
   const [message, setMessage] = useState<string | null>(null);
-  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_url: "" });
+  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "" });
 
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
@@ -78,8 +78,16 @@ export function InterviewQuestionsPage() {
       setMessage("Company name is required.");
       return;
     }
+
+    const validDrafts = questionDrafts.filter((item) => item.text.trim());
+    if (validDrafts.length === 0) {
+      setMessage("Add at least one interview question.");
+      return;
+    }
+
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
+
     const { data, error } = await supabase.from("interviews").insert({
       student_id: userData.user.id,
       company_name: interviewForm.company_name.trim(),
@@ -87,22 +95,50 @@ export function InterviewQuestionsPage() {
       interview_type: interviewForm.interview_type,
       interview_round: interviewForm.interview_round.trim() || null,
       interview_date: interviewForm.interview_date ? new Date(interviewForm.interview_date).toISOString() : null,
-      student_notes: interviewForm.student_notes.trim() || null,
       job_application_id: null,
-      job_application_url: interviewForm.job_application_url.trim() || null,
       status: "submitted",
     }).select("*").single();
-    if (error) setMessage(error.message);
-    else {
-      setMessage("Interview experience created. Add the questions you were asked.");
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    const { data: createdQuestions, error: questionError } = await supabase
+      .from("interview_questions")
+      .insert(validDrafts.map((item, index) => ({
+        interview_id: data.id,
+        question_text: item.text.trim(),
+        category: item.category.trim() || "Uncategorized",
+        difficulty: item.difficulty,
+        question_order: index + 1,
+      })))
+      .select("*");
+
+    if (questionError) {
       setInterviews((current) => [data, ...current]);
       setSelectedInterview(data.id);
+      setMessage("Interview was created, but the questions could not be saved. Please add them below.");
       setShowInterviewForm(false);
-      setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_url: "" });
+      setQuestionDrafts([{ text: "", category: "Android", difficulty: "medium" }]);
+      return;
     }
+
+    setMessage((createdQuestions?.length ?? 0) + " question(s) recorded for this interview.");
+    setInterviews((current) => [data, ...current]);
+    setQuestions((current) => [...current, ...(createdQuestions ?? [])]);
+    setSelectedInterview(data.id);
+    setShowInterviewForm(false);
+    setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "" });
+    setQuestionDrafts([{ text: "", category: "Android", difficulty: "medium" }]);
   };
 
   const addQuestionField = () => {
+    const lastDraft = questionDrafts[questionDrafts.length - 1];
+    if (!lastDraft?.text.trim()) {
+      setMessage("Enter the current question before adding another one.");
+      return;
+    }
     setQuestionDrafts((items) => [...items, { text: "", category: "Android", difficulty: "medium" }]);
   };
 
@@ -244,15 +280,67 @@ export function InterviewQuestionsPage() {
               <Input placeholder="Job title" value={interviewForm.job_title} onChange={(e) => setInterviewForm({ ...interviewForm, job_title: e.target.value })} />
               <Input placeholder="Interview type" value={interviewForm.interview_type} onChange={(e) => setInterviewForm({ ...interviewForm, interview_type: e.target.value })} />
               <Input placeholder="Round" value={interviewForm.interview_round} onChange={(e) => setInterviewForm({ ...interviewForm, interview_round: e.target.value })} />
-              <Input
-                type="url"
-                placeholder="Job application link (optional)"
-                value={interviewForm.job_application_url}
-                onChange={(e) => setInterviewForm({ ...interviewForm, job_application_url: e.target.value })}
-              />
               <Input type="date" value={interviewForm.interview_date} onChange={(e) => setInterviewForm({ ...interviewForm, interview_date: e.target.value })} />
-              <Textarea placeholder="Notes about the interview (optional)" value={interviewForm.student_notes} onChange={(e) => setInterviewForm({ ...interviewForm, student_notes: e.target.value })} />
-              <div className="md:col-span-2 flex justify-end"><Button onClick={() => void createInterview()}><Send /> Save interview</Button></div>
+
+              <div className="md:col-span-2 rounded-xl border border-dashed border-border p-4">
+                <div className="mb-4">
+                  <p className="font-semibold">Interview questions</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Add every question you remember from this interview. Enter a question first, then the “Add more question” button becomes available.
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  {questionDrafts.map((draft, index) => (
+                    <div key={index} className="rounded-xl border border-border bg-muted/20 p-4">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <p className="text-sm font-semibold">Interview Question {index + 1}</p>
+                        {questionDrafts.length > 1 ? (
+                          <Button type="button" variant="ghost" size="sm" onClick={() => removeQuestionField(index)}>
+                            Remove
+                          </Button>
+                        ) : null}
+                      </div>
+                      <Textarea
+                        className="min-h-24"
+                        placeholder={index === 0 ? "Enter the first question you were asked" : "Enter the next question you were asked"}
+                        value={draft.text}
+                        onChange={(e) => updateQuestionDraft(index, "text", e.target.value)}
+                      />
+                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                        <Input
+                          placeholder="Category, e.g. Coroutines"
+                          value={draft.category}
+                          onChange={(e) => updateQuestionDraft(index, "category", e.target.value)}
+                        />
+                        <select
+                          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
+                          value={draft.difficulty}
+                          onChange={(e) => updateQuestionDraft(index, "difficulty", e.target.value)}
+                        >
+                          <option value="easy">easy</option>
+                          <option value="medium">medium</option>
+                          <option value="hard">hard</option>
+                        </select>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4 flex flex-wrap justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={!questionDrafts[questionDrafts.length - 1]?.text.trim()}
+                    onClick={addQuestionField}
+                  >
+                    <Plus /> Add more question
+                  </Button>
+                  <Button type="button" onClick={() => void createInterview()} disabled={!questionDrafts.some((item) => item.text.trim())}>
+                    <Send /> Save interview & questions
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         )}
@@ -421,7 +509,14 @@ export function InterviewQuestionsPage() {
                   ))}
 
                   <div className="flex flex-wrap gap-2">
-                    <Button type="button" variant="outline" onClick={addQuestionField}><Plus /> Add more question</Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={!questionDrafts[questionDrafts.length - 1]?.text.trim()}
+                      onClick={addQuestionField}
+                    >
+                      <Plus /> Add more question
+                    </Button>
                     <Button type="button" onClick={() => void saveQuestionDrafts()}><Send /> Save question set</Button>
                   </div>
                 </div>
