@@ -194,6 +194,15 @@ export function InterviewQuestionsPage() {
     });
   }, [interviews, questions, historyCompany, historyRole, historyRound, historyDate, historyCategory]);
 
+  const questionRepeatCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    questions.forEach((item) => {
+      const normalized = item.question_text.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+      if (normalized) counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
+    });
+    return counts;
+  }, [questions]);
+
   const visibleQuestions = useMemo(() => {
     const q = search.trim().toLowerCase();
     return questions.filter((item) => {
@@ -356,6 +365,11 @@ export function InterviewQuestionsPage() {
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <p className="font-semibold">{question.question_order}. {question.question_text}</p>
                         <div className="flex items-center gap-2">
+                          {(() => {
+                            const normalized = question.question_text.trim().toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+                            const repeatCount = questionRepeatCounts.get(normalized) ?? 1;
+                            return repeatCount > 1 ? <Badge variant="secondary">Repeated ×{repeatCount}</Badge> : null;
+                          })()}
                           <Badge variant="outline">{question.difficulty ?? "medium"}</Badge>
                           <Button type="button" variant="ghost" size="sm" onClick={() => startEditingQuestion(question)}>Edit</Button>
                         </div>
