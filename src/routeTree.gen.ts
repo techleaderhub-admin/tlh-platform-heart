@@ -29,11 +29,13 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
 import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
 import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
+import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './routes/_authenticated/dashboard/interview-questions'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
 import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
+import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -134,6 +136,11 @@ const AuthenticatedDashboardL1LearningRoute = AuthenticatedDashboardL1LearningRo
   path: '/l1-learning',
   getParentRoute: () => AuthenticatedDashboardRoute,
 } as any)
+const AuthenticatedDashboardInterviewQuestionsRoute = AuthenticatedDashboardInterviewQuestionsRouteImport.update({
+  id: '/interview-questions',
+  path: '/interview-questions',
+  getParentRoute: () => AuthenticatedDashboardRoute,
+} as any)
 const AuthenticatedDashboardFoundationRoute = AuthenticatedDashboardFoundationRouteImport.update({
   id: '/foundation',
   path: '/foundation',
@@ -154,6 +161,11 @@ const AuthenticatedAdminStudentsRoute =
 const AuthenticatedAdminL1LearningRoute = AuthenticatedAdminL1LearningRouteImport.update({
   id: '/l1-learning',
   path: '/l1-learning',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminInterviewQuestionsRoute = AuthenticatedAdminInterviewQuestionsRouteImport.update({
+  id: '/interview-questions',
+  path: '/interview-questions',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
 const AuthenticatedAdminFoundationRoute =
@@ -182,11 +194,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
   '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
+  '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
   '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
   '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
+  '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -230,6 +244,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
+  '/_authenticated/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
@@ -256,11 +271,13 @@ export interface FileRouteTypes {
     | '/dashboard/assessment'
     | '/dashboard/l1-knowledge-check'
     | '/dashboard/l1-learning'
+    | '/dashboard/interview-questions'
     | '/dashboard/foundation'
     | '/admin/masterclass'
     | '/admin/students'
     | '/admin/foundation'
     | '/admin/l1-learning'
+    | '/admin/interview-questions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -472,6 +489,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
   AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
   AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
+  AuthenticatedDashboardInterviewQuestionsRoute: typeof AuthenticatedDashboardInterviewQuestionsRoute
   AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
 }
 
@@ -480,6 +498,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   AuthenticatedDashboardAssessmentRoute: AuthenticatedDashboardAssessmentRoute,
   AuthenticatedDashboardL1KnowledgeCheckRoute: AuthenticatedDashboardL1KnowledgeCheckRoute,
   AuthenticatedDashboardL1LearningRoute: AuthenticatedDashboardL1LearningRoute,
+  AuthenticatedDashboardInterviewQuestionsRoute: AuthenticatedDashboardInterviewQuestionsRoute,
   AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
 }
 
@@ -491,6 +510,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
   AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
   AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
+  AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -498,6 +518,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
   AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
   AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
+  AuthenticatedAdminInterviewQuestionsRoute: AuthenticatedAdminInterviewQuestionsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

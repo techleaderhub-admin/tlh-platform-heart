@@ -1,0 +1,5 @@
+-- Interview question bank implementation note.
+-- The TLH repository already contained the interviews, interview_questions and question_bank
+-- tables. Access control for the existing architecture is established by
+-- supabase/migrations/20261002201000_harden_interview_question_rls.sql on main.
+-- No duplicate interview_questions table is created here.
