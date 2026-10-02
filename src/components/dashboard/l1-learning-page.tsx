@@ -335,11 +335,16 @@ export function L1LearningPage() {
         )}
 
         <Card>
-          <CardContent className="p-5">
-            <p className="text-sm font-semibold">L1 completion rule</p>
-            <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              Completion is tracked from published lessons plus required assignment submissions. This learning progress does not automatically change your membership level.
-            </p>
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+            <div>
+              <p className="text-sm font-semibold">Ready for the knowledge check?</p>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                After working through the L1 learning material, use the separate 20-question knowledge check to measure your foundation.
+              </p>
+            </div>
+            <Button variant="outline" asChild>
+              <a href="/dashboard/l1-knowledge-check">Open knowledge check <ArrowRight /></a>
+            </Button>
           </CardContent>
         </Card>
       </div>
