@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type Category = "Architecture" | "Kotlin & Concurrency" | "Mobile System Design" | "Leadership";
 type AssessmentQuestion = { id: string; category: Category; question: string };
+type SkillGap = { id: string; domain: string; score: number | null; status: string; recommendation: string | null; last_assessed_at: string };
 const QUESTIONS: AssessmentQuestion[] = [
   { id: "architecture-1", category: "Architecture", question: "I can explain and defend the architecture of a production Android application, including trade-offs." },
   { id: "architecture-2", category: "Architecture", question: "I can identify boundaries between UI, domain and data responsibilities and explain why they exist." },
@@ -48,7 +49,8 @@ function assessmentSummary(answers: Record<string, number>) {
 export function CareerAssessmentPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [membershipLabel, setMembershipLabel] = useState("Free Membership");
-  const [previousAssessment, setPreviousAssessment] = useState<{ score: number | null; created_at: string } | null>(null);
+  const [previousAssessment, setPreviousAssessment] = useState<{ id: string; score: number | null; created_at: string } | null>(null);
+  const [skillGaps, setSkillGaps] = useState<SkillGap[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -58,13 +60,16 @@ export function CareerAssessmentPage() {
     setLoading(true); setError(null);
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) { setError("Your session could not be loaded. Please sign in again."); setLoading(false); return; }
-    const [{ data: membership }, { data: latest, error: assessmentError }] = await Promise.all([
+    const [{ data: membership }, { data: latest, error: assessmentError }, { data: gaps, error: gapsError }] = await Promise.all([
       supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
-      supabase.from("career_assessments").select("score, created_at").eq("student_id", userData.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("career_assessments").select("id, score, created_at").eq("student_id", userData.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      supabase.from("career_skill_gaps").select("id, domain, score, status, recommendation, last_assessed_at").eq("student_id", userData.user.id).order("domain"),
     ]);
     if (membership?.is_active !== false && membership?.level) setMembershipLabel(membership.level === "free" ? "Free Membership" : membership.level.toUpperCase() + " Membership");
-    if (assessmentError) setError("We could not load your previous assessment. You can still complete a new assessment.");
-    setPreviousAssessment(latest ?? null); setLoading(false);
+    if (assessmentError || gapsError) setError("We could not load your previous assessment data. You can still complete a new assessment.");
+    setPreviousAssessment(latest ?? null);
+    setSkillGaps(gaps ?? []);
+    setLoading(false);
   };
   useEffect(() => { void load(); }, []);
 
@@ -80,16 +85,36 @@ export function CareerAssessmentPage() {
     const { data: userData, error: userError } = await supabase.auth.getUser();
     if (userError || !userData.user) { setError("Your session has expired. Please sign in again."); setSaving(false); return; }
     const result = assessmentSummary(answers);
-    const { error: saveError } = await supabase.from("career_assessments").insert({
+    const { data: assessment, error: saveError } = await supabase.from("career_assessments").insert({
       student_id: userData.user.id,
       assessment_type: "tlh-career-readiness-v1",
       score: liveScore,
       strengths: { categories: result.strengths, scores: Object.fromEntries(result.scores.map((item) => [item.category, item.score])) },
       gaps: { categories: result.gaps, scores: Object.fromEntries(result.scores.map((item) => [item.category, item.score])) },
       recommendations: { items: result.recommendations, answers },
-    });
-    if (saveError) setError("Could not save your assessment. " + saveError.message);
-    else { setSaved(true); setPreviousAssessment({ score: liveScore, created_at: new Date().toISOString() }); }
+    }).select("id, score, created_at").single();
+
+    if (saveError || !assessment) {
+      setError("Could not save your assessment. " + (saveError?.message ?? "Unknown error"));
+    } else {
+      const gapRows = result.scores.map((item) => ({
+        student_id: userData.user.id,
+        assessment_id: assessment.id,
+        domain: item.category,
+        score: item.score,
+        status: item.score < 60 ? "open" : item.score < 80 ? "developing" : "strength",
+        recommendation: result.recommendations[CATEGORY_ORDER.indexOf(item.category)],
+        last_assessed_at: assessment.created_at,
+      }));
+      const { error: gapError } = await supabase.from("career_skill_gaps").upsert(gapRows, { onConflict: "student_id,domain" });
+      if (gapError) {
+        setError("Assessment saved, but the skill-gap snapshot could not be updated. " + gapError.message);
+      } else {
+        await load();
+      }
+      setSaved(true);
+      setPreviousAssessment(assessment);
+    }
     setSaving(false);
   };
 

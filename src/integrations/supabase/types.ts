@@ -594,6 +594,63 @@ export type Database = {
           },
         ]
       }
+      career_skill_gaps: {
+        Row: {
+          assessment_id: string | null
+          created_at: string
+          domain: string
+          evidence: string | null
+          id: string
+          last_assessed_at: string
+          recommendation: string | null
+          score: number | null
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          assessment_id?: string | null
+          created_at?: string
+          domain: string
+          evidence?: string | null
+          id?: string
+          last_assessed_at?: string
+          recommendation?: string | null
+          score?: number | null
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          assessment_id?: string | null
+          created_at?: string
+          domain?: string
+          evidence?: string | null
+          id?: string
+          last_assessed_at?: string
+          recommendation?: string | null
+          score?: number | null
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "career_skill_gaps_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "career_assessments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "career_skill_gaps_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_profiles: {
         Row: {
           career_goal: string | null

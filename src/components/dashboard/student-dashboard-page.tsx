@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, MessageSquareText, RefreshCw, BriefcaseBusiness } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, LockKeyhole, MessageSquareText, RefreshCw, BriefcaseBusiness, ClipboardCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { StudentShell } from "@/components/dashboard/student-shell";
@@ -208,6 +208,18 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
             </CardContent>
           </Card>
         )}
+
+        <Card className="border-primary/20 bg-primary/[0.03]">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+            <div>
+              <p className="font-semibold">Career Readiness Assessment</p>
+              <p className="mt-1 text-sm text-muted-foreground">Measure your current architecture, Kotlin, system design and leadership readiness, then track the skill gaps in Career OS.</p>
+            </div>
+            <Button variant="outline" asChild>
+              <a href="/dashboard/assessment">Open assessment <ClipboardCheck /></a>
+            </Button>
+          </CardContent>
+        </Card>
 
         {rank >= LEVEL_RANK.l1 && (
           <Card className="border-primary/20 bg-primary/[0.03]">
