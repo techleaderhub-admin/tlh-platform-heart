@@ -100,6 +100,7 @@ export function CareerProfilePage() {
   const [membershipLabel, setMembershipLabel] = useState("Free Membership");
   const [accountName, setAccountName] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
+  const [accountPhone, setAccountPhone] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -119,10 +120,11 @@ export function CareerProfilePage() {
     const [{ data, error: profileError }, { data: membership }, { data: accountProfile, error: accountProfileError }] = await Promise.all([
       supabase.from("career_profiles").select("*").eq("student_id", userData.user.id).maybeSingle(),
       supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
-      supabase.from("profiles").select("full_name, linkedin_url").eq("id", userData.user.id).maybeSingle(),
+      supabase.from("profiles").select("full_name, phone, linkedin_url").eq("id", userData.user.id).maybeSingle(),
     ]);
     if (!accountProfileError) {
       setAccountName(accountProfile?.full_name ?? "");
+      setAccountPhone(accountProfile?.phone ?? "");
     }
 
     if (membership?.is_active !== false && membership?.level) {
@@ -191,6 +193,43 @@ export function CareerProfilePage() {
 
     if (notice !== null && (Number.isNaN(notice) || notice < 0 || notice > 365)) {
       setError("Notice period must be between 0 and 365 days.");
+      setSaving(false);
+      return;
+    }
+
+    const normalizedName = accountName.trim() || null;
+    const normalizedPhone = accountPhone.trim() || null;
+    if (normalizedPhone && !/^\+[1-9]\d{7,14}$/.test(normalizedPhone.replace(/[\s()-]/g, ""))) {
+      setError("Phone number must be in international format, for example +919810123456.");
+      setSaving(false);
+      return;
+    }
+
+    const normalizedPhoneForSave = normalizedPhone ? normalizedPhone.replace(/[\s()-]/g, "") : null;
+    const { error: identitySaveError } = await supabase
+      .from("profiles")
+      .update({
+        full_name: normalizedName,
+        phone: normalizedPhoneForSave,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", userData.user.id);
+
+    if (identitySaveError) {
+      setError("Could not save your name or phone number. " + identitySaveError.message);
+      setSaving(false);
+      return;
+    }
+
+    // Keep the display name in Auth metadata in sync. Email is intentionally not changed here.
+    const { error: metadataError } = await supabase.auth.updateUser({
+      data: {
+        full_name: normalizedName,
+        phone: normalizedPhoneForSave,
+      },
+    });
+    if (metadataError) {
+      setError("Your profile was saved, but the account metadata could not be synchronized. " + metadataError.message);
       setSaving(false);
       return;
     }
@@ -288,14 +327,32 @@ export function CareerProfilePage() {
           <CardHeader>
             <CardTitle>Profile identity</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-5 md:grid-cols-3">
-            <div>
-              <Label>Name</Label>
-              <p className="mt-2 text-sm font-semibold">{accountName || "Name not available"}</p>
+          <CardContent className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="account-name">Name</Label>
+              <Input
+                id="account-name"
+                value={accountName}
+                onChange={(e) => { setSaved(false); setAccountName(e.target.value); }}
+                placeholder="Your full name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="account-phone">Phone Number</Label>
+              <Input
+                id="account-phone"
+                type="tel"
+                inputMode="tel"
+                value={accountPhone}
+                onChange={(e) => { setSaved(false); setAccountPhone(e.target.value); }}
+                placeholder="+919810123456"
+              />
+              <p className="text-xs text-muted-foreground">Use your complete international number. Phone verification is not enabled by this profile form.</p>
             </div>
             <div>
               <Label>Email</Label>
               <p className="mt-2 break-all text-sm font-semibold">{accountEmail || "Email not available"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">Email cannot be changed here. Contact Tech Leader Hub if you need an email change.</p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="linkedin">LinkedIn profile</Label>
