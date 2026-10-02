@@ -33,6 +33,8 @@ import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
+import { Route as AuthenticatedAdminL3CourseRouteImport } from './routes/_authenticated/admin/l3-course'
+import { Route as AuthenticatedDashboardL3CourseRouteImport } from './routes/_authenticated/dashboard/l3-course'
 import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
 import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
 import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
@@ -168,6 +170,12 @@ const AuthenticatedAdminCareerOsRoute =
     path: '/career-os',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminL3CourseRoute =
+  AuthenticatedAdminL3CourseRouteImport.update({
+    id: '/l3-course',
+    path: '/l3-course',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminFoundationRoute =
   AuthenticatedAdminFoundationRouteImport.update({
     id: '/foundation',
@@ -257,6 +265,12 @@ const AuthenticatedDashboardL2KnowledgeCheckRoute =
     path: '/l2-knowledge-check',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardL3CourseRoute =
+  AuthenticatedDashboardL3CourseRouteImport.update({
+    id: '/l3-course',
+    path: '/l3-course',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardL1LearningRoute =
   AuthenticatedDashboardL1LearningRouteImport.update({
     id: '/l1-learning',
@@ -294,6 +308,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
+  '/admin/l3-course': typeof AuthenticatedAdminL3CourseRoute
   '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
   '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
@@ -308,6 +323,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
   '/dashboard/l1-knowledge-check': typeof AuthenticatedDashboardL1KnowledgeCheckRoute
   '/dashboard/l2-knowledge-check': typeof AuthenticatedDashboardL2KnowledgeCheckRoute
+  '/dashboard/l3-course': typeof AuthenticatedDashboardL3CourseRoute
   '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
 }
@@ -814,6 +830,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminL3CourseRoute: typeof AuthenticatedAdminL3CourseRoute
   AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
@@ -829,6 +846,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminL3CourseRoute: AuthenticatedAdminL3CourseRoute,
   AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
@@ -848,6 +866,7 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardL3CourseRoute: typeof AuthenticatedDashboardL3CourseRoute
   AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
   AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
   AuthenticatedDashboardCareerOsRoute: typeof AuthenticatedDashboardCareerOsRoute
