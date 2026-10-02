@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { signupSchema } from "@/lib/auth-validation";
 
+const findDialCode = (iso: string) => findCountryByIso(iso).dialCode;
+
 export const Route = createFileRoute("/signup")({
   ssr: false,
   head: () => ({
