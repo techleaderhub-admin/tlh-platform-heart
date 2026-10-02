@@ -10,6 +10,8 @@ import type { Database } from "@/integrations/supabase/types";
 
 type Resource = Database["public"]["Tables"]["foundation_resources"]["Row"];
 type Progress = Database["public"]["Tables"]["student_resource_progress"]["Row"];
+type MembershipLevel = Database["public"]["Enums"]["membership_level"];
+const MEMBERSHIP_LABEL: Record<MembershipLevel, string> = { free: "Free", l0: "L0", l1: "L1 Silver", l2: "L2", l3: "L3 Career Track", l4: "L4" };
 
 const statusLabel: Record<Progress["status"], string> = {
   not_started: "Not started",
@@ -17,8 +19,9 @@ const statusLabel: Record<Progress["status"], string> = {
   completed: "Completed",
 };
 
-export function FoundationReadingPage({ name, membershipLabel }: { name: string | null; membershipLabel: string }) {
+export function FoundationReadingPage({ membershipLabel }: { membershipLabel?: string }) {
   const [resources, setResources] = useState<Resource[]>([]);
+  const [resolvedMembershipLabel, setResolvedMembershipLabel] = useState(membershipLabel ?? "Membership");
   const [progress, setProgress] = useState<Record<string, Progress>>({});
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -35,7 +38,8 @@ export function FoundationReadingPage({ name, membershipLabel }: { name: string 
       return;
     }
 
-    const [resourceResult, progressResult] = await Promise.all([
+    const [membershipResult, resourceResult, progressResult] = await Promise.all([
+      supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
       supabase
         .from("foundation_resources")
         .select("*")
@@ -47,7 +51,10 @@ export function FoundationReadingPage({ name, membershipLabel }: { name: string 
         .eq("student_id", userData.user.id),
     ]);
 
-    if (resourceResult.error || progressResult.error) {
+    const level = membershipResult.data?.is_active === false ? "free" : (membershipResult.data?.level ?? "free");
+    setResolvedMembershipLabel(MEMBERSHIP_LABEL[level]);
+
+    if (resourceResult.error || progressResult.error || membershipResult.error) {
       setError("We could not load your foundation reading. Please refresh.");
     } else {
       setResources(resourceResult.data ?? []);
@@ -102,7 +109,7 @@ export function FoundationReadingPage({ name, membershipLabel }: { name: string 
     <StudentShell
       title="Foundation Reading"
       subtitle="Complete the assigned PDF material before moving into the next TLH learning stage. Reading progress is intentionally simple in V1."
-      membershipLabel={membershipLabel}
+      membershipLabel={resolvedMembershipLabel}
     >
       <div className="space-y-6">
         <Card className="border-primary/20 bg-primary/[0.03]">
