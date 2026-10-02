@@ -13,11 +13,15 @@ import type { Database } from "@/integrations/supabase/types";
 type Interview = Database["public"]["Tables"]["interviews"]["Row"];
 type InterviewQuestion = Database["public"]["Tables"]["interview_questions"]["Row"];
 type BankQuestion = Database["public"]["Tables"]["question_bank"]["Row"];
+type Application = Database["public"]["Tables"]["job_applications"]["Row"];
+type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
 export function InterviewQuestionsPage() {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [bank, setBank] = useState<BankQuestion[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [jobs, setJobs] = useState<Record<string, Job>>({});
   const [selectedInterview, setSelectedInterview] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showInterviewForm, setShowInterviewForm] = useState(false);
@@ -25,23 +29,27 @@ export function InterviewQuestionsPage() {
   const [questionCategory, setQuestionCategory] = useState("Android");
   const [questionDifficulty, setQuestionDifficulty] = useState("medium");
   const [message, setMessage] = useState<string | null>(null);
-  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "" });
+  const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_id: "" });
 
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
-    const [interviewResult, questionResult, bankResult] = await Promise.all([
+    const [interviewResult, questionResult, bankResult, applicationResult, jobResult] = await Promise.all([
       supabase.from("interviews").select("*").eq("student_id", userData.user.id).order("interview_date", { ascending: false }),
       supabase.from("interview_questions").select("*"),
       supabase.from("question_bank").select("*").eq("is_active", true).order("created_at", { ascending: false }),
+      supabase.from("job_applications").select("*").eq("student_id", userData.user.id).order("updated_at", { ascending: false }),
+      supabase.from("jobs").select("*"),
     ]);
-    if (interviewResult.error || questionResult.error || bankResult.error) {
+    if (interviewResult.error || questionResult.error || bankResult.error || applicationResult.error || jobResult.error) {
       setMessage("Interview data could not be loaded. Please refresh.");
       return;
     }
     setInterviews(interviewResult.data ?? []);
     setQuestions(questionResult.data ?? []);
     setBank(bankResult.data ?? []);
+    setApplications(applicationResult.data ?? []);
+    setJobs(Object.fromEntries((jobResult.data ?? []).map((job) => [job.id, job])));
     if (!selectedInterview && interviewResult.data?.[0]) setSelectedInterview(interviewResult.data[0].id);
   };
 
@@ -62,6 +70,7 @@ export function InterviewQuestionsPage() {
       interview_round: interviewForm.interview_round.trim() || null,
       interview_date: interviewForm.interview_date ? new Date(interviewForm.interview_date).toISOString() : null,
       student_notes: interviewForm.student_notes.trim() || null,
+      job_application_id: interviewForm.job_application_id || null,
       status: "submitted",
     }).select("*").single();
     if (error) setMessage(error.message);
@@ -70,7 +79,7 @@ export function InterviewQuestionsPage() {
       setInterviews((current) => [data, ...current]);
       setSelectedInterview(data.id);
       setShowInterviewForm(false);
-      setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "" });
+      setInterviewForm({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "", student_notes: "", job_application_id: "" });
     }
   };
 
@@ -136,6 +145,18 @@ export function InterviewQuestionsPage() {
               <Input placeholder="Job title" value={interviewForm.job_title} onChange={(e) => setInterviewForm({ ...interviewForm, job_title: e.target.value })} />
               <Input placeholder="Interview type" value={interviewForm.interview_type} onChange={(e) => setInterviewForm({ ...interviewForm, interview_type: e.target.value })} />
               <Input placeholder="Round" value={interviewForm.interview_round} onChange={(e) => setInterviewForm({ ...interviewForm, interview_round: e.target.value })} />
+              <select className="h-10 rounded-md border border-input bg-background px-3 text-sm" value={interviewForm.job_application_id} onChange={(e) => {
+                const jobApplicationId = e.target.value;
+                const application = applications.find((item) => item.id === jobApplicationId);
+                const job = application ? jobs[application.job_id] : null;
+                setInterviewForm({ ...interviewForm, job_application_id: jobApplicationId, company_name: job?.company_name ?? interviewForm.company_name, job_title: job?.job_title ?? interviewForm.job_title });
+              }}>
+                <option value="">Link to a job application (optional)</option>
+                {applications.map((application) => {
+                  const job = jobs[application.job_id];
+                  return <option key={application.id} value={application.id}>{job?.company_name ?? "Unknown company"} · {job?.job_title ?? "Unknown role"} · {application.status}</option>;
+                })}
+              </select>
               <Input type="date" value={interviewForm.interview_date} onChange={(e) => setInterviewForm({ ...interviewForm, interview_date: e.target.value })} />
               <Textarea placeholder="Notes about the interview (optional)" value={interviewForm.student_notes} onChange={(e) => setInterviewForm({ ...interviewForm, student_notes: e.target.value })} />
               <div className="md:col-span-2 flex justify-end"><Button onClick={() => void createInterview()}><Send /> Save interview</Button></div>
