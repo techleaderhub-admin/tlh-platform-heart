@@ -34,6 +34,7 @@ import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
 import { Route as AuthenticatedAdminL3CourseRouteImport } from './routes/_authenticated/admin/l3-course'
+import { Route as AuthenticatedAdminLearningProgramsRouteImport } from './routes/_authenticated/admin/learning-programs'
 import { Route as AuthenticatedAdminL3LiveSessionsRouteImport } from './routes/_authenticated/admin/l3-live-sessions'
 import { Route as AuthenticatedDashboardL3CourseRouteImport } from './routes/_authenticated/dashboard/l3-course'
 import { Route as AuthenticatedDashboardL3LiveSessionsRouteImport } from './routes/_authenticated/dashboard/l3-live-sessions'
@@ -199,6 +200,12 @@ const AuthenticatedAdminL3LiveSessionsRoute =
   AuthenticatedAdminL3LiveSessionsRouteImport.update({
     id: '/l3-live-sessions',
     path: '/l3-live-sessions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminLearningProgramsRoute =
+  AuthenticatedAdminLearningProgramsRouteImport.update({
+    id: '/learning-programs',
+    path: '/learning-programs',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminL1LearningRoute =
@@ -857,6 +864,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
   AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
   AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
+  AuthenticatedAdminLearningProgramsRoute: typeof AuthenticatedAdminLearningProgramsRoute
   AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
@@ -875,6 +883,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminInterviewQuestionsRoute,
   AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
   AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
+  AuthenticatedAdminLearningProgramsRoute: AuthenticatedAdminLearningProgramsRoute,
   AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
