@@ -1123,6 +1123,18 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_events: {
+        Row: { created_at:string; error_message:string|null; event_type:string; id:string; payment_id:string|null; payload:Json; processed_at:string|null; provider:string; provider_event_id:string; status:string }
+        Insert: { created_at?:string; error_message?:string|null; event_type:string; id?:string; payment_id?:string|null; payload?:Json; processed_at?:string|null; provider:string; provider_event_id:string; status?:string }
+        Update: { created_at?:string; error_message?:string|null; event_type?:string; id?:string; payment_id?:string|null; payload?:Json; processed_at?:string|null; provider?:string; provider_event_id?:string; status?:string }
+        Relationships: [{ foreignKeyName:"payment_events_payment_id_fkey"; columns:["payment_id"]; isOneToOne:false; referencedRelation:"payments"; referencedColumns:["id"] }]
+      }
+      payment_products: {
+        Row: { created_at:string; currency:string; description:string|null; id:string; is_active:boolean; membership_level:Database["public"]["Enums"]["membership_level"]|null; name:string; price:number; updated_at:string }
+        Insert: { created_at?:string; currency?:string; description?:string|null; id?:string; is_active?:boolean; membership_level?:Database["public"]["Enums"]["membership_level"]|null; name:string; price:number; updated_at?:string }
+        Update: { created_at?:string; currency?:string; description?:string|null; id?:string; is_active?:boolean; membership_level?:Database["public"]["Enums"]["membership_level"]|null; name?:string; price?:number; updated_at?:string }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -1132,6 +1144,8 @@ export type Database = {
           id: string
           paid_at: string | null
           product_name: string
+          product_id: string | null
+          metadata: Json
           provider: string | null
           status: string
           student_id: string
@@ -1145,6 +1159,8 @@ export type Database = {
           id?: string
           paid_at?: string | null
           product_name: string
+          product_id?: string | null
+          metadata?: Json
           provider?: string | null
           status?: string
           student_id: string
@@ -1158,6 +1174,8 @@ export type Database = {
           id?: string
           paid_at?: string | null
           product_name?: string
+          product_id?: string | null
+          metadata?: Json
           provider?: string | null
           status?: string
           student_id?: string
@@ -1379,6 +1397,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      record_payment_event: {
+        Args: { p_event_type: string; p_payload: Json; p_payment_id?: string | null; p_provider: string; p_provider_event_id: string }
+        Returns: string
+      }
       search_blog_posts: {
         Args: {
           p_limit?: number

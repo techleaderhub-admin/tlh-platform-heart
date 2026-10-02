@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { BarChart3, BookOpen, LogOut, Users, LayoutDashboard, Video, GraduationCap, MessageSquareText, BriefcaseBusiness, ClipboardList, ClipboardCheck, Map, FileText } from "lucide-react";
+import { BarChart3, BookOpen, LogOut, Users, LayoutDashboard, Video, GraduationCap, MessageSquareText, BriefcaseBusiness, ClipboardList, ClipboardCheck, Map, FileText, CreditCard } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const items = [
   { to: "/admin/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/admin/career-os", label: "Career OS", icon: Map },
   { to: "/admin/blog", label: "Blog & SEO", icon: FileText },
+  { to: "/admin/payments", label: "Payments", icon: CreditCard },
 ] as const;
 
 export function AdminShell({
