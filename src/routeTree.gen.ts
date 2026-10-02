@@ -47,6 +47,7 @@ import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
+import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -240,6 +241,11 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminPaymentsRoute = AuthenticatedAdminPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -330,6 +336,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/_authenticated/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
 }
 export interface FileRouteTypes {
@@ -367,6 +374,7 @@ export interface FileRouteTypes {
     | '/admin/career-os'
     | '/admin/admin-360'
     | '/admin/blog'
+    | '/admin/payments'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -625,6 +633,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/payments': {
+      id: '/_authenticated/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/career-os': {
       id: '/_authenticated/admin/career-os'
       path: '/career-os'
@@ -681,6 +696,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
   AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
@@ -695,6 +711,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
   AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
   AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+  AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
