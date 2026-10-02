@@ -15,3 +15,11 @@ create index if not exists profiles_active_directory_idx
 create index if not exists profiles_blocked_idx
   on public.profiles (is_blocked)
   where is_blocked = true;
+
+-- Allow admins to manage profile lifecycle fields and edit user profile information.
+drop policy if exists "profiles_admin_update" on public.profiles;
+create policy "profiles_admin_update"
+on public.profiles
+for update to authenticated
+using (public.has_role(auth.uid(), 'admin'::public.app_role))
+with check (public.has_role(auth.uid(), 'admin'::public.app_role));
