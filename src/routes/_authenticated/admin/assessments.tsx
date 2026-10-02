@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/admin/assessments")({
   head: () => ({
     meta: [
       { title: "Career Assessments | TLH Admin" },
-      { name: "description", content: "Review student career assessments and track skill gaps." },
+      { name: "description", content: "Review Leader career assessments and track skill gaps." },
     ],
   }),
   component: CareerAssessmentsAdminPage,
