@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, BriefcaseBusiness, CheckCircle2, ClipboardCheck, Map, MessageSquareText, RefreshCw, Search, Target, UserRound } from "lucide-react";
+import { ArrowLeft, BriefcaseBusiness, ClipboardCheck, Map, MessageSquareText, RefreshCw, Search, Target, UserRound } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,6 @@ type SkillGap=Database["public"]["Tables"]["career_skill_gaps"]["Row"];
 type Roadmap=Database["public"]["Tables"]["career_roadmaps"]["Row"];
 type RoadmapItem=Database["public"]["Tables"]["roadmap_items"]["Row"];
 type Application=Database["public"]["Tables"]["job_applications"]["Row"];
-type Job=Database["public"]["Tables"]["jobs"]["Row"];
 type Interview=Database["public"]["Tables"]["interviews"]["Row"];
 type Assessment=Database["public"]["Tables"]["l1_assessment_attempts"]["Row"];
 type Submission=Database["public"]["Tables"]["l1_assignment_submissions"]["Row"];
