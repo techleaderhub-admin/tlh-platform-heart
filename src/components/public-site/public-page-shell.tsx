@@ -27,6 +27,7 @@ export function PublicPageShell({
             <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground">About</Link>
             <Link to="/framework" className="text-sm text-muted-foreground hover:text-foreground">Framework</Link>
             <Link to="/programs" className="text-sm text-muted-foreground hover:text-foreground">Programs</Link>
+            <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground">Blog</Link>
             <Link to="/masterclass" className="text-sm text-muted-foreground hover:text-foreground">Masterclass</Link>
           </nav>
           <div className="flex items-center gap-2">
@@ -50,7 +51,7 @@ export function PublicPageShell({
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between lg:px-10">
           <Link to="/" className="flex items-center gap-3"><TLHLogo className="h-9 w-auto max-w-[170px] object-contain" /></Link>
           <div className="flex flex-wrap gap-5 text-sm text-muted-foreground">
-            <Link to="/about">About</Link><Link to="/framework">Framework</Link><Link to="/programs">Programs</Link><Link to="/masterclass">Masterclass</Link><Link to="/contact">Contact</Link><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link>
+            <Link to="/about">About</Link><Link to="/framework">Framework</Link><Link to="/programs">Programs</Link><Link to="/blog">Blog</Link><Link to="/masterclass">Masterclass</Link><Link to="/contact">Contact</Link><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link>
           </div>
         </div>
       </footer>
