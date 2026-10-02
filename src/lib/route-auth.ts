@@ -17,7 +17,7 @@ export async function requireRole(role: AppRole) {
       throw redirect({ to: "/login", replace: true });
     }
 
-    identity = { profile: profileResult.data, role: roleResult.data.role as AppRole };
+    const metadataName = typeof userData.user.user_metadata?.full_name === "string"\n      ? userData.user.user_metadata.full_name.trim()\n      : "";\n    identity = {\n      profile: {\n        ...profileResult.data,\n        full_name: profileResult.data.full_name?.trim() || metadataName || null,\n      },\n      role: roleResult.data.role as AppRole,\n    };
   } catch {
     throw redirect({ to: "/login" });
   }
