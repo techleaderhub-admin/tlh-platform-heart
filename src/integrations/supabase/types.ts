@@ -1397,6 +1397,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_l1_assessment_questions: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          question_text: string
+          category: string
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          explanation: string | null
+          sort_order: number
+          is_active: boolean
+        }[]
+      }
+
       record_payment_event: {
         Args: { p_event_type: string; p_payload: Json; p_payment_id?: string | null; p_provider: string; p_provider_event_id: string }
         Returns: string

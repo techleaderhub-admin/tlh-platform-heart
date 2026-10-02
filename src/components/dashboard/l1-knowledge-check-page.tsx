@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
-type Question = Database["public"]["Tables"]["l1_assessment_questions"]["Row"];
+type Question = Database["public"]["Functions"]["get_l1_assessment_questions"]["Returns"][number];
 type Attempt = Database["public"]["Tables"]["l1_assessment_attempts"]["Row"];
 type Answer = Database["public"]["Tables"]["l1_assessment_answers"]["Row"];
 type CategoryResult = Database["public"]["Functions"]["get_l1_assessment_category_results"]["Returns"][number];
@@ -48,7 +48,7 @@ export function L1KnowledgeCheckPage() {
     }
 
     const [questionResult, attemptResult] = await Promise.all([
-      supabase.from("l1_assessment_questions").select("*").eq("is_active", true).order("sort_order", { ascending: true }),
+      supabase.rpc("get_l1_assessment_questions").order("sort_order", { ascending: true }),
       supabase.from("l1_assessment_attempts").select("*").eq("student_id", userData.user.id).order("created_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
 
