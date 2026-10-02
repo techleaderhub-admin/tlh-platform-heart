@@ -6,7 +6,6 @@ import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
 type Country = {
   iso: string;
@@ -297,15 +296,11 @@ export function PhoneCountryField({
           </PopoverTrigger>
           <PopoverContent className="w-[320px] p-0" align="start">
             <Command shouldFilter={false}>
-              <div className="flex items-center border-b px-3">
-                <Search className="mr-2 size-4 shrink-0 opacity-50" />
-                <CommandInput
-                  value={query}
-                  onValueChange={setQuery}
-                  placeholder="Search country or code..."
-                  className="border-0"
-                />
-              </div>
+              <CommandInput
+                value={query}
+                onValueChange={setQuery}
+                placeholder="Search country or code..."
+              />
               <CommandList className="max-h-[320px]">
                 <CommandEmpty>No country found.</CommandEmpty>
                 {filteredCountries.map((country) => (
