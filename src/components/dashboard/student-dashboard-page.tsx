@@ -195,6 +195,20 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
           </Card>
         </section>
 
+        {rank >= LEVEL_RANK.l1 && (
+          <Card className="border-primary/20 bg-primary/[0.03]">
+            <CardContent className="flex flex-wrap items-center justify-between gap-4 p-5">
+              <div>
+                <p className="font-semibold">Interview Question Bank</p>
+                <p className="mt-1 text-sm text-muted-foreground">Study approved questions and submit the real questions you have faced in interviews.</p>
+              </div>
+              <Button variant="outline" asChild>
+                <a href="/dashboard/interview-questions">Open interview bank <MessageSquareText /></a>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         <Card>
           <CardHeader>
             <CardTitle>Your TLH Journey</CardTitle>
