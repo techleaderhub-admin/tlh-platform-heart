@@ -55,6 +55,101 @@ export type Database = {
           },
         ]
       }
+      foundation_resources: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          is_required: boolean
+          minimum_membership: Database["public"]["Enums"]["membership_level"]
+          resource_type: string
+          resource_url: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          minimum_membership?: Database["public"]["Enums"]["membership_level"]
+          resource_type?: string
+          resource_url: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_required?: boolean
+          minimum_membership?: Database["public"]["Enums"]["membership_level"]
+          resource_type?: string
+          resource_url?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "foundation_resources_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_resource_progress: {
+        Row: {
+          completed_at: string | null
+          resource_id: string
+          started_at: string | null
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          resource_id: string
+          started_at?: string | null
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          resource_id?: string
+          started_at?: string | null
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_resource_progress_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "foundation_resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_resource_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_profiles: {
         Row: {
           career_goal: string | null

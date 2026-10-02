@@ -138,11 +138,24 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                 </div>
               </div>
                             <div className="mt-5 flex flex-wrap items-center gap-3">
-                <Button variant="outline" disabled>
-                  {journeyCta(membership)}
-                  <ArrowRight />
-                </Button>
-                <span className="text-xs text-muted-foreground">This action will connect when the next journey module is built.</span>
+                {membership === "free" || membership === "l0" ? (
+                  <Button variant="outline" asChild>
+                    <a href="/dashboard/foundation">
+                      {journeyCta(membership)}
+                      <ArrowRight />
+                    </a>
+                  </Button>
+                ) : (
+                  <Button variant="outline" disabled>
+                    {journeyCta(membership)}
+                    <ArrowRight />
+                  </Button>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  {membership === "free" || membership === "l0"
+                    ? "Complete the assigned reading before moving to the next stage."
+                    : "This journey module will connect when it is built."}
+                </span>
               </div>
             </CardContent>
           </Card>
