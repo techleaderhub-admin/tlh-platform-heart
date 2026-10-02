@@ -1055,6 +1055,7 @@ export type Database = {
           interview_round: string | null
           interview_type: string | null
           job_application_id: string | null
+          job_application_url: string | null
           job_title: string | null
           status: Database["public"]["Enums"]["interview_status"]
           student_id: string
@@ -1070,6 +1071,7 @@ export type Database = {
           interview_round?: string | null
           interview_type?: string | null
           job_application_id?: string | null
+          job_application_url?: string | null
           job_title?: string | null
           status?: Database["public"]["Enums"]["interview_status"]
           student_id: string
@@ -1085,6 +1087,7 @@ export type Database = {
           interview_round?: string | null
           interview_type?: string | null
           job_application_id?: string | null
+          job_application_url?: string | null
           job_title?: string | null
           status?: Database["public"]["Enums"]["interview_status"]
           student_id?: string
@@ -1299,6 +1302,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
+          linkedin_url: string | null
           phone: string | null
           updated_at: string
         }
@@ -1307,6 +1311,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id: string
+          linkedin_url?: string | null
           phone?: string | null
           updated_at?: string
         }
@@ -1315,6 +1320,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
+          linkedin_url?: string | null
           phone?: string | null
           updated_at?: string
         }
