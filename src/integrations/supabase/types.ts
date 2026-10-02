@@ -150,6 +150,148 @@ export type Database = {
           },
         ]
       }
+      l1_assessment_answers: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          id: string
+          question_id: string
+          selected_option: string | null
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          id?: string
+          question_id: string
+          selected_option?: string | null
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          id?: string
+          question_id?: string
+          selected_option?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "l1_assessment_answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "l1_assessment_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "l1_assessment_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "l1_assessment_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      l1_assessment_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          passed: boolean | null
+          score: number | null
+          started_at: string
+          status: string
+          student_id: string
+          submitted_at: string | null
+          total_questions: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          passed?: boolean | null
+          score?: number | null
+          started_at?: string
+          status?: string
+          student_id: string
+          submitted_at?: string | null
+          total_questions?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          passed?: boolean | null
+          score?: number | null
+          started_at?: string
+          status?: string
+          student_id?: string
+          submitted_at?: string | null
+          total_questions?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "l1_assessment_attempts_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      l1_assessment_questions: {
+        Row: {
+          category: string
+          correct_option: string
+          created_at: string
+          created_by: string | null
+          explanation: string | null
+          id: string
+          is_active: boolean
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          question_text: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          correct_option: string
+          created_at?: string
+          created_by?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          option_a: string
+          option_b: string
+          option_c: string
+          option_d: string
+          question_text: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          correct_option?: string
+          created_at?: string
+          created_by?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean
+          option_a?: string
+          option_b?: string
+          option_c?: string
+          option_d?: string
+          question_text?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "l1_assessment_questions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_profiles: {
         Row: {
           career_goal: string | null
@@ -807,6 +949,12 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      submit_l1_assessment: {
+        Args: {
+          p_attempt_id: string
+        }
+        Returns: Database["public"]["Tables"]["l1_assessment_attempts"]["Row"]
       }
     }
     Enums: {

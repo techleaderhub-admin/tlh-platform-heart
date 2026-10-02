@@ -145,6 +145,13 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                       <ArrowRight />
                     </a>
                   </Button>
+                ) : membership === "l1" ? (
+                  <Button variant="outline" asChild>
+                    <a href="/dashboard/l1-knowledge-check">
+                      {journeyCta(membership)}
+                      <ArrowRight />
+                    </a>
+                  </Button>
                 ) : (
                   <Button variant="outline" disabled>
                     {journeyCta(membership)}
@@ -154,7 +161,9 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                 <span className="text-xs text-muted-foreground">
                   {membership === "free" || membership === "l0"
                     ? "Complete the assigned reading before moving to the next stage."
-                    : "This journey module will connect when it is built."}
+                    : membership === "l1"
+                      ? "Complete the 20-question knowledge check. 40% is the defined checkpoint."
+                      : "This journey module will connect when it is built."}
                 </span>
               </div>
             </CardContent>
