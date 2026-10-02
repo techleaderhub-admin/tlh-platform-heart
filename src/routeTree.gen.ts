@@ -30,6 +30,7 @@ import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
+import { Route as AuthenticatedAdminAssessmentAdminRouteImport } from './routes/_authenticated/admin/assessment-admin'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
@@ -156,6 +157,7 @@ const AuthenticatedAdminApplicationsRoute =
     path: '/applications',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAssessmentAdminRoute = AuthenticatedAdminAssessmentAdminRouteImport.update({ id: '/assessment-admin', path: '/assessment-admin', getParentRoute: () => AuthenticatedAdminRoute } as any)
 const AuthenticatedAdminAssessmentsRoute =
   AuthenticatedAdminAssessmentsRouteImport.update({
     id: '/assessments',
@@ -858,6 +860,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
+  AuthenticatedAdminAssessmentAdminRoute: typeof AuthenticatedAdminAssessmentAdminRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
   AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
@@ -876,6 +879,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
+  AuthenticatedAdminAssessmentAdminRoute: AuthenticatedAdminAssessmentAdminRoute,
   AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
   AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
   AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
