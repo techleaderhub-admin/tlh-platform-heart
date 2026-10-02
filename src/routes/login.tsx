@@ -82,6 +82,21 @@ function LoginPage() {
         refresh_token: tokens.refreshToken,
       });
       if (sessionError) throw sessionError;
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: profile } = user
+        ? await supabase
+            .from("profiles")
+            .select("is_blocked, deleted_at")
+            .eq("id", user.id)
+            .maybeSingle()
+        : { data: null };
+      if (profile?.is_blocked || profile?.deleted_at) {
+        await supabase.auth.signOut();
+        setError(profile.deleted_at
+          ? "This account has been removed. Please contact Tech Leader Hub support."
+          : "This account is blocked. Please contact Tech Leader Hub support.");
+        return;
+      }
       const identity = await getMyIdentity();
       await navigate({ to: destinationForRole(identity.role), replace: true, reloadDocument: true });
     } catch {
