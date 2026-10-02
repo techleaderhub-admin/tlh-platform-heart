@@ -1,80 +1,8 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { LayoutDashboard, LogOut, MessageSquareText, UserRound, Map } from "lucide-react";
+import { LayoutDashboard, LogOut, MessageSquareText, UserRound, Map, GraduationCap, CalendarDays } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-
 import { Button } from "@/components/ui/button";
 import { signOutAndReturnToLogin } from "@/lib/auth-client";
 import { TLHLogo } from "@/components/brand/tlh-logo";
-
-export function StudentShell({
-  children,
-  title,
-  subtitle,
-  membershipLabel,
-}: {
-  children: ReactNode;
-  title: string;
-  subtitle: string;
-  membershipLabel: string;
-}) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8">
-          <div className="flex items-center gap-3">
-            <TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block" />
-            <TLHLogo variant="icon" className="size-10 object-contain sm:hidden" />
-            <div className="hidden sm:block">
-              <p className="font-heading text-sm font-bold">Tech Leader Hub</p>
-              <p className="text-xs text-muted-foreground">Student workspace</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="hidden rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary sm:inline-flex">
-              {membershipLabel}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => signOutAndReturnToLogin(queryClient, () => navigate({ to: "/login", replace: true }))}
-            >
-              <LogOut aria-hidden="true" />
-              Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <nav className="flex gap-1 overflow-x-auto border-b border-border py-2" aria-label="Student navigation">
-          <Button variant={location.pathname === "/dashboard" ? "secondary" : "ghost"} size="sm" asChild>
-            <Link to="/dashboard"><LayoutDashboard aria-hidden="true" />Journey</Link>
-          </Button>
-          <Button variant={location.pathname === "/dashboard/profile" ? "secondary" : "ghost"} size="sm" asChild>
-            <Link to="/dashboard/profile"><UserRound aria-hidden="true" />Profile</Link>
-          </Button>
-          <Button variant={location.pathname.startsWith("/dashboard/career-os") ? "secondary" : "ghost"} size="sm" asChild>
-            <Link to="/dashboard/career-os"><Map aria-hidden="true" />Career OS</Link>
-          </Button>
-          <Button variant={location.pathname.startsWith("/dashboard/interview-questions") ? "secondary" : "ghost"} size="sm" asChild>
-            <Link to="/dashboard/interview-questions"><MessageSquareText aria-hidden="true" />Interview Questions</Link>
-          </Button>
-        </nav>
-      </div>
-
-      <main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">Student workspace</p>
-          <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-          <p className="mt-2 max-w-2xl text-muted-foreground">{subtitle}</p>
-        </div>
-        <div className="mt-8">{children}</div>
-      </main>
-    </div>
-  );
-}
+export function StudentShell({children,title,subtitle,membershipLabel}:{children:ReactNode;title:string;subtitle:string;membershipLabel:string}){const location=useLocation();const navigate=useNavigate();const queryClient=useQueryClient();return <div className="min-h-screen bg-background text-foreground"><header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur"><div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8"><div className="flex items-center gap-3"><TLHLogo className="hidden h-10 w-auto max-w-[180px] object-contain sm:block"/><TLHLogo variant="icon" className="size-10 object-contain sm:hidden"/><div className="hidden sm:block"><p className="font-heading text-sm font-bold">Tech Leader Hub</p><p className="text-xs text-muted-foreground">Student workspace</p></div></div><div className="flex items-center gap-2"><span className="hidden rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-semibold text-primary sm:inline-flex">{membershipLabel}</span><Button variant="outline" size="sm" onClick={()=>signOutAndReturnToLogin(queryClient,()=>navigate({to:"/login",replace:true}))}><LogOut/>Sign out</Button></div></div></header><div className="mx-auto max-w-7xl px-5 sm:px-8"><nav className="flex gap-1 overflow-x-auto border-b border-border py-2" aria-label="Student navigation"><Button variant={location.pathname==="/dashboard"?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard"><LayoutDashboard/>Journey</Link></Button><Button variant={location.pathname==="/dashboard/profile"?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard/profile"><UserRound/>Profile</Link></Button><Button variant={location.pathname.startsWith("/dashboard/l3-course")?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard/l3-course"><GraduationCap/>L3 Career Track</Link></Button><Button variant={location.pathname.startsWith("/dashboard/l3-live-sessions")?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard/l3-live-sessions"><CalendarDays/>Live Sessions</Link></Button><Button variant={location.pathname.startsWith("/dashboard/career-os")?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard/career-os"><Map/>Career OS</Link></Button><Button variant={location.pathname.startsWith("/dashboard/interview-questions")?"secondary":"ghost"} size="sm" asChild><Link to="/dashboard/interview-questions"><MessageSquareText/>Interview Questions</Link></Button></nav></div><main className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10"><div><p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">Student workspace</p><h1 className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1><p className="mt-2 max-w-2xl text-muted-foreground">{subtitle}</p></div><div className="mt-8">{children}</div></main></div>}
