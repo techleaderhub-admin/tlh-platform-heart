@@ -627,6 +627,51 @@ export type Database = {
           },
         ]
       }
+      student_memberships: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          is_active: boolean
+          level: Database["public"]["Enums"]["membership_level"]
+          note: string | null
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          is_active?: boolean
+          level?: Database["public"]["Enums"]["membership_level"]
+          note?: string | null
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          is_active?: boolean
+          level?: Database["public"]["Enums"]["membership_level"]
+          note?: string | null
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_memberships_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_memberships_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -670,6 +715,7 @@ export type Database = {
       }
     }
     Enums: {
+      membership_level: "free" | "l0" | "l1" | "l2" | "l3" | "l4"
       app_role: "student" | "admin"
       application_status:
         | "saved"
@@ -813,6 +859,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      membership_level: ["free", "l0", "l1", "l2", "l3", "l4"],
       app_role: ["student", "admin"],
       application_status: [
         "saved",
