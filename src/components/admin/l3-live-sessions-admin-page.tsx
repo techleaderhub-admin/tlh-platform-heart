@@ -274,7 +274,7 @@ export function L3LiveSessionsAdminPage() {
           <CardHeader>
             <CardTitle>Attendance responses</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Admin can review and correct each Student → Session → Attended / Not Attended response.
+              Admin can review and correct each Leader → Session → Attended / Not Attended response.
             </p>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -287,7 +287,7 @@ export function L3LiveSessionsAdminPage() {
                   <p className="font-semibold">
                     {sessions.find((session) => session.id === item.session_id)?.title ?? "Session"}
                   </p>
-                  <p className="text-xs text-muted-foreground">Student: {item.student_id}</p>
+                  <p className="text-xs text-muted-foreground">Leader: {item.student_id}</p>
                 </div>
 
                 <div className="flex items-center gap-2">
