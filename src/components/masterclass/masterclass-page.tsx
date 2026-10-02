@@ -1,814 +1,729 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  BadgeCheck,
   BrainCircuit,
   CalendarDays,
-  Check,
-  ChevronDown,
   Clock3,
+  Flame,
   Gift,
-  Laptop2,
-  Layers3,
-  Map,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  Users,
-  X,
+  Magnet,
+  Play,
+  Route,
+  ShieldAlert,
+  Timer,
+  TrendingDown,
+  UserRoundCog,
+  Video,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { TLHLogo } from "@/components/brand/tlh-logo";
 
-const SESSION_LABEL = "Sunday 11:00 AM IST";
-const SESSION_TIME = "11:00 AM IST";
+import {
+  AUDIENCE,
+  BONUSES,
+  CASE_STUDIES,
+  CTA,
+  DISCLAIMER,
+  EVENT,
+  FAQS,
+  FINAL_CTA,
+  HERO,
+  PROBLEM,
+  SECRETS,
+  SOLUTION,
+  SPEAKER,
+  VSL,
+  WHY_ATTEND,
+  type CaseStudy,
+} from "@/components/masterclass/masterclass-content";
+import { RegistrationDialog } from "@/components/masterclass/registration-dialog";
+import {
+  formatSessionDate,
+  useNextSession,
+  type Countdown,
+} from "@/components/masterclass/use-next-session";
+import { BonusCover, HeroBlueprint, TrajectoryChart } from "@/components/masterclass/visuals";
 
-const audience = [
-  {
-    icon: Target,
-    title: "2–13 years of Android experience",
-    description: "You already have Android experience and want that experience to create stronger career opportunities.",
-  },
-  {
-    icon: Layers3,
-    title: "Currently in a service or mid-tier product company",
-    description: "You want to understand what stronger product organizations expect from experienced engineers.",
-  },
-  {
-    icon: Map,
-    title: "Want to crack high-paying product-based roles",
-    description: "You've been thinking about changing jobs and need a clearer, structured path.",
-  },
-  {
-    icon: BrainCircuit,
-    title: "Ready to grow into a tech leader",
-    description: "You want to move toward Senior, Lead, Architect or broader technical ownership.",
-  },
-];
+const PAIN_ICONS = [Flame, ShieldAlert, TrendingDown, UserRoundCog];
+const SECRET_ICONS = [UserRoundCog, Magnet, Route];
 
-const learningPoints = [
-  {
-    number: "01",
-    title: "The real difference between a senior developer and a tech leader",
-    description:
-      "Understand how expectations change when you move from feature execution toward product engineering and technical ownership.",
-  },
-  {
-    number: "02",
-    title: "3 skills that actually matter for ₹36+ LPA Android roles",
-    description:
-      "Identify the capabilities that increasingly separate experienced engineers from engineers ready for larger technical responsibilities.",
-  },
-  {
-    number: "03",
-    title: "How to position yourself as a leader, not just a coder",
-    description:
-      "Learn why years of experience alone do not automatically communicate leadership-level capability.",
-  },
-  {
-    number: "04",
-    title: "The Tech Leader Hub roadmap to premium Android careers",
-    description:
-      "See a practical path from Senior Android Engineer toward Tech Lead, Architect and technology leadership.",
-  },
-];
+const PORTRAIT = {
+  hero: "/images/nikhil/nikhil-rai-arms-crossed-charcoal",
+  speaker: "/images/nikhil/nikhil-rai-blue-suit",
+} as const;
 
-const framework = [
-  ["01", "Diagnose", "Understand where your career is today."],
-  ["02", "Position", "Define the role and career direction you're targeting."],
-  ["03", "Upgrade", "Build the technical capabilities you're missing."],
-  ["04", "Prove", "Create evidence of your technical depth."],
-  ["05", "Prepare", "Become interview-ready."],
-  ["06", "Activate", "Start targeting the right opportunities."],
-  ["07", "Convert", "Turn interviews into opportunities."],
-  ["08", "Negotiate", "Create stronger career outcomes."],
-  ["09", "Advance", "Build your long-term leadership trajectory."],
-];
+/* ---------- Small building blocks ---------- */
 
-const faqs = [
-  {
-    question: "Is this masterclass really free?",
-    answer: "Yes. The live 90-minute masterclass is free to attend.",
-  },
-  {
-    question: "Is this for beginners?",
-    answer: "No. The primary audience is experienced Android professionals, particularly those with around 2–8 years of experience.",
-  },
-  {
-    question: "I'm already a Senior Android Developer. Is this relevant?",
-    answer: "Yes. The session focuses on career positioning, technical depth, interviews and progression toward larger technical responsibilities.",
-  },
-  {
-    question: "Is this about learning basic Android?",
-    answer: "No. This is not a beginner Android-development class. It is a career-focused session for professionals who already work with Android.",
-  },
-  {
-    question: "Where is the masterclass conducted?",
-    answer: "The masterclass is live online via Zoom.",
-  },
-  {
-    question: "What happens after the masterclass?",
-    answer: "You'll understand the TLH career framework and your potential next steps. If you want deeper guidance afterward, you'll be able to explore the Tech Leader Hub ecosystem.",
-  },
-];
-
-type RegistrationForm = {
-  experienceRange: string;
-  currentRole: string;
-  biggestChallenge: string;
-  fullName: string;
-  email: string;
-  phone: string;
-};
-
-export function MasterclassPage() {
-  const [open, setOpen] = useState(false);
-  const [step, setStep] = useState(0);
-  const [processing, setProcessing] = useState(false);
-  const [registered, setRegistered] = useState(false);
-  const [error, setError] = useState("");
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [form, setForm] = useState<RegistrationForm>({
-    experienceRange: "",
-    currentRole: "",
-    biggestChallenge: "",
-    fullName: "",
-    email: "",
-    phone: "",
-  });
-
-  const start = () => {
-    setStep(0);
-    setProcessing(false);
-    setRegistered(false);
-    setError("");
-    setForm({
-      experienceRange: "",
-      currentRole: "",
-      biggestChallenge: "",
-      fullName: "",
-      email: "",
-      phone: "",
-    });
-    setOpen(true);
-  };
-
-  const submitRegistration = async () => {
-    setError("");
-
-    if (!form.fullName.trim() || !form.email.trim() || !form.phone.trim()) {
-      setError("Please enter your name, email, and WhatsApp number.");
-      return;
-    }
-
-    if (!form.experienceRange || !form.currentRole || !form.biggestChallenge) {
-      setError("Please complete your career details before registering.");
-      return;
-    }
-
-    setProcessing(true);
-
-    // The existing masterclass table has a roadblock field but no current_role column.
-    // Preserve both qualification answers in that existing field until the schema is expanded.
-    const roadblock = `Current role: ${form.currentRole} | Biggest challenge: ${form.biggestChallenge}`;
-
-    const { error: insertError } = await supabase.from("masterclass_registrations").insert({
-      full_name: form.fullName.trim(),
-      email: form.email.trim().toLowerCase(),
-      phone: form.phone.trim(),
-      experience_range: form.experienceRange,
-      roadblock,
-      session_label: SESSION_LABEL,
-    });
-
-    if (insertError) {
-      setProcessing(false);
-      setError("We couldn't complete your registration. Please check your details and try again.");
-      return;
-    }
-
-    setProcessing(false);
-    setRegistered(true);
-  };
-
+function CtaButton({
+  onClick,
+  children = CTA.primary,
+  size = "lg",
+  className = "",
+}: {
+  onClick: () => void;
+  children?: React.ReactNode;
+  size?: "lg" | "sm";
+  className?: string;
+}) {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#071426] text-[#F8FAFC]">
-      <div className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#071426]/90 backdrop-blur-2xl">
-        <div className="mx-auto flex h-11 max-w-7xl items-center justify-center px-5 sm:px-8">
-          <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-white/70 sm:text-xs">
-            <span className="size-1.5 animate-pulse rounded-full bg-[#22D3EE]" />
-            Free Live Masterclass · Sunday · {SESSION_TIME}
-          </p>
+    <button
+      type="button"
+      onClick={onClick}
+      className={`mc-btn mc-btn-primary ${size === "lg" ? "mc-btn-lg" : "mc-btn-sm"} ${className}`}
+    >
+      <span>{children}</span>
+      <ArrowRight className="size-5 shrink-0" aria-hidden="true" />
+    </button>
+  );
+}
+
+function CountdownTiles({ left, compact = false }: { left: Countdown | null; compact?: boolean }) {
+  const units: Array<[string, number | null]> = [
+    ["Days", left?.days ?? null],
+    ["Hours", left?.hours ?? null],
+    ["Mins", left?.minutes ?? null],
+    ["Secs", left?.seconds ?? null],
+  ];
+  return (
+    <div
+      className={compact ? "mc-countdown mc-countdown-compact" : "mc-countdown"}
+      role="timer"
+      aria-live="off"
+    >
+      {units.map(([label, value]) => (
+        <div key={label} className="mc-countdown-unit">
+          <span className="mc-countdown-value">
+            {value === null ? "--" : String(value).padStart(2, "0")}
+          </span>
+          <span className="mc-countdown-label">{label}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  intro,
+  center = false,
+  id,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  intro?: string;
+  center?: boolean;
+  id: string;
+}) {
+  return (
+    <div className={center ? "mc-heading mc-heading-center" : "mc-heading"}>
+      <p className="mc-eyebrow">{eyebrow}</p>
+      <h2 id={id} className="mc-h2">
+        {title}
+      </h2>
+      {intro ? <p className="mc-intro">{intro}</p> : null}
+    </div>
+  );
+}
+
+/** Click-to-play YouTube block: nothing from YouTube loads until the visitor presses play. */
+function VideoFacade({
+  youtubeId,
+  poster,
+  label,
+  className = "",
+}: {
+  youtubeId: string;
+  poster: string;
+  label: string;
+  className?: string;
+}) {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <div className={`mc-video ${className}`}>
+      {playing ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+          title={label}
+          allow="autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+        />
+      ) : (
+        <button
+          type="button"
+          className="mc-video-poster"
+          onClick={() => setPlaying(true)}
+          aria-label={`Play video: ${label}`}
+        >
+          <img src={poster} alt="" width={640} height={885} loading="eager" decoding="async" />
+          <span className="mc-video-play" aria-hidden="true">
+            <Play className="size-7 translate-x-0.5 fill-current" />
+          </span>
+          <span className="mc-video-label">
+            <Video className="size-4" aria-hidden="true" />
+            {label}
+          </span>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function CaseStudyCard({ study }: { study: CaseStudy }) {
+  const initials = study.name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2);
+  return (
+    <article className="mc-case" data-mc-reveal>
+      <div className="mc-case-media">
+        {study.videoId ? (
+          <VideoFacade
+            youtubeId={study.videoId}
+            poster={study.photo ?? `${PORTRAIT.hero}-640.webp`}
+            label={`${study.name}'s story`}
+          />
+        ) : (
+          <div className="mc-case-avatar">
+            {study.photo ? (
+              <img
+                src={study.photo}
+                alt={`${study.name}, Droid Skool mentee`}
+                width={72}
+                height={72}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span aria-hidden="true">{initials}</span>
+            )}
+          </div>
+        )}
+        <div>
+          <p className="mc-case-name">{study.name}</p>
+          <p className="mc-case-headline">{study.headline}</p>
         </div>
       </div>
+      <div className="mc-case-jump" aria-label={`From ${study.from} to ${study.to}`}>
+        <span className="mc-case-from">{study.from}</span>
+        <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
+        <span className="mc-case-to">{study.to}</span>
+      </div>
+      <p className="mc-case-story">{study.story}</p>
+    </article>
+  );
+}
 
-      <header className="sticky top-11 z-40 border-b border-white/10 bg-[#071426]/80 backdrop-blur-2xl">
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
-          <Link to="/" aria-label="Tech Leader Hub home" className="shrink-0">
-            <TLHLogo className="h-9 w-auto max-w-[175px] object-contain sm:h-10" />
+/** Fades sections in on scroll. Content is only hidden once this has run (no-JS safe). */
+function useReveal() {
+  useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>("[data-mc-reveal]");
+    if (
+      typeof IntersectionObserver === "undefined" ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    elements.forEach((element) => {
+      if (element.getBoundingClientRect().top < window.innerHeight) element.classList.add("is-in");
+    });
+    document.documentElement.classList.add("mc-reveal-ready");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    elements.forEach((element) => {
+      if (!element.classList.contains("is-in")) observer.observe(element);
+    });
+    return () => {
+      observer.disconnect();
+      document.documentElement.classList.remove("mc-reveal-ready");
+    };
+  }, []);
+}
+
+/* ---------- Page ---------- */
+
+export function MasterclassPage() {
+  const session = useNextSession();
+  const [dialog, setDialog] = useState<{ open: boolean; source: string }>({
+    open: false,
+    source: "hero",
+  });
+  const [showBar, setShowBar] = useState(false);
+  const heroCtaRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+
+  const register = useCallback((source: string) => {
+    openerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setDialog({ open: true, source });
+  }, []);
+
+  const closeDialog = useCallback(() => {
+    setDialog((current) => ({ ...current, open: false }));
+    window.requestAnimationFrame(() => openerRef.current?.focus());
+  }, []);
+
+  // The sticky mobile bar appears once the hero's own button has scrolled away.
+  useEffect(() => {
+    const target = heroCtaRef.current;
+    if (!target || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry) setShowBar(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+    });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
+  useReveal();
+
+  const dateLabel = session ? formatSessionDate(session.start) : EVENT.dayLabel;
+
+  return (
+    <div className="tlh-mc">
+      <a href="#mc-main" className="mc-skip">
+        Skip to content
+      </a>
+
+      {/* ---------- Header ---------- */}
+      <header className="mc-header">
+        <div className="mc-header-inner">
+          <Link to="/" className="mc-logo" aria-label="Tech Leader Hub home">
+            <img src="/images/brand/tlh-icon-72.webp" alt="" width={32} height={32} />
+            <span>Tech Leader Hub</span>
           </Link>
-
-          <nav className="hidden items-center gap-7 lg:flex">
-            <a href="#why" className="text-sm text-white/55 transition hover:text-white">Why this</a>
-            <a href="#learn" className="text-sm text-white/55 transition hover:text-white">What you'll learn</a>
-            <a href="#framework" className="text-sm text-white/55 transition hover:text-white">Framework</a>
-            <a href="#host" className="text-sm text-white/55 transition hover:text-white">About Nikhil</a>
-            <a href="#faq" className="text-sm text-white/55 transition hover:text-white">FAQ</a>
-          </nav>
-
-          <Button onClick={start} className="h-10 rounded-full bg-[#1677FF] px-5 text-sm font-bold text-white shadow-[0_0_30px_rgba(22,119,255,.22)] hover:bg-[#2581ff]">
-            Book My Free Seat <ArrowRight />
-          </Button>
+          <div className="mc-header-session" aria-label="Next live session">
+            <span className="mc-live-dot" aria-hidden="true" />
+            <span className="mc-header-session-text">
+              {EVENT.dayLabel} · {EVENT.timeLabel}
+            </span>
+            <CountdownTiles left={session?.left ?? null} compact />
+          </div>
+          <CtaButton size="sm" onClick={() => register("header")}>
+            {CTA.short}
+          </CtaButton>
         </div>
       </header>
 
-      <section className="relative overflow-hidden border-b border-white/10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_22%,rgba(22,119,255,.22),transparent_33%),radial-gradient(circle_at_15%_12%,rgba(34,211,238,.08),transparent_27%)]" />
-        <div className="hero-grid absolute inset-0 opacity-50" aria-hidden="true" />
+      <main id="mc-main">
+        {/* ---------- 1. Hero ---------- */}
+        <section className="mc-hero" aria-labelledby="mc-hero-title">
+          <HeroBlueprint className="mc-hero-blueprint" />
+          <div className="mc-hero-glow" aria-hidden="true" />
+          <div className="mc-container mc-hero-inner">
+            <p className="mc-prehead">{HERO.preHeadline}</p>
+            <h1 id="mc-hero-title" className="mc-h1">
+              {HERO.headlineLead} <span className="mc-gradient-text">{HERO.headlineHighlight}</span>
+            </h1>
+            <p className="mc-hero-desc">{HERO.description}</p>
 
-        <div className="relative mx-auto grid max-w-7xl gap-14 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.04fr_.96fr] lg:items-center lg:gap-20 lg:pb-28 lg:pt-24">
-          <div className="home-reveal">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#22D3EE]/25 bg-[#22D3EE]/[0.06] px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">
-              <Sparkles className="size-3.5" />
-              Free 90-Minute Live Masterclass
+            <div className="mc-hero-grid">
+              <VideoFacade
+                youtubeId={VSL.youtubeId}
+                poster={`${PORTRAIT.hero}-640.webp`}
+                label={VSL.label}
+                className="mc-hero-video"
+              />
+
+              <div className="mc-event-card" ref={heroCtaRef}>
+                <div className="mc-event-badge">
+                  <span className="mc-live-dot" aria-hidden="true" />
+                  Free live masterclass
+                </div>
+                <ul className="mc-event-facts">
+                  <li>
+                    <CalendarDays className="size-5" aria-hidden="true" />
+                    <span>
+                      <strong>{dateLabel}</strong>
+                      <small>Webinar date</small>
+                    </span>
+                  </li>
+                  <li>
+                    <Clock3 className="size-5" aria-hidden="true" />
+                    <span>
+                      <strong>{EVENT.timeLabel}</strong>
+                      <small>{EVENT.durationLabel}, live</small>
+                    </span>
+                  </li>
+                  <li>
+                    <Video className="size-5" aria-hidden="true" />
+                    <span>
+                      <strong>Online on Zoom</strong>
+                      <small>Join from anywhere</small>
+                    </span>
+                  </li>
+                </ul>
+
+                <div className="mc-price">
+                  <span className="mc-price-old">
+                    <span className="sr-only">Regular price </span>
+                    {EVENT.anchorPrice}
+                  </span>
+                  <span className="mc-price-new">Free Access</span>
+                </div>
+
+                <div className="mc-event-countdown">
+                  <p>
+                    <Timer className="size-4" aria-hidden="true" />
+                    Registration closes when the session starts
+                  </p>
+                  <CountdownTiles left={session?.left ?? null} />
+                </div>
+
+                <CtaButton onClick={() => register("hero")} className="mc-btn-block" />
+                <p className="mc-micro">{CTA.micro}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- Authority strip ---------- */}
+        <section className="mc-strip" aria-label="Speaker experience">
+          <div className="mc-container mc-strip-inner">
+            <p>Lead and Architect experience at</p>
+            <ul>
+              {SPEAKER.companies.map((company) => (
+                <li key={company}>{company}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ---------- 2. Problem ---------- */}
+        <section className="mc-section mc-light" aria-labelledby="mc-problem-title">
+          <div className="mc-container">
+            <SectionHeading
+              id="mc-problem-title"
+              eyebrow={PROBLEM.eyebrow}
+              title={PROBLEM.title}
+              intro={PROBLEM.intro}
+            />
+            <div className="mc-pain-grid">
+              {PROBLEM.pains.map((pain, index) => {
+                const Icon = PAIN_ICONS[index] ?? Flame;
+                return (
+                  <article key={pain.title} className="mc-pain" data-mc-reveal>
+                    <span className="mc-icon-tile">
+                      <Icon className="size-5" aria-hidden="true" />
+                    </span>
+                    <h3>{pain.title}</h3>
+                    <p>{pain.text}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- 2b. Solution ---------- */}
+        <section className="mc-section mc-dark" aria-labelledby="mc-solution-title">
+          <div className="mc-container mc-solution">
+            <div>
+              <SectionHeading
+                id="mc-solution-title"
+                eyebrow={SOLUTION.eyebrow}
+                title={SOLUTION.title}
+                intro={SOLUTION.intro}
+              />
+              <ol className="mc-shifts">
+                {SOLUTION.shifts.map((shift) => (
+                  <li key={shift.from} data-mc-reveal>
+                    <span className="mc-shift-from">{shift.from}</span>
+                    <ArrowRight className="mc-shift-arrow size-4" aria-hidden="true" />
+                    <span className="mc-shift-to">{shift.to}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className="mc-chart-card" data-mc-reveal>
+              <TrajectoryChart className="mc-chart" />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- 3. Three secrets ---------- */}
+        <section
+          className="mc-section mc-dark mc-secrets-section"
+          aria-labelledby="mc-secrets-title"
+        >
+          <div className="mc-container">
+            <SectionHeading
+              id="mc-secrets-title"
+              center
+              eyebrow="Inside the masterclass"
+              title="3 secrets we will cover"
+              intro="Two live hours. Three shifts that separate ₹8 LPA ticket-closers from tier-1 Tech Leaders."
+            />
+            <div className="mc-secrets">
+              {SECRETS.map((secret, index) => {
+                const Icon = SECRET_ICONS[index] ?? BrainCircuit;
+                return (
+                  <article key={secret.title} className="mc-secret" data-mc-reveal>
+                    <div className="mc-secret-top">
+                      <span className="mc-icon-tile mc-icon-tile-dark">
+                        <Icon className="size-5" aria-hidden="true" />
+                      </span>
+                      <span className="mc-secret-number">{secret.number}</span>
+                    </div>
+                    <h3>{secret.title}</h3>
+                    <p>{secret.text}</p>
+                    <ul className="mc-tags">
+                      {secret.tags.map((tag) => (
+                        <li key={tag}>{tag}</li>
+                      ))}
+                    </ul>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="mc-center-cta">
+              <CtaButton onClick={() => register("secrets")} />
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- 4. Who is this webinar for ---------- */}
+        <section className="mc-section mc-light" aria-labelledby="mc-audience-title">
+          <div className="mc-container">
+            <SectionHeading
+              id="mc-audience-title"
+              eyebrow="Whom is this webinar for"
+              title="Built for experienced Android developers with 2–13 years behind them."
+            />
+            <div className="mc-audience">
+              {AUDIENCE.map((item) => (
+                <article key={item.title} className="mc-audience-card" data-mc-reveal>
+                  <span className="mc-years">{item.years}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+            <p className="mc-not-for">
+              <strong>Not for freshers or absolute beginners.</strong> We won't teach basic Kotlin
+              syntax. This is a high-level strategic masterclass.
+            </p>
+          </div>
+        </section>
+
+        {/* ---------- 5. About the speaker ---------- */}
+        <section className="mc-section mc-dark" aria-labelledby="mc-speaker-title">
+          <div className="mc-container mc-speaker">
+            <div className="mc-speaker-photo" data-mc-reveal>
+              <img
+                src={`${PORTRAIT.speaker}-1200.webp`}
+                srcSet={`${PORTRAIT.speaker}-640.webp 640w, ${PORTRAIT.speaker}-1200.webp 736w`}
+                sizes="(min-width: 1024px) 460px, 92vw"
+                alt={`${SPEAKER.name}, ${SPEAKER.title}`}
+                width={736}
+                height={1018}
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="mc-speaker-tag">
+                <p>{SPEAKER.name}</p>
+                <span>{SPEAKER.title}</span>
+              </div>
             </div>
 
-            <p className="mt-7 text-sm font-semibold text-white/55 sm:text-base">
-              Free 90-minute masterclass for serious Android professionals ready to move from senior developer to tech leader.
-            </p>
+            <div>
+              <p className="mc-eyebrow">About the speaker</p>
+              <h2 id="mc-speaker-title" className="mc-h2">
+                {SPEAKER.name}
+              </h2>
+              <p className="mc-speaker-title">{SPEAKER.title}</p>
 
-            <h1 className="mt-4 max-w-4xl font-heading text-4xl font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.55rem]">
-              How Senior Android Engineers Can Transition Into{" "}
-              <span className="bg-gradient-to-r from-[#1677FF] via-[#22D3EE] to-[#F5B942] bg-clip-text text-transparent">
-                Tech Leader Hub and Unlock ₹36+ LPA Roles
-              </span>
-            </h1>
+              <dl className="mc-stats">
+                {SPEAKER.stats.map((stat) => (
+                  <div key={stat.label}>
+                    <dt>{stat.label}</dt>
+                    <dd>{stat.value}</dd>
+                  </div>
+                ))}
+              </dl>
 
-            <p className="mt-7 max-w-2xl text-base leading-7 text-white/60 sm:text-xl sm:leading-8">
-              Most senior Android engineers are stuck in service companies with slow salary growth, outdated skills, and no clear path to product-based leadership roles. This masterclass gives you a practical roadmap to change that.
-            </p>
+              <h3 className="mc-h3">{SPEAKER.experienceTitle}</h3>
+              <p className="mc-body">{SPEAKER.experience}</p>
+              <ul className="mc-chips" aria-label="Platforms architected">
+                {SPEAKER.platforms.map((platform) => (
+                  <li key={platform}>{platform}</li>
+                ))}
+              </ul>
 
-            <div className="mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-              {[
-                [CalendarDays, "Every Sunday"],
-                [Clock3, SESSION_TIME],
-                [Laptop2, "Live on Zoom"],
-              ].map(([Icon, value]) => (
-                <div key={String(value)} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 backdrop-blur-xl">
-                  <Icon className="size-5 text-[#22D3EE]" />
-                  <p className="mt-3 text-sm font-semibold text-white/80">{String(value)}</p>
-                </div>
+              <h3 className="mc-h3">{SPEAKER.missionTitle}</h3>
+              <p className="mc-body">{SPEAKER.mission}</p>
+              <dl className="mc-marks" aria-label="Academic marks">
+                {SPEAKER.marks.map((mark) => (
+                  <div key={mark.label}>
+                    <dt>{mark.label}</dt>
+                    <dd>{mark.value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <CtaButton onClick={() => register("speaker")} className="mt-9">
+                Learn the system from Nikhil, free
+              </CtaButton>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- 6. Case studies ---------- */}
+        <section className="mc-section mc-light" aria-labelledby="mc-cases-title">
+          <div className="mc-container">
+            <SectionHeading
+              id="mc-cases-title"
+              eyebrow="Case studies & proof"
+              title="Real developers. Real career jumps."
+              intro="Droid Skool mentees who applied the same system you'll see in the masterclass."
+            />
+            <div className="mc-cases">
+              {CASE_STUDIES.map((study) => (
+                <CaseStudyCard key={study.name} study={study} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- 7. Why attend + bonuses ---------- */}
+        <section className="mc-section mc-dark" aria-labelledby="mc-why-title">
+          <div className="mc-container">
+            <SectionHeading
+              id="mc-why-title"
+              center
+              eyebrow="Why attend this webinar"
+              title="Six reasons to block two hours this Sunday."
+            />
+            <div className="mc-why">
+              {WHY_ATTEND.map((item) => (
+                <article key={item.title} className="mc-why-item" data-mc-reveal>
+                  <BadgeCheck className="size-6 shrink-0" aria-hidden="true" />
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </article>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <Button size="lg" onClick={start} className="h-14 rounded-full bg-[#1677FF] px-7 text-base font-extrabold text-white shadow-[0_12px_50px_rgba(22,119,255,.28)] hover:bg-[#2581ff]">
-                Book My Free Seat <ArrowRight />
-              </Button>
-              <p className="text-sm text-white/45">No credit card · 100% free · 90 minutes</p>
-            </div>
-          </div>
-
-          <div className="relative home-reveal home-delay">
-            <div className="absolute -inset-10 rounded-full bg-[#1677FF]/10 blur-3xl" />
-            <div className="relative rounded-[28px] border border-white/12 bg-white/[0.045] p-3 shadow-2xl backdrop-blur-xl sm:p-5">
-              <div className="rounded-[22px] border border-white/10 bg-[#0B1C32]/90 p-5 sm:p-7">
-                <div className="flex items-center justify-between border-b border-white/10 pb-5">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#22D3EE]">Tech Leader Hub</p>
-                    <p className="mt-1 font-heading text-lg font-bold">Career OS</p>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-full border border-[#22D3EE]/20 bg-[#22D3EE]/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-[#22D3EE]">
-                    Live System
-                  </div>
-                </div>
-
-                <div className="mt-7 grid gap-3 sm:grid-cols-[1.1fr_.9fr]">
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Current</p>
-                    <p className="mt-2 font-heading text-lg font-bold">Senior Android Engineer</p>
-                    <div className="mt-5 flex items-end justify-between">
-                      <div>
-                        <p className="text-[10px] uppercase tracking-wider text-white/35">Readiness</p>
-                        <p className="mt-1 text-2xl font-extrabold text-[#22D3EE]">78%</p>
-                      </div>
-                      <div className="size-14 rounded-full border-[5px] border-[#1677FF] border-r-[#22D3EE]/20" />
-                    </div>
-                    <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full w-[78%] rounded-full bg-gradient-to-r from-[#1677FF] to-[#22D3EE]" />
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Target</p>
-                    <p className="mt-2 font-heading text-lg font-bold">Tech Lead / Architect</p>
-                    <div className="mt-6 space-y-3 text-xs">
-                      {["Technical depth", "System design", "Interview readiness", "Career positioning"].map((item, index) => (
-                        <div key={item} className="flex items-center justify-between gap-3">
-                          <span className="text-white/55">{item}</span>
-                          {index < 2 ? <Check className="size-3.5 text-[#22D3EE]" /> : <span className="size-2 rounded-full bg-[#F5B942]" />}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {["Diagnose", "Position", "Upgrade"].map((item, index) => (
-                    <div key={item} className="rounded-xl border border-white/10 bg-black/15 px-3 py-3">
-                      <span className="text-[9px] font-bold text-[#22D3EE]">0{index + 1}</span>
-                      <p className="mt-1 text-xs font-bold text-white/75">{item}</p>
-                    </div>
-                  ))}
-                </div>
+            <div className="mc-bonuses" aria-labelledby="mc-bonus-title">
+              <div className="mc-bonus-head">
+                <Gift className="size-6" aria-hidden="true" />
+                <h3 id="mc-bonus-title">3 exclusive action gifts for staying till the end</h3>
+              </div>
+              <div className="mc-bonus-grid">
+                {BONUSES.map((bonus) => (
+                  <article key={bonus.title} className="mc-bonus" data-mc-reveal>
+                    <BonusCover kind={bonus.kind} title={bonus.title} />
+                    <p className="mc-bonus-label">{bonus.label}</p>
+                    <h4>{bonus.title}</h4>
+                    <p className="mc-bonus-format">{bonus.format}</p>
+                  </article>
+                ))}
               </div>
             </div>
-            <div className="hero-orbit pointer-events-none absolute -inset-6 rounded-full border border-[#22D3EE]/10" aria-hidden="true" />
-          </div>
-        </div>
-      </section>
 
-      <section className="border-b border-white/10 bg-[#0B1C32]/45" aria-label="Trust signals">
-        <div className="mx-auto grid max-w-6xl grid-cols-2 divide-x divide-white/10 sm:grid-cols-4">
-          {[
-            ["13+", "Years building Android products"],
-            ["100M+", "Users reached by Android apps"],
-            ["Ola + PayU", "Product & technology experience"],
-            ["100+", "Android engineers mentored"],
-          ].map(([value, label]) => (
-            <div key={value} className="px-4 py-7 text-center sm:px-6">
-              <p className="font-heading text-2xl font-extrabold text-white sm:text-3xl">{value}</p>
-              <p className="mt-1 text-[11px] leading-5 text-white/40 sm:text-xs">{label}</p>
+            <div className="mc-center-cta">
+              <CtaButton onClick={() => register("bonuses")} />
+              <p className="mc-micro">{CTA.micro}</p>
             </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="why" className="border-b border-white/10 py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">The real problem</p>
-          <h2 className="mt-4 max-w-4xl font-heading text-3xl font-extrabold tracking-tight sm:text-5xl">
-            Most senior Android engineers are stuck.{" "}
-            <span className="text-white/45">Your experience deserves a clearer path forward.</span>
-          </h2>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/55">
-            Most senior Android engineers are stuck in service companies with slow salary growth, outdated skills, and no clear path to product-based leadership roles.
-          </p>
-
-          <div className="mt-12 grid gap-px overflow-hidden rounded-3xl border border-white/10 bg-white/10 md:grid-cols-3">
-            {[
-              ["Slow salary growth", "Your responsibilities are increasing, but your compensation isn't moving at the same pace."],
-              ["Outdated technical depth", "Day-to-day Android work can leave gaps in architecture, system design and leadership-level thinking."],
-              ["No clear leadership path", "You want product-based roles and technical leadership, but don't know what to build, prove and prepare next."],
-            ].map(([title, description]) => (
-              <article key={title} className="bg-[#071426] p-7 sm:p-9">
-                <span className="text-[#F5B942]">●</span>
-                <h3 className="mt-5 font-heading text-xl font-bold">{title}</h3>
-                <p className="mt-3 leading-7 text-white/50">{description}</p>
-              </article>
-            ))}
           </div>
+        </section>
 
-          <p className="mt-8 text-sm font-semibold text-white/65">
-            If this sounds like your career right now, this masterclass is built for you.
-          </p>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 bg-white/[0.018] py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="max-w-3xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Is this you?</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">This masterclass is for serious Android professionals ready to become tech leaders.</h2>
-          </div>
-
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
-            {audience.map(({ icon: Icon, title, description }) => (
-              <article key={title} className="group rounded-3xl border border-white/10 bg-[#0B1C32]/55 p-7 transition duration-300 hover:-translate-y-1 hover:border-[#1677FF]/40 sm:p-8">
-                <div className="flex size-11 items-center justify-center rounded-2xl border border-[#22D3EE]/15 bg-[#22D3EE]/5">
-                  <Icon className="size-5 text-[#22D3EE]" />
-                </div>
-                <h3 className="mt-6 font-heading text-xl font-bold">{title}</h3>
-                <p className="mt-3 leading-7 text-white/50">{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-10 rounded-2xl border border-[#F5B942]/20 bg-[#F5B942]/[0.045] p-5 text-center">
-            <p className="font-semibold text-white/80">
-              This isn't another “learn Android from scratch” webinar.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="learn" className="border-b border-white/10 py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Inside the masterclass</p>
-              <h2 className="mt-4 max-w-3xl font-heading text-3xl font-extrabold sm:text-5xl">What you'll discover in 90 minutes.</h2>
+        {/* ---------- 8. FAQ ---------- */}
+        <section className="mc-section mc-light" aria-labelledby="mc-faq-title">
+          <div className="mc-container mc-faq-wrap">
+            <SectionHeading
+              id="mc-faq-title"
+              center
+              eyebrow="Frequently asked questions"
+              title="Everything you need to know before you reserve."
+            />
+            <div className="mc-faq">
+              {FAQS.map((faq, index) => (
+                <details key={faq.question} open={index === 0}>
+                  <summary>
+                    <h3>{faq.question}</h3>
+                    <span className="mc-faq-icon" aria-hidden="true" />
+                  </summary>
+                  <p>{faq.answer}</p>
+                </details>
+              ))}
             </div>
-            <p className="max-w-sm text-sm leading-6 text-white/40">Specific ideas. Practical direction. No beginner Android syllabus.</p>
           </div>
+        </section>
 
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
-            {learningPoints.map(({ number, title, description }) => (
-              <article key={number} className="rounded-3xl border border-white/10 bg-white/[0.025] p-7 sm:p-9">
-                <span className="font-heading text-5xl font-extrabold text-white/10">{number}</span>
-                <h3 className="mt-8 font-heading text-2xl font-bold">{title}</h3>
-                <p className="mt-4 max-w-xl leading-7 text-white/50">{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-10">
-            <Button onClick={start} size="lg" className="rounded-full bg-[#1677FF] px-7 font-bold text-white hover:bg-[#2581ff]">
-              Reserve My Free Seat <ArrowRight />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section id="framework" className="relative overflow-hidden border-b border-white/10 bg-[#0B1C32]/45 py-20 sm:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(34,211,238,.07),transparent_35%)]" />
-        <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">The signature framework</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Your career needs a system.</h2>
-            <p className="mt-5 text-lg leading-8 text-white/50">
-              Introducing the Tech Leader Hub 9-stage career framework.
+        {/* ---------- 9. Final CTA ---------- */}
+        <section className="mc-final" aria-labelledby="mc-final-title">
+          <div className="mc-hero-glow" aria-hidden="true" />
+          <div className="mc-container mc-final-inner">
+            <p className="mc-eyebrow">{FINAL_CTA.eyebrow}</p>
+            <h2 id="mc-final-title" className="mc-h2 mc-final-title">
+              {FINAL_CTA.title}
+            </h2>
+            <p className="mc-intro">{FINAL_CTA.text}</p>
+            <p className="mc-final-date">
+              {dateLabel} · {EVENT.timeLabel} · Online on Zoom
             </p>
-          </div>
-
-          <div className="mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {framework.map(([number, title, description]) => (
-              <article key={number} className="rounded-2xl border border-white/10 bg-[#071426]/75 p-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-extrabold tracking-[0.15em] text-[#22D3EE]">{number}</span>
-                  <span className="size-2 rounded-full bg-[#F5B942]" />
-                </div>
-                <h3 className="mt-6 font-heading text-xl font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/45">{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-white/35">
-            {framework.map(([number, title], index) => (
-              <span key={number} className="flex items-center gap-2">
-                <span className="text-[#22D3EE]">{title}</span>
-                {index < framework.length - 1 && <ArrowRight className="size-3 text-white/15" />}
+            <CountdownTiles left={session?.left ?? null} />
+            <div className="mc-price mc-price-center">
+              <span className="mc-price-old">
+                <span className="sr-only">Regular price </span>
+                {EVENT.anchorPrice}
               </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 py-20 sm:py-28">
-        <div className="mx-auto grid max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-[.82fr_1.18fr] lg:items-center">
-          <div className="relative mx-auto w-full max-w-sm">
-            <div className="absolute -inset-8 rounded-full bg-[#1677FF]/10 blur-3xl" />
-            <div className="relative aspect-square rounded-[32px] border border-white/10 bg-gradient-to-br from-[#0B1C32] via-[#0A1830] to-[#071426] p-6 shadow-2xl">
-              <div className="flex h-full flex-col items-center justify-center rounded-[24px] border border-white/10 bg-white/[0.025]">
-                <TLHLogo variant="icon" className="size-32 object-contain drop-shadow-[0_0_35px_rgba(34,211,238,.18)]" />
-                <p className="mt-7 text-xs font-extrabold uppercase tracking-[0.22em] text-[#22D3EE]">Tech Leader Hub</p>
-                <p className="mt-2 text-sm text-white/45">Career acceleration for technology professionals</p>
-              </div>
+              <span className="mc-price-new">Free Access</span>
             </div>
+            <CtaButton onClick={() => register("final")} />
+            <p className="mc-micro">{CTA.micro}</p>
           </div>
+        </section>
+      </main>
 
-          <div id="host">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Your host</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Hi, I'm Nikhil Rai.</h2>
-            <p className="mt-3 font-semibold text-[#F5B942]">Android Architect · Mentor · Founder, Tech Leader Hub & Droid Skool</p>
-            <p className="mt-6 text-lg leading-8 text-white/55">
-              I've spent 13+ years building Android products and working through the realities of Android engineering, product development and technical growth.
-            </p>
-            <p className="mt-5 text-lg leading-8 text-white/55">
-              I've worked across companies including Ola and PayU, building Android products used by 100 million+ users and experiencing the difference between simply writing code and taking ownership of larger technical problems.
-            </p>
-            <p className="mt-5 text-lg leading-8 text-white/55">
-              Today, I'm building Tech Leader Hub to help experienced Android engineers turn their existing experience into stronger technical depth, better positioning and a clearer path toward technical leadership.
-            </p>
-
-            <blockquote className="mt-8 border-l-2 border-[#22D3EE] pl-5 font-heading text-xl font-bold leading-8 text-white/85 sm:text-2xl">
-              “You don't need another Android course. You need a system that connects your technical skills with your career goals.”
-            </blockquote>
-
-            <Button onClick={start} className="mt-8 rounded-full bg-[#1677FF] px-6 font-bold text-white hover:bg-[#2581ff]">
-              Join My Free Masterclass <ArrowRight />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 bg-white/[0.018] py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <Users className="mx-auto size-8 text-[#F5B942]" />
-            <p className="mt-5 text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Social proof</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Built for engineers who are ready for their next level.</h2>
-            <p className="mt-5 text-lg leading-8 text-white/50">
-              Tech Leader Hub is built around practical career acceleration for experienced Android engineers.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-5 sm:grid-cols-3">
-            {[
-              ["100+", "Android engineers mentored"],
-              ["100M+", "Users reached by Android apps"],
-              ["9", "Stages in the TLH career framework"],
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-3xl border border-white/10 bg-[#071426] p-8 text-center">
-                <p className="font-heading text-4xl font-extrabold text-white">{value}</p>
-                <p className="mt-3 text-sm leading-6 text-white/40">{label}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 rounded-2xl border border-white/10 bg-[#071426]/60 p-5 text-center text-sm text-white/45">
-            Student testimonials and verified outcome screenshots can be added here as your proof library grows. No fabricated testimonials or results.
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 py-20 sm:py-28">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="max-w-3xl">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Bonus resources</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Register free. Unlock the career starter pack.</h2>
-          </div>
-
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
-            {[
-              ["01", "Android Career Roadmap", "A structured roadmap to understand what capabilities matter at each career stage."],
-              ["02", "LinkedIn Optimization Checklist", "A practical checklist to improve your professional positioning."],
-              ["03", "Android Interview Questions Guide", "A focused guide to identify and prepare for common senior-level Android interview areas."],
-            ].map(([number, title, description]) => (
-              <article key={title} className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#0B1C32]/55 p-7 sm:p-8">
-                <Gift className="size-7 text-[#F5B942]" />
-                <span className="absolute right-6 top-6 font-heading text-4xl font-extrabold text-white/5">{number}</span>
-                <h3 className="mt-8 font-heading text-xl font-bold">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/45">{description}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-8 flex flex-col gap-5 rounded-3xl border border-[#22D3EE]/15 bg-[#22D3EE]/[0.035] p-7 sm:flex-row sm:items-center sm:justify-between sm:p-9">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#22D3EE]">Included with registration</p>
-              <p className="mt-2 font-heading text-xl font-bold">Free masterclass + career resources</p>
-            </div>
-            <Button onClick={start} className="rounded-full bg-[#1677FF] px-6 font-bold text-white hover:bg-[#2581ff]">
-              Claim My Free Seat <ArrowRight />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 bg-white/[0.018] py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            <ShieldCheck className="mx-auto size-8 text-[#22D3EE]" />
-            <h2 className="mt-5 font-heading text-3xl font-extrabold sm:text-5xl">Here's what happens after you register.</h2>
-          </div>
-
-          <div className="mt-12 grid gap-4 md:grid-cols-4">
-            {[
-              ["01", "Reserve your seat", "Complete the short registration form."],
-              ["02", "Get your confirmation", "Receive your masterclass details."],
-              ["03", "Join live on Zoom", "Attend the 90-minute session."],
-              ["04", "Build career clarity", "Understand your next move and the TLH framework."],
-            ].map(([number, title, description]) => (
-              <article key={number} className="rounded-2xl border border-white/10 bg-[#071426] p-6">
-                <span className="text-xs font-extrabold text-[#22D3EE]">{number}</span>
-                <h3 className="mt-5 font-heading font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/40">{description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="faq" className="border-b border-white/10 py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-5 sm:px-8">
-          <div className="text-center">
-            <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">FAQ</p>
-            <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">Questions before you reserve your seat?</h2>
-          </div>
-
-          <div className="mt-12 overflow-hidden rounded-3xl border border-white/10">
-            {faqs.map((faq, index) => (
-              <div key={faq.question} className="border-b border-white/10 last:border-b-0">
-                <button
-                  type="button"
-                  onClick={() => setOpenFaq(openFaq === index ? null : index)}
-                  className="flex w-full items-center justify-between gap-6 px-6 py-6 text-left sm:px-7"
-                  aria-expanded={openFaq === index}
-                >
-                  <span className="font-heading font-bold text-white/85">{faq.question}</span>
-                  <ChevronDown className={`size-5 shrink-0 text-white/40 transition-transform ${openFaq === index ? "rotate-180" : ""}`} />
-                </button>
-                {openFaq === index && (
-                  <div className="px-6 pb-6 text-sm leading-7 text-white/50 sm:px-7">{faq.answer}</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden border-b border-white/10 py-20 sm:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(22,119,255,.16),transparent_45%)]" />
-        <div className="relative mx-auto max-w-4xl px-5 text-center sm:px-8">
-          <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-[#22D3EE]">Limited live seats · Next session</p>
-          <h2 className="mt-5 font-heading text-4xl font-extrabold tracking-tight sm:text-6xl">Your next career move deserves a tech-leadership roadmap.</h2>
-          <div className="mx-auto mt-8 grid max-w-2xl gap-3 sm:grid-cols-3">
-            {[
-              ["Sunday", "11:00 AM IST"],
-              ["90 minutes", "Live on Zoom"],
-              ["Free", "Limited live seats"],
-            ].map(([value, label]) => (
-              <div key={value} className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
-                <p className="font-heading text-lg font-bold">{value}</p>
-                <p className="mt-1 text-xs text-white/40">{label}</p>
-              </div>
-            ))}
-          </div>
-          <Button onClick={start} size="lg" className="mt-9 h-14 rounded-full bg-[#1677FF] px-9 text-base font-extrabold text-white shadow-[0_12px_50px_rgba(22,119,255,.28)] hover:bg-[#2581ff]">
-            Book My Free Seat <ArrowRight />
-          </Button>
-          <p className="mt-4 text-xs text-white/35">Live · Online · 100% Free</p>
-        </div>
-      </section>
-
-      <section className="border-b border-white/10 bg-[#0B1C32]/45 py-20 sm:py-28">
-        <div className="mx-auto max-w-4xl px-5 sm:px-8">
-          <div className="rounded-[32px] border border-[#1677FF]/20 bg-[#071426] p-7 shadow-2xl sm:p-10">
-            <div className="text-center">
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Reserve your seat</p>
-              <h2 className="mt-4 font-heading text-3xl font-extrabold sm:text-5xl">You already have the Android experience. Now build the leadership path around it.</h2>
-              <p className="mx-auto mt-5 max-w-2xl leading-7 text-white/45">
-                Join the free Tech Leader Hub masterclass and discover a clearer path from experienced Android engineer to technical leader.
-              </p>
-              <Button onClick={start} size="lg" className="mt-8 h-14 rounded-full bg-[#1677FF] px-8 text-base font-extrabold text-white hover:bg-[#2581ff]">
-                Book My Free Seat <ArrowRight />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="border-t border-white/10 py-9">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 sm:px-8 md:flex-row md:items-center md:justify-between">
-          <Link to="/" aria-label="Tech Leader Hub home">
-            <TLHLogo className="h-9 w-auto max-w-[170px] object-contain" />
-          </Link>
-          <div className="flex flex-wrap gap-5 text-xs text-white/35">
-            <Link to="/about" className="hover:text-white">About</Link>
-            <Link to="/framework" className="hover:text-white">Framework</Link>
-            <Link to="/programs" className="hover:text-white">Programs</Link>
-            <Link to="/contact" className="hover:text-white">Contact</Link>
-            <Link to="/privacy" className="hover:text-white">Privacy</Link>
-            <Link to="/terms" className="hover:text-white">Terms</Link>
-          </div>
-          <p className="text-xs text-white/30">© Tech Leader Hub</p>
+      {/* ---------- Footer ---------- */}
+      <footer className="mc-footer">
+        <div className="mc-container">
+          <nav className="mc-footer-links" aria-label="Footer">
+            <Link to="/">Home</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+            <Link to="/contact">Contact</Link>
+          </nav>
+          <p className="mc-disclaimer">{DISCLAIMER}</p>
+          <p className="mc-copyright">
+            © {new Date().getFullYear()} Nikhil Rai. Tech Leader Hub and Droid Skool are brands
+            founded by Nikhil Rai.
+          </p>
         </div>
       </footer>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#071426]/95 p-3 backdrop-blur-xl md:hidden">
-        <Button onClick={start} className="h-12 w-full rounded-full bg-[#1677FF] font-extrabold text-white hover:bg-[#2581ff]">
-          Book My Free Seat <ArrowRight />
-        </Button>
+      {/* ---------- Sticky mobile CTA ---------- */}
+      <div
+        className={`mc-mobile-bar ${showBar ? "is-visible" : ""}`}
+        aria-hidden={!showBar}
+        inert={!showBar}
+      >
+        <div>
+          <span className="mc-mobile-price">
+            <s>{EVENT.anchorPrice}</s> Free
+          </span>
+          <span className="mc-mobile-date">
+            {EVENT.dayLabel.replace("Every ", "")} · {EVENT.timeLabel}
+          </span>
+        </div>
+        <CtaButton size="sm" onClick={() => register("sticky")}>
+          {CTA.short}
+        </CtaButton>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="registration-title">
-          <div className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-3xl border border-white/12 bg-[#0B1C32] p-6 shadow-2xl sm:p-8">
-            <button type="button" onClick={() => setOpen(false)} aria-label="Close registration" className="absolute right-4 top-4 rounded-full p-2 text-white/45 transition hover:bg-white/5 hover:text-white">
-              <X className="size-5" />
-            </button>
-
-            {registered ? (
-              <div className="py-10 text-center">
-                <div className="mx-auto flex size-16 items-center justify-center rounded-full border border-[#22D3EE]/20 bg-[#22D3EE]/10">
-                  <Check className="size-8 text-[#22D3EE]" />
-                </div>
-                <h2 id="registration-title" className="mt-7 font-heading text-3xl font-extrabold">You're registered.</h2>
-                <p className="mt-3 leading-7 text-white/50">Your masterclass registration has been saved successfully.</p>
-                <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-sm text-white/75">
-                  <strong>Every Sunday · 11:00 AM IST · Live on Zoom</strong>
-                </div>
-                <p className="mt-4 text-xs leading-6 text-white/35">Your session details and next steps can be shared after registration.</p>
-                <Button onClick={() => setOpen(false)} className="mt-7 rounded-full bg-[#1677FF] px-7 text-white hover:bg-[#2581ff]">Done</Button>
-              </div>
-            ) : processing ? (
-              <div className="py-14 text-center">
-                <div className="mx-auto size-10 animate-spin rounded-full border-2 border-white/10 border-t-[#22D3EE]" />
-                <h2 id="registration-title" className="mt-6 font-heading text-2xl font-bold">Saving your seat...</h2>
-              </div>
-            ) : (
-              <>
-                <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#22D3EE]">Step {step + 1} of 3</p>
-                <h2 id="registration-title" className="mt-3 pr-8 font-heading text-2xl font-extrabold">
-                  {step === 0 && "Let's reserve your seat."}
-                  {step === 1 && "Tell us where you are in your career."}
-                  {step === 2 && "What's the biggest challenge you want to solve?"}
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-white/40">
-                  {step === 0 && "We'll use these details to confirm your live masterclass seat."}
-                  {step === 1 && "This helps us understand the audience in the room."}
-                  {step === 2 && "Your answer helps us make the session more relevant."}
-                </p>
-
-                <div className="mt-7 space-y-4">
-                  {step === 0 && (
-                    <>
-                      <input value={form.fullName} onChange={(e) => setForm((current) => ({ ...current, fullName: e.target.value }))} placeholder="Full Name" autoComplete="name" className="h-13 w-full rounded-xl border border-white/10 bg-white/[0.035] px-4 text-white outline-none placeholder:text-white/30 focus:border-[#1677FF]" />
-                      <input value={form.email} onChange={(e) => setForm((current) => ({ ...current, email: e.target.value }))} placeholder="Email Address" type="email" autoComplete="email" className="h-13 w-full rounded-xl border border-white/10 bg-white/[0.035] px-4 text-white outline-none placeholder:text-white/30 focus:border-[#1677FF]" />
-                      <input value={form.phone} onChange={(e) => setForm((current) => ({ ...current, phone: e.target.value }))} placeholder="WhatsApp Number" type="tel" autoComplete="tel" className="h-13 w-full rounded-xl border border-white/10 bg-white/[0.035] px-4 text-white outline-none placeholder:text-white/30 focus:border-[#1677FF]" />
-                    </>
-                  )}
-
-                  {step === 1 && (
-                    <>
-                      <div>
-                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-white/40">Years of Android experience</label>
-                        <select value={form.experienceRange} onChange={(e) => setForm((current) => ({ ...current, experienceRange: e.target.value }))} className="h-13 w-full rounded-xl border border-white/10 bg-[#0B1C32] px-4 text-white outline-none focus:border-[#1677FF]">
-                          <option value="">Select experience</option>
-                          <option value="2–3 years">2–3 years</option>
-                          <option value="3–5 years">3–5 years</option>
-                          <option value="5–8 years">5–8 years</option>
-                          <option value="8+ years">8+ years</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-white/40">Current role</label>
-                        <select value={form.currentRole} onChange={(e) => setForm((current) => ({ ...current, currentRole: e.target.value }))} className="h-13 w-full rounded-xl border border-white/10 bg-[#0B1C32] px-4 text-white outline-none focus:border-[#1677FF]">
-                          <option value="">Select current role</option>
-                          <option value="Android Developer">Android Developer</option>
-                          <option value="Senior Android Developer">Senior Android Developer</option>
-                          <option value="Lead Android Developer">Lead Android Developer</option>
-                          <option value="Staff Engineer">Staff Engineer</option>
-                          <option value="Architect">Architect</option>
-                          <option value="Engineering Manager">Engineering Manager</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                    </>
-                  )}
-
-                  {step === 2 && (
-                    <div>
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-white/40">Biggest career challenge</label>
-                      <select value={form.biggestChallenge} onChange={(e) => setForm((current) => ({ ...current, biggestChallenge: e.target.value }))} className="h-13 w-full rounded-xl border border-white/10 bg-[#0B1C32] px-4 text-white outline-none focus:border-[#1677FF]">
-                        <option value="">Select your biggest challenge</option>
-                        <option value="Planning to switch">I'm planning to switch</option>
-                        <option value="Interviewing but not converting">I'm interviewing but not converting</option>
-                        <option value="Salary growth has slowed">My salary growth has slowed</option>
-                        <option value="Want to move into leadership">I want to move into leadership</option>
-                        <option value="Need stronger system-design skills">I need stronger system-design skills</option>
-                        <option value="Don't know what to focus on next">I don't know what to focus on next</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-                  )}
-
-                  {error && <p className="text-sm text-red-300">{error}</p>}
-
-                  {step < 2 ? (
-                    <Button
-                      onClick={() => {
-                        setError("");
-                        if (step === 0 && (!form.fullName.trim() || !form.email.trim() || !form.phone.trim())) {
-                          setError("Please enter your name, email, and WhatsApp number.");
-                          return;
-                        }
-                        if (step === 1 && (!form.experienceRange || !form.currentRole)) {
-                          setError("Please select your experience and current role.");
-                          return;
-                        }
-                        setStep(step + 1);
-                      }}
-                      className="h-13 w-full rounded-xl bg-[#1677FF] font-extrabold text-white hover:bg-[#2581ff]"
-                    >
-                      Continue <ArrowRight />
-                    </Button>
-                  ) : (
-                    <Button onClick={submitRegistration} className="h-13 w-full rounded-xl bg-[#1677FF] font-extrabold text-white hover:bg-[#2581ff]">
-                      Book My Free Seat <ArrowRight />
-                    </Button>
-                  )}
-
-                  <p className="text-center text-[11px] leading-5 text-white/30">Your information is used to confirm your masterclass registration and send session details.</p>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-    </main>
+      <RegistrationDialog open={dialog.open} source={dialog.source} onClose={closeDialog} />
+    </div>
   );
 }

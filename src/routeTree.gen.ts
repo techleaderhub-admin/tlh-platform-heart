@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FrameworkRouteImport } from './routes/framework'
@@ -23,31 +24,30 @@ import { Route as ProgramsRouteImport } from './routes/programs'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UpdatePasswordRouteImport } from './routes/update-password'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
-import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
-import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
-import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
-import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './routes/_authenticated/dashboard/interview-questions'
-import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
-import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard/jobs'
-import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
-import { Route as AuthenticatedDashboardCareerOsRouteImport } from './routes/_authenticated/dashboard/career-os'
-import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
-import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
-import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
-import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
-import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
-import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
+import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
+import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin/applications'
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
-import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
-import { Route as AuthenticatedAdminAdmin360RouteImport } from './routes/_authenticated/admin/admin-360'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
+import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
+import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
+import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
+import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
+import { Route as AuthenticatedAdminL1LearningRouteImport } from './routes/_authenticated/admin/l1-learning'
+import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
+import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
+import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
+import { Route as AuthenticatedDashboardCareerOsRouteImport } from './routes/_authenticated/dashboard/career-os'
+import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
+import { Route as AuthenticatedDashboardInterviewQuestionsRouteImport } from './routes/_authenticated/dashboard/interview-questions'
+import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard/jobs'
+import { Route as AuthenticatedDashboardL1KnowledgeCheckRouteImport } from './routes/_authenticated/dashboard/l1-knowledge-check'
+import { Route as AuthenticatedDashboardL1LearningRouteImport } from './routes/_authenticated/dashboard/l1-learning'
+import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +61,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -118,16 +123,6 @@ const UpdatePasswordRoute = UpdatePasswordRouteImport.update({
   path: '/update-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog/$slug',
-  path: '/blog/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -138,55 +133,73 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedDashboardProfileRoute = AuthenticatedDashboardProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedDashboardRoute,
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
 } as any)
-const AuthenticatedDashboardAssessmentRoute = AuthenticatedDashboardAssessmentRouteImport.update({
-  id: '/assessment',
-  path: '/assessment',
-  getParentRoute: () => AuthenticatedDashboardRoute,
+const AuthenticatedAdminAdmin360Route =
+  AuthenticatedAdminAdmin360RouteImport.update({
+    id: '/admin-360',
+    path: '/admin-360',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminApplicationsRoute =
+  AuthenticatedAdminApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAssessmentsRoute =
+  AuthenticatedAdminAssessmentsRouteImport.update({
+    id: '/assessments',
+    path: '/assessments',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedDashboardL1KnowledgeCheckRoute = AuthenticatedDashboardL1KnowledgeCheckRouteImport.update({
-  id: '/l1-knowledge-check',
-  path: '/l1-knowledge-check',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
-const AuthenticatedDashboardL1LearningRoute = AuthenticatedDashboardL1LearningRouteImport.update({
-  id: '/l1-learning',
-  path: '/l1-learning',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
-const AuthenticatedDashboardInterviewQuestionsRoute = AuthenticatedDashboardInterviewQuestionsRouteImport.update({
-  id: '/interview-questions',
-  path: '/interview-questions',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
-const AuthenticatedDashboardFoundationRoute = AuthenticatedDashboardFoundationRouteImport.update({
-  id: '/foundation',
-  path: '/foundation',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
-const AuthenticatedDashboardJobsRoute = AuthenticatedDashboardJobsRouteImport.update({
+const AuthenticatedAdminCareerOsRoute =
+  AuthenticatedAdminCareerOsRouteImport.update({
+    id: '/career-os',
+    path: '/career-os',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminFoundationRoute =
+  AuthenticatedAdminFoundationRouteImport.update({
+    id: '/foundation',
+    path: '/foundation',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminInterviewQuestionsRoute =
+  AuthenticatedAdminInterviewQuestionsRouteImport.update({
+    id: '/interview-questions',
+    path: '/interview-questions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminJobsRoute = AuthenticatedAdminJobsRouteImport.update({
   id: '/jobs',
   path: '/jobs',
-  getParentRoute: () => AuthenticatedDashboardRoute,
+  getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const AuthenticatedDashboardApplicationsRoute = AuthenticatedDashboardApplicationsRouteImport.update({
-  id: '/applications',
-  path: '/applications',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
-const AuthenticatedDashboardCareerOsRoute = AuthenticatedDashboardCareerOsRouteImport.update({
-  id: '/career-os',
-  path: '/career-os',
-  getParentRoute: () => AuthenticatedDashboardRoute,
-} as any)
+const AuthenticatedAdminL1LearningRoute =
+  AuthenticatedAdminL1LearningRouteImport.update({
+    id: '/l1-learning',
+    path: '/l1-learning',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminMasterclassRoute =
   AuthenticatedAdminMasterclassRouteImport.update({
     id: '/masterclass',
     path: '/masterclass',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPaymentsRoute =
+  AuthenticatedAdminPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminStudentsRoute =
@@ -195,61 +208,65 @@ const AuthenticatedAdminStudentsRoute =
     path: '/students',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminL1LearningRoute = AuthenticatedAdminL1LearningRouteImport.update({
-  id: '/l1-learning',
-  path: '/l1-learning',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminInterviewQuestionsRoute = AuthenticatedAdminInterviewQuestionsRouteImport.update({
-  id: '/interview-questions',
-  path: '/interview-questions',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminFoundationRoute =
-  AuthenticatedAdminFoundationRouteImport.update({
+const AuthenticatedDashboardApplicationsRoute =
+  AuthenticatedDashboardApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardAssessmentRoute =
+  AuthenticatedDashboardAssessmentRouteImport.update({
+    id: '/assessment',
+    path: '/assessment',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardCareerOsRoute =
+  AuthenticatedDashboardCareerOsRouteImport.update({
+    id: '/career-os',
+    path: '/career-os',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardFoundationRoute =
+  AuthenticatedDashboardFoundationRouteImport.update({
     id: '/foundation',
     path: '/foundation',
-    getParentRoute: () => AuthenticatedAdminRoute,
+    getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
-const AuthenticatedAdminJobsRoute = AuthenticatedAdminJobsRouteImport.update({
-  id: '/jobs',
-  path: '/jobs',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminApplicationsRoute = AuthenticatedAdminApplicationsRouteImport.update({
-  id: '/applications',
-  path: '/applications',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminAssessmentsRoute = AuthenticatedAdminAssessmentsRouteImport.update({
-  id: '/assessments',
-  path: '/assessments',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminCareerOsRoute = AuthenticatedAdminCareerOsRouteImport.update({
-  id: '/career-os',
-  path: '/career-os',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminAdmin360Route = AuthenticatedAdminAdmin360RouteImport.update({
-  id: '/admin-360',
-  path: '/admin-360',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminPaymentsRoute = AuthenticatedAdminPaymentsRouteImport.update({
-  id: '/payments',
-  path: '/payments',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
+const AuthenticatedDashboardInterviewQuestionsRoute =
+  AuthenticatedDashboardInterviewQuestionsRouteImport.update({
+    id: '/interview-questions',
+    path: '/interview-questions',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardJobsRoute =
+  AuthenticatedDashboardJobsRouteImport.update({
+    id: '/jobs',
+    path: '/jobs',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardL1KnowledgeCheckRoute =
+  AuthenticatedDashboardL1KnowledgeCheckRouteImport.update({
+    id: '/l1-knowledge-check',
+    path: '/l1-knowledge-check',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardL1LearningRoute =
+  AuthenticatedDashboardL1LearningRouteImport.update({
+    id: '/l1-learning',
+    path: '/l1-learning',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardProfileRoute =
+  AuthenticatedDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/framework': typeof FrameworkRoute
@@ -261,32 +278,35 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/terms': typeof TermsRoute
   '/update-password': typeof UpdatePasswordRoute
-  '/blog': typeof BlogRoute
-  '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
-  '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
-  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
-  '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
-  '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
-  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
-  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
-  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
-  '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
-  '/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
-  '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
-  '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
-  '/admin/jobs': typeof AuthenticatedAdminJobsRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
-  '/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
+  '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
+  '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
+  '/admin/jobs': typeof AuthenticatedAdminJobsRoute
+  '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
+  '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
+  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
+  '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
+  '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
+  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
+  '/dashboard/l1-knowledge-check': typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/framework': typeof FrameworkRoute
@@ -300,20 +320,35 @@ export interface FileRoutesByTo {
   '/update-password': typeof UpdatePasswordRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
-  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
-  '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
-  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
-  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
-  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
+  '/blog/$slug': typeof BlogSlugRoute
+  '/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
+  '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
+  '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
+  '/admin/jobs': typeof AuthenticatedAdminJobsRoute
+  '/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
+  '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
+  '/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
+  '/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
+  '/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
+  '/dashboard/l1-knowledge-check': typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  '/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/framework': typeof FrameworkRoute
@@ -327,23 +362,35 @@ export interface FileRoutesById {
   '/update-password': typeof UpdatePasswordRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
-  '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
-  '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
-  '/_authenticated/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
-  '/_authenticated/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
-  '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
-  '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/_authenticated/admin/admin-360': typeof AuthenticatedAdminAdmin360Route
+  '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRoute
+  '/_authenticated/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
-  '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
+  '/_authenticated/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
+  '/_authenticated/admin/jobs': typeof AuthenticatedAdminJobsRoute
+  '/_authenticated/admin/l1-learning': typeof AuthenticatedAdminL1LearningRoute
+  '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
+  '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
+  '/_authenticated/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
+  '/_authenticated/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
+  '/_authenticated/dashboard/foundation': typeof AuthenticatedDashboardFoundationRoute
+  '/_authenticated/dashboard/interview-questions': typeof AuthenticatedDashboardInterviewQuestionsRoute
+  '/_authenticated/dashboard/jobs': typeof AuthenticatedDashboardJobsRoute
+  '/_authenticated/dashboard/l1-knowledge-check': typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  '/_authenticated/dashboard/l1-learning': typeof AuthenticatedDashboardL1LearningRoute
+  '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/forgot-password'
     | '/framework'
@@ -355,30 +402,35 @@ export interface FileRouteTypes {
     | '/signup'
     | '/terms'
     | '/update-password'
-    | '/blog'
-    | '/blog/$slug'
     | '/admin'
     | '/dashboard'
-    | '/dashboard/profile'
+    | '/blog/$slug'
+    | '/admin/admin-360'
+    | '/admin/applications'
+    | '/admin/assessments'
+    | '/admin/blog'
+    | '/admin/career-os'
+    | '/admin/foundation'
+    | '/admin/interview-questions'
+    | '/admin/jobs'
+    | '/admin/l1-learning'
+    | '/admin/masterclass'
+    | '/admin/payments'
+    | '/admin/students'
+    | '/dashboard/applications'
     | '/dashboard/assessment'
+    | '/dashboard/career-os'
+    | '/dashboard/foundation'
+    | '/dashboard/interview-questions'
+    | '/dashboard/jobs'
     | '/dashboard/l1-knowledge-check'
     | '/dashboard/l1-learning'
-    | '/dashboard/interview-questions'
-    | '/dashboard/foundation'
-    | '/dashboard/career-os'
-    | '/admin/masterclass'
-    | '/admin/students'
-    | '/admin/foundation'
-    | '/admin/l1-learning'
-    | '/admin/interview-questions'
-    | '/admin/career-os'
-    | '/admin/admin-360'
-    | '/admin/blog'
-    | '/admin/payments'
+    | '/dashboard/profile'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/forgot-password'
     | '/framework'
@@ -392,15 +444,34 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/admin'
     | '/dashboard'
-    | '/dashboard/profile'
-    | '/admin/masterclass'
-    | '/admin/students'
+    | '/blog/$slug'
+    | '/admin/admin-360'
+    | '/admin/applications'
+    | '/admin/assessments'
+    | '/admin/blog'
     | '/admin/career-os'
+    | '/admin/foundation'
+    | '/admin/interview-questions'
+    | '/admin/jobs'
+    | '/admin/l1-learning'
+    | '/admin/masterclass'
+    | '/admin/payments'
+    | '/admin/students'
+    | '/dashboard/applications'
+    | '/dashboard/assessment'
+    | '/dashboard/career-os'
+    | '/dashboard/foundation'
+    | '/dashboard/interview-questions'
+    | '/dashboard/jobs'
+    | '/dashboard/l1-knowledge-check'
+    | '/dashboard/l1-learning'
+    | '/dashboard/profile'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/forgot-password'
     | '/framework'
@@ -414,19 +485,35 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/_authenticated/dashboard/profile'
-    | '/_authenticated/dashboard/career-os'
-    | '/_authenticated/dashboard/assessment'
-    | '/_authenticated/admin/masterclass'
-    | '/_authenticated/admin/students'
-    | '/_authenticated/admin/career-os'
+    | '/blog/$slug'
     | '/_authenticated/admin/admin-360'
+    | '/_authenticated/admin/applications'
+    | '/_authenticated/admin/assessments'
+    | '/_authenticated/admin/blog'
+    | '/_authenticated/admin/career-os'
+    | '/_authenticated/admin/foundation'
+    | '/_authenticated/admin/interview-questions'
+    | '/_authenticated/admin/jobs'
+    | '/_authenticated/admin/l1-learning'
+    | '/_authenticated/admin/masterclass'
+    | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/students'
+    | '/_authenticated/dashboard/applications'
+    | '/_authenticated/dashboard/assessment'
+    | '/_authenticated/dashboard/career-os'
+    | '/_authenticated/dashboard/foundation'
+    | '/_authenticated/dashboard/interview-questions'
+    | '/_authenticated/dashboard/jobs'
+    | '/_authenticated/dashboard/l1-knowledge-check'
+    | '/_authenticated/dashboard/l1-learning'
+    | '/_authenticated/dashboard/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRouteWithChildren
   ContactRoute: typeof ContactRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   FrameworkRoute: typeof FrameworkRoute
@@ -438,8 +525,6 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   TermsRoute: typeof TermsRoute
   UpdatePasswordRoute: typeof UpdatePasswordRoute
-  BlogRoute: typeof BlogRoute
-  BlogSlugRoute: typeof BlogSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -463,6 +548,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -556,60 +648,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/dashboard/profile': {
-      id: '/_authenticated/dashboard/profile'
-      path: '/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
-    '/_authenticated/dashboard/assessment': {
-      id: '/_authenticated/dashboard/assessment'
-      path: '/assessment'
-      fullPath: '/dashboard/assessment'
-      preLoaderRoute: typeof AuthenticatedDashboardAssessmentRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
-    }
-    '/_authenticated/admin/masterclass': {
-      id: '/_authenticated/admin/masterclass'
-      path: '/masterclass'
-      fullPath: '/admin/masterclass'
-      preLoaderRoute: typeof AuthenticatedAdminMasterclassRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/students': {
-      id: '/_authenticated/admin/students'
-      path: '/students'
-      fullPath: '/admin/students'
-      preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/dashboard/jobs': {
-      id: '/_authenticated/dashboard/jobs'
-      path: '/jobs'
-      fullPath: '/dashboard/jobs'
-      preLoaderRoute: typeof AuthenticatedDashboardJobsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
-    }
-    '/_authenticated/dashboard/career-os': {
-      id: '/_authenticated/dashboard/career-os'
-      path: '/career-os'
-      fullPath: '/dashboard/career-os'
-      preLoaderRoute: typeof AuthenticatedDashboardCareerOsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
-    }
-    '/_authenticated/dashboard/applications': {
-      id: '/_authenticated/dashboard/applications'
-      path: '/applications'
-      fullPath: '/dashboard/applications'
-      preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
-    }
-    '/_authenticated/admin/jobs': {
-      id: '/_authenticated/admin/jobs'
-      path: '/jobs'
-      fullPath: '/admin/jobs'
-      preLoaderRoute: typeof AuthenticatedAdminJobsRouteImport
+    '/_authenticated/admin/admin-360': {
+      id: '/_authenticated/admin/admin-360'
+      path: '/admin-360'
+      fullPath: '/admin/admin-360'
+      preLoaderRoute: typeof AuthenticatedAdminAdmin360RouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/applications': {
@@ -619,11 +669,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminApplicationsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/admin-360': {
-      id: '/_authenticated/admin/admin-360'
-      path: '/admin-360'
-      fullPath: '/admin/admin-360'
-      preLoaderRoute: typeof AuthenticatedAdminAdmin360RouteImport
+    '/_authenticated/admin/assessments': {
+      id: '/_authenticated/admin/assessments'
+      path: '/assessments'
+      fullPath: '/admin/assessments'
+      preLoaderRoute: typeof AuthenticatedAdminAssessmentsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/blog': {
@@ -633,13 +683,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/payments': {
-      id: '/_authenticated/admin/payments'
-      path: '/payments'
-      fullPath: '/admin/payments'
-      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/career-os': {
       id: '/_authenticated/admin/career-os'
       path: '/career-os'
@@ -647,75 +690,190 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCareerOsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/assessments': {
-      id: '/_authenticated/admin/assessments'
-      path: '/assessments'
-      fullPath: '/admin/assessments'
-      preLoaderRoute: typeof AuthenticatedAdminAssessmentsRouteImport
+    '/_authenticated/admin/foundation': {
+      id: '/_authenticated/admin/foundation'
+      path: '/foundation'
+      fullPath: '/admin/foundation'
+      preLoaderRoute: typeof AuthenticatedAdminFoundationRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/interview-questions': {
+      id: '/_authenticated/admin/interview-questions'
+      path: '/interview-questions'
+      fullPath: '/admin/interview-questions'
+      preLoaderRoute: typeof AuthenticatedAdminInterviewQuestionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/jobs': {
+      id: '/_authenticated/admin/jobs'
+      path: '/jobs'
+      fullPath: '/admin/jobs'
+      preLoaderRoute: typeof AuthenticatedAdminJobsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/l1-learning': {
+      id: '/_authenticated/admin/l1-learning'
+      path: '/l1-learning'
+      fullPath: '/admin/l1-learning'
+      preLoaderRoute: typeof AuthenticatedAdminL1LearningRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/masterclass': {
+      id: '/_authenticated/admin/masterclass'
+      path: '/masterclass'
+      fullPath: '/admin/masterclass'
+      preLoaderRoute: typeof AuthenticatedAdminMasterclassRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/payments': {
+      id: '/_authenticated/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/students': {
+      id: '/_authenticated/admin/students'
+      path: '/students'
+      fullPath: '/admin/students'
+      preLoaderRoute: typeof AuthenticatedAdminStudentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/dashboard/applications': {
+      id: '/_authenticated/dashboard/applications'
+      path: '/applications'
+      fullPath: '/dashboard/applications'
+      preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/assessment': {
+      id: '/_authenticated/dashboard/assessment'
+      path: '/assessment'
+      fullPath: '/dashboard/assessment'
+      preLoaderRoute: typeof AuthenticatedDashboardAssessmentRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/career-os': {
+      id: '/_authenticated/dashboard/career-os'
+      path: '/career-os'
+      fullPath: '/dashboard/career-os'
+      preLoaderRoute: typeof AuthenticatedDashboardCareerOsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/foundation': {
+      id: '/_authenticated/dashboard/foundation'
+      path: '/foundation'
+      fullPath: '/dashboard/foundation'
+      preLoaderRoute: typeof AuthenticatedDashboardFoundationRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/interview-questions': {
+      id: '/_authenticated/dashboard/interview-questions'
+      path: '/interview-questions'
+      fullPath: '/dashboard/interview-questions'
+      preLoaderRoute: typeof AuthenticatedDashboardInterviewQuestionsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/jobs': {
+      id: '/_authenticated/dashboard/jobs'
+      path: '/jobs'
+      fullPath: '/dashboard/jobs'
+      preLoaderRoute: typeof AuthenticatedDashboardJobsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/l1-knowledge-check': {
+      id: '/_authenticated/dashboard/l1-knowledge-check'
+      path: '/l1-knowledge-check'
+      fullPath: '/dashboard/l1-knowledge-check'
+      preLoaderRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/l1-learning': {
+      id: '/_authenticated/dashboard/l1-learning'
+      path: '/l1-learning'
+      fullPath: '/dashboard/l1-learning'
+      preLoaderRoute: typeof AuthenticatedDashboardL1LearningRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/profile': {
+      id: '/_authenticated/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
   }
 }
 
-interface AuthenticatedDashboardRouteChildren {
-  AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
-  AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
-  AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
-  AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
-  AuthenticatedDashboardInterviewQuestionsRoute: typeof AuthenticatedDashboardInterviewQuestionsRoute
-  AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
-  AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRoute
-  AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
-  AuthenticatedDashboardCareerOsRoute: typeof AuthenticatedDashboardCareerOsRoute
-}
-
-const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren = {
-  AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
-  AuthenticatedDashboardAssessmentRoute: AuthenticatedDashboardAssessmentRoute,
-  AuthenticatedDashboardL1KnowledgeCheckRoute: AuthenticatedDashboardL1KnowledgeCheckRoute,
-  AuthenticatedDashboardL1LearningRoute: AuthenticatedDashboardL1LearningRoute,
-  AuthenticatedDashboardInterviewQuestionsRoute: AuthenticatedDashboardInterviewQuestionsRoute,
-  AuthenticatedDashboardFoundationRoute: AuthenticatedDashboardFoundationRoute,
-  AuthenticatedDashboardJobsRoute: AuthenticatedDashboardJobsRoute,
-  AuthenticatedDashboardApplicationsRoute: AuthenticatedDashboardApplicationsRoute,
-  AuthenticatedDashboardCareerOsRoute: AuthenticatedDashboardCareerOsRoute,
-}
-
-const AuthenticatedDashboardRouteWithChildren =
-  AuthenticatedDashboardRoute._addFileChildren(AuthenticatedDashboardRouteChildren)
-
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
-  AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
-  AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
-  AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
-  AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
-  AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
+  AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
-  AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
-  AuthenticatedAdminAdmin360Route: typeof AuthenticatedAdminAdmin360Route
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
+  AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
+  AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
+  AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
+  AuthenticatedAdminL1LearningRoute: typeof AuthenticatedAdminL1LearningRoute
+  AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
-  AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
-  AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
-  AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
-  AuthenticatedAdminInterviewQuestionsRoute: AuthenticatedAdminInterviewQuestionsRoute,
-  AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
+  AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
-  AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
-  AuthenticatedAdminAdmin360Route: AuthenticatedAdminAdmin360Route,
   AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+  AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
+  AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
+  AuthenticatedAdminInterviewQuestionsRoute:
+    AuthenticatedAdminInterviewQuestionsRoute,
+  AuthenticatedAdminJobsRoute: AuthenticatedAdminJobsRoute,
+  AuthenticatedAdminL1LearningRoute: AuthenticatedAdminL1LearningRoute,
+  AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
+  AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
+  AuthenticatedDashboardCareerOsRoute: typeof AuthenticatedDashboardCareerOsRoute
+  AuthenticatedDashboardFoundationRoute: typeof AuthenticatedDashboardFoundationRoute
+  AuthenticatedDashboardInterviewQuestionsRoute: typeof AuthenticatedDashboardInterviewQuestionsRoute
+  AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRoute
+  AuthenticatedDashboardL1KnowledgeCheckRoute: typeof AuthenticatedDashboardL1KnowledgeCheckRoute
+  AuthenticatedDashboardL1LearningRoute: typeof AuthenticatedDashboardL1LearningRoute
+  AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardApplicationsRoute:
+      AuthenticatedDashboardApplicationsRoute,
+    AuthenticatedDashboardAssessmentRoute:
+      AuthenticatedDashboardAssessmentRoute,
+    AuthenticatedDashboardCareerOsRoute: AuthenticatedDashboardCareerOsRoute,
+    AuthenticatedDashboardFoundationRoute:
+      AuthenticatedDashboardFoundationRoute,
+    AuthenticatedDashboardInterviewQuestionsRoute:
+      AuthenticatedDashboardInterviewQuestionsRoute,
+    AuthenticatedDashboardJobsRoute: AuthenticatedDashboardJobsRoute,
+    AuthenticatedDashboardL1KnowledgeCheckRoute:
+      AuthenticatedDashboardL1KnowledgeCheckRoute,
+    AuthenticatedDashboardL1LearningRoute:
+      AuthenticatedDashboardL1LearningRoute,
+    AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
@@ -730,10 +888,21 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  BlogRoute: BlogRouteWithChildren,
   ContactRoute: ContactRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   FrameworkRoute: FrameworkRoute,
@@ -745,8 +914,6 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   TermsRoute: TermsRoute,
   UpdatePasswordRoute: UpdatePasswordRoute,
-  BlogRoute: BlogRoute,
-  BlogSlugRoute: BlogSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
