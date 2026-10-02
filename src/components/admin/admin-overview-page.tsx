@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, GraduationCap, UserPlus, Video } from "lucide-react";
+import { ArrowRight, GraduationCap, UserPlus, Video, LayoutDashboard } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -80,11 +80,7 @@ export function AdminOverviewPage() {
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               Review registered platform users and open their career workspace in future phases.
             </p>
-            <Button asChild variant="outline" className="mt-5">
-              <Link to="/admin/students">
-                Manage students <ArrowRight />
-              </Link>
-            </Button>
+            <div className="mt-5 flex flex-wrap gap-2"><Button asChild variant="outline"><Link to="/admin/students">Manage students <ArrowRight /></Link></Button><Button asChild><Link to="/admin/admin-360"><LayoutDashboard />Open Admin 360</Link></Button></div>
           </CardContent>
         </Card>
       </div>
