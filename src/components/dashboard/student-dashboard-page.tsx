@@ -256,7 +256,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                     <p className="min-h-12 text-sm leading-6 text-muted-foreground">{module.description}</p>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <span className="text-xs text-muted-foreground">{module.status}</span>
-                      {unlocked && module.minimumLevel === "free" ? (
+                      {module.title === "Career Profile" ? (
                         <Button variant="ghost" size="sm" asChild>
                           <Link to="/dashboard/profile">
                             <ArrowRight />
