@@ -26,6 +26,7 @@ const DEFAULT_FORM = {
   resume_url: "",
   primary_skills: [] as string[],
   preferred_locations: [] as string[],
+  linkedin_url: "",
 };
 
 function ProfileListEditor({
@@ -97,6 +98,8 @@ export function CareerProfilePage() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [membershipLabel, setMembershipLabel] = useState("Free Membership");
+  const [accountName, setAccountName] = useState("");
+  const [accountEmail, setAccountEmail] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -109,10 +112,15 @@ export function CareerProfilePage() {
       return;
     }
 
-    const [{ data, error: profileError }, { data: membership }] = await Promise.all([
+    setAccountEmail(userData.user.email ?? "");
+    const [{ data, error: profileError }, { data: membership }, { data: accountProfile, error: accountProfileError }] = await Promise.all([
       supabase.from("career_profiles").select("*").eq("student_id", userData.user.id).maybeSingle(),
       supabase.from("student_memberships").select("level, is_active").eq("student_id", userData.user.id).maybeSingle(),
+      supabase.from("profiles").select("full_name, linkedin_url").eq("id", userData.user.id).maybeSingle(),
     ]);
+    if (!accountProfileError) {
+      setAccountName(accountProfile?.full_name ?? "");
+    }
 
     if (membership?.is_active !== false && membership?.level) {
       setMembershipLabel(membership.level === "free" ? "Free Membership" : membership.level.toUpperCase() + " Membership");
@@ -133,6 +141,7 @@ export function CareerProfilePage() {
         resume_url: profile.resume_url ?? "",
         primary_skills: profile.primary_skills ?? [],
         preferred_locations: profile.preferred_locations ?? [],
+        linkedin_url: accountProfile?.linkedin_url ?? "",
       });
     }
 
@@ -202,6 +211,18 @@ export function CareerProfilePage() {
       .from("career_profiles")
       .upsert(payload, { onConflict: "student_id" });
 
+    if (!saveError) {
+      const { error: accountSaveError } = await supabase
+        .from("profiles")
+        .update({ linkedin_url: form.linkedin_url.trim() || null })
+        .eq("id", userData.user.id);
+      if (accountSaveError) {
+        setError("Career profile saved, but LinkedIn could not be saved. " + accountSaveError.message);
+        setSaving(false);
+        return;
+      }
+    }
+
     if (saveError) {
       setError("Could not save your career profile. " + saveError.message);
     } else {
@@ -221,6 +242,7 @@ export function CareerProfilePage() {
     form.career_goal,
     form.primary_skills.length ? "skills" : "",
     form.preferred_locations.length ? "locations" : "",
+    form.linkedin_url,
   ];
   const completion = Math.round((completionFields.filter(Boolean).length / completionFields.length) * 100);
 
@@ -258,6 +280,33 @@ export function CareerProfilePage() {
             <CardContent className="p-4 text-sm font-medium text-destructive">{error}</CardContent>
           </Card>
         )}
+
+        <Card className="border-primary/20 bg-primary/[0.03]">
+          <CardHeader>
+            <CardTitle>Profile identity</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-5 md:grid-cols-3">
+            <div>
+              <Label>Name</Label>
+              <p className="mt-2 text-sm font-semibold">{accountName || "Name not available"}</p>
+            </div>
+            <div>
+              <Label>Email</Label>
+              <p className="mt-2 break-all text-sm font-semibold">{accountEmail || "Email not available"}</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="linkedin">LinkedIn profile</Label>
+              <Input
+                id="linkedin"
+                type="url"
+                value={form.linkedin_url}
+                onChange={(e) => update("linkedin_url", e.target.value)}
+                placeholder="https://www.linkedin.com/in/your-name"
+              />
+              <p className="text-xs text-muted-foreground">Optional. Use your public LinkedIn profile URL.</p>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader>
