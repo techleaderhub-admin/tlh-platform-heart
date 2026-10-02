@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { getLeaderEmail, updateLeaderEmail } from "@/lib/auth.functions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type Membership = Database["public"]["Tables"]["student_memberships"]["Row"];
@@ -72,7 +73,6 @@ export function StudentsPage() {
   const [editPhone, setEditPhone] = useState("");
   const [editLinkedIn, setEditLinkedIn] = useState("");
   const [actionStudentId, setActionStudentId] = useState<string | null>(null);
-  const [emails, setEmails] = useState<Record<string, string>>({});
 
   const load = async () => {
     setLoading(true);
@@ -100,10 +100,6 @@ export function StudentsPage() {
       setStudents(studentRows);
       setMemberships(membershipMap);
 
-      const { data: emailData } = await supabase.functions.invoke("admin-list-user-emails", {
-        body: { user_ids: studentRows.map((profile) => profile.id) },
-      });
-      if (emailData?.emails) setEmails(emailData.emails as Record<string, string>);
     }
 
     setLoading(false);
@@ -121,14 +117,21 @@ export function StudentsPage() {
     );
   }, [search, students]);
 
-  const openEdit = (student: Profile) => {
+  const openEdit = async (student: Profile) => {
     setEditingStudent(student);
     setEditName(student.full_name ?? "");
-    setEditEmail(emails[student.id] ?? "");
+    setEditEmail("");
     setEditPhone(student.phone ?? "");
     setEditLinkedIn(student.linkedin_url ?? "");
     setSaveError(null);
     setSuccess(null);
+
+    try {
+      const result = await getLeaderEmail({ data: { userId: student.id } });
+      setEditEmail(result.email);
+    } catch (emailError) {
+      setSaveError(emailError instanceof Error ? emailError.message : "Could not load the Leader email.");
+    }
   };
 
   const saveProfile = async () => {
@@ -150,24 +153,21 @@ export function StudentsPage() {
     }
 
     const normalizedEmail = editEmail.trim().toLowerCase();
-    const currentEmail = (emails[editingStudent.id] ?? "").trim().toLowerCase();
-
-    if (!normalizedEmail || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(normalizedEmail)) {
+    if (!normalizedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setSaveError("Please enter a valid email address.");
       setActionStudentId(null);
       return;
     }
 
-    if (normalizedEmail !== currentEmail) {
-      const { data: emailData, error: emailError } = await supabase.functions.invoke("admin-update-user-email", {
-        body: { user_id: editingStudent.id, email: normalizedEmail },
-      });
-      if (emailError || !emailData?.email) {
-        setSaveError("Could not update this Leader's email. " + (emailError?.message ?? emailData?.error ?? "Please try again."));
-        setActionStudentId(null);
-        return;
+    try {
+      const currentEmail = (await getLeaderEmail({ data: { userId: editingStudent.id } })).email.trim().toLowerCase();
+      if (normalizedEmail !== currentEmail) {
+        await updateLeaderEmail({ data: { userId: editingStudent.id, email: normalizedEmail } });
       }
-      setEmails((current) => ({ ...current, [editingStudent.id]: emailData.email }));
+    } catch (emailError) {
+      setSaveError(emailError instanceof Error ? emailError.message : "Could not update this Leader's email.");
+      setActionStudentId(null);
+      return;
     }
 
     const { error: updateError } = await supabase
