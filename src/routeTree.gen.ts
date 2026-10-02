@@ -206,6 +206,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/admin'
     | '/dashboard'
+    | '/dashboard/profile'
     | '/admin/masterclass'
     | '/admin/students'
   fileRoutesByTo: FileRoutesByTo
@@ -225,6 +226,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/admin'
     | '/dashboard'
+    | '/dashboard/profile'
     | '/admin/masterclass'
     | '/admin/students'
   id:
@@ -245,6 +247,7 @@ export interface FileRouteTypes {
     | '/update-password'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/_authenticated/dashboard/profile'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
   fileRoutesById: FileRoutesById
