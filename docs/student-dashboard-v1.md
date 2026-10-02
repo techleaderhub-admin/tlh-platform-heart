@@ -15,10 +15,11 @@ It intentionally avoids the previously planned complex Career OS / 9-stage roadm
 
 ## Membership-driven behavior
 
-- Free/L0: foundation reading
-- L1 Silver: L1 learning -> assignments -> L1 knowledge check
-- L2: L2 knowledge check placeholder until the L2 engine is implemented
-- L3: career-track placeholder until course/live-session systems are implemented
+- Free: free resources and foundation reading
+- Bronz (L0): paid membership with TagMango course access
+- Silver (L1): L1 learning -> assignments -> Silver knowledge check
+- Gold (L2): Gold knowledge check placeholder until the L2 engine is implemented
+- Diamond (L3): Diamond career-track placeholder until course/live-session systems are implemented
 
 The dashboard does not automatically upgrade membership.
 
