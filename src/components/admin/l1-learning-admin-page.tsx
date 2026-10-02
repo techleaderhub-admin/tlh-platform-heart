@@ -183,7 +183,7 @@ export function L1LearningAdminPage() {
   };
 
   return (
-    <AdminShell title="L1 Silver Learning" subtitle="Build and publish the L1 course structure, lessons and assignments, then review student submissions from one admin workspace.">
+    <AdminShell title="L1 Silver Learning" subtitle="Build and publish the L1 course structure, lessons and assignments, then review Leader submissions from one admin workspace.">
       <div className="space-y-6">
         {error && <Card className="border-destructive/30 bg-destructive/5"><CardContent className="p-4 text-sm text-destructive">{error}</CardContent></Card>}
 
