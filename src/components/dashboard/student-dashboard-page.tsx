@@ -555,7 +555,15 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                   </div>
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     {stage.href ? (
-                      <Button asChild><a href={stage.href}>{stage.cta}<ArrowRight /></a></Button>
+                      <Button asChild>
+                        <a
+                          href={stage.href}
+                          target={stage.href.startsWith("http") ? "_blank" : undefined}
+                          rel={stage.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                        >
+                          {stage.cta}<ArrowRight />
+                        </a>
+                      </Button>
                     ) : (
                       <Button variant="outline" disabled>{stage.cta}</Button>
                     )}
