@@ -54,7 +54,7 @@ export function CareerAssessmentsAdminPage() {
     return gaps.filter((gap) => {
       const student = profiles[gap.student_id];
       const statusMatch = statusFilter === "all" || gap.status === statusFilter;
-      const searchMatch = !q || [student?.full_name, student?.email, gap.domain, gap.recommendation]
+      const searchMatch = !q || [student?.full_name, gap.domain, gap.recommendation]
         .some((value) => value?.toLowerCase().includes(q));
       return statusMatch && searchMatch;
     });
@@ -97,7 +97,7 @@ export function CareerAssessmentsAdminPage() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <p className="font-semibold">{student?.full_name ?? "Unknown student"}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{student?.email ?? "No email"} · {gap.domain}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{gap.domain}</p>
                     </div>
                     <Badge>{gap.score ?? 0}% · {gap.status}</Badge>
                   </div>
