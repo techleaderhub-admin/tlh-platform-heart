@@ -76,10 +76,11 @@ const LEVEL_RANK: Record<MembershipLevel, number> = {
 };
 
 const STAGES = [
-  { key: "foundation", label: "Free", description: "Foundation reading", rank: 1 },
-  { key: "l1", label: "Silver", description: "Learning + knowledge check", rank: 2 },
-  { key: "l2", label: "Gold", description: "Advanced knowledge check", rank: 3 },
-  { key: "l3", label: "Diamond", description: "Course + assignments + live sessions", rank: 4 },
+  { key: "free", label: "Free", description: "Free resources and foundation reading", rank: 1 },
+  { key: "l0", label: "Bronz", description: "Paid access with TagMango courses", rank: 2 },
+  { key: "l1", label: "Silver", description: "Learning + knowledge check", rank: 3 },
+  { key: "l2", label: "Gold", description: "Advanced knowledge check", rank: 4 },
+  { key: "l3", label: "Diamond", description: "Course + assignments + live sessions", rank: 5 },
 ] as const;
 
 function pct(done: number, total: number) {
@@ -87,13 +88,22 @@ function pct(done: number, total: number) {
 }
 
 function stageFor(level: MembershipLevel) {
-  if (level === "free" || level === "l0") {
+  if (level === "free") {
     return {
       eyebrow: "Foundation",
       title: "Build your foundation",
-      description: "Complete your assigned foundation material before moving into the L1 learning path.",
+      description: "Access your free TLH resources and complete your foundation material.",
       href: "/dashboard/foundation",
       cta: "Open foundation",
+    };
+  }
+  if (level === "l0") {
+    return {
+      eyebrow: "Bronz",
+      title: "Continue your TLH courses",
+      description: "Your Bronz membership includes access to your TagMango courses and paid learning resources.",
+      href: "https://app.techleaderhub.com/web/courses",
+      cta: "Open courses",
     };
   }
   if (level === "l1") {
@@ -102,7 +112,7 @@ function stageFor(level: MembershipLevel) {
       title: "Build stronger Android fundamentals",
       description: "Learn, practice through assignments and use the Silver knowledge check as your next checkpoint.",
       href: "/dashboard/l1-learning",
-      cta: "Continue L1 learning",
+      cta: "Continue Silver learning",
     };
   }
   if (level === "l2") {
@@ -111,7 +121,7 @@ function stageFor(level: MembershipLevel) {
       title: "Advance your Android engineering depth",
       description: "Use the Gold knowledge check to measure advanced Android readiness and identify areas to strengthen.",
       href: "/dashboard/l2-knowledge-check",
-      cta: "Open L2 knowledge check",
+      cta: "Open Gold knowledge check",
     };
   }
   if (level === "l3") {
@@ -120,7 +130,7 @@ function stageFor(level: MembershipLevel) {
       title: "Execute your career track",
       description: "Move through the Diamond course, assignments and live sessions while building real interview evidence.",
       href: "/dashboard/l3-course",
-      cta: "Continue L3 track",
+      cta: "Continue Diamond track",
     };
   }
   return {
@@ -371,7 +381,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       return {
         title: "Foundation complete",
-        description: "Your foundation resources are complete. Continue with the next membership stage when L1 access is assigned.",
+        description: "Your foundation resources are complete. Continue with Bronz or a higher membership when assigned.",
         href: "/dashboard/profile",
         label: "Review profile",
       };
@@ -437,16 +447,16 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       }
       if (!data.l2.latestAttempt || data.l2.latestAttempt.status === "in_progress") {
         return {
-          title: data.l2.latestAttempt ? "Continue your L2 knowledge check" : "Start your L2 knowledge check",
+          title: data.l2.latestAttempt ? "Continue your Gold knowledge check" : "Start your Gold knowledge check",
           description: data.l2.latestAttempt
-            ? "Your saved L2 attempt is ready to continue."
-            : "Measure advanced Android engineering readiness across the L2 question set.",
+            ? "Your saved Gold attempt is ready to continue."
+            : "Measure advanced Android engineering readiness across the Gold question set.",
           href: "/dashboard/l2-knowledge-check",
           label: data.l2.latestAttempt ? "Continue assessment" : "Start assessment",
         };
       }
       return {
-        title: data.l2.latestAttempt.passed ? "Review your L2 result" : "Review and retake your L2 knowledge check",
+        title: data.l2.latestAttempt.passed ? "Review your Gold result" : "Review and retake your Gold knowledge check",
         description: `Latest score: ${data.l2.latestAttempt.score ?? 0}%. Use the category breakdown to decide what to strengthen next.`,
         href: "/dashboard/l2-knowledge-check",
         label: data.l2.latestAttempt.passed ? "View result" : "Review result",
@@ -457,7 +467,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
       if (!data.profileComplete) {
         return {
           title: "Complete your career profile",
-          description: "Keep your career context current while you execute the L3 track.",
+          description: "Keep your career context current while you execute the Diamond track.",
           href: "/dashboard/profile",
           label: "Complete profile",
         };
@@ -575,18 +585,15 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                     <CardTitle>Your TLH Journey</CardTitle>
                     <p className="mt-1 text-sm text-muted-foreground">One path from foundation to career-track execution.</p>
                   </div>
-                  <Badge variant="outline">Step {Math.min(Math.max(rank, 1), 4)} of 4</Badge>
+                  <Badge variant="outline">Step {Math.min(Math.max(rank + 1, 1), 5)} of 5</Badge>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="grid gap-3 md:grid-cols-4">
                   {STAGES.map((item) => {
                     const current =
-                      (item.key === "foundation" && (data.membership === "free" || data.membership === "l0")) ||
-                      (item.key === "l1" && data.membership === "l1") ||
-                      (item.key === "l2" && data.membership === "l2") ||
-                      (item.key === "l3" && data.membership === "l3");
-                    const unlocked = item.key === "foundation" ? true : rank >= item.rank;
+                      (item.key === data.membership);
+                    const unlocked = rank + 1 >= item.rank;
 
                     return (
                       <div
@@ -722,7 +729,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                           : data.l2.latestAttempt.passed ? "Checkpoint reached. Review your category breakdown." : "Checkpoint not reached. Review and retake when ready."}
                     </p>
                   </div>
-                  <Button variant="outline" asChild><a href="/dashboard/l2-knowledge-check">Open L2 check<ArrowRight /></a></Button>
+                  <Button variant="outline" asChild><a href="/dashboard/l2-knowledge-check">Open Gold check<ArrowRight /></a></Button>
                 </CardContent>
               </Card>
             ) : data.membership === "l3" ? (
