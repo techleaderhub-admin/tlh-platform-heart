@@ -114,7 +114,7 @@ export const getMyIdentity = createServerFn({ method: "GET" })
     const [profileResult, roleResult] = await Promise.all([
       context.supabase
         .from("profiles")
-        .select("id, full_name, phone")
+        .select("id, full_name, phone, is_blocked, deleted_at")
         .eq("id", context.userId)
         .single(),
       context.supabase
@@ -125,6 +125,11 @@ export const getMyIdentity = createServerFn({ method: "GET" })
 
     if (profileResult.error || roleResult.error || !roleResult.data?.length) {
       throw new Error("Your account could not be loaded. Please sign in again.");
+    }
+    if (profileResult.data.is_blocked || profileResult.data.deleted_at) {
+      throw new Error(profileResult.data.deleted_at
+        ? "This account has been removed."
+        : "This account is blocked.");
     }
 
     // A user may hold multiple roles. Prefer admin when present so an admin
