@@ -4,6 +4,7 @@ import {
   CheckCircle2,
   ClipboardCheck,
   LockKeyhole,
+  Map,
   MessageSquareText,
   RefreshCw,
   Sparkles,
@@ -453,8 +454,9 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                     </>
                   ) : (
                     <div>
-                      <p className="font-semibold">{stage.title}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{stage.description}</p>
+                      <p className="font-semibold">Career OS</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Review your target role, skill gaps and personalized roadmap.</p>
+                      <Button className="mt-4" variant="outline" asChild><a href="/dashboard/career-os"><Map />Open Career OS<ArrowRight /></a></Button>
                     </div>
                   )}
                 </CardContent>
@@ -492,6 +494,14 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                 </>
               )}
             </section>
+
+            <Card className="border-primary/20 bg-primary/[0.03]">
+              <CardHeader><div className="flex items-center gap-2"><Map className="size-5 text-primary" /><CardTitle>Career OS</CardTitle></div></CardHeader>
+              <CardContent className="flex flex-wrap items-center justify-between gap-4">
+                <div><p className="font-semibold">Turn your assessment into a plan.</p><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Review your target role, current skill gaps and the roadmap created for your career journey.</p></div>
+                <Button variant="outline" asChild><a href="/dashboard/career-os">Open Career OS<ArrowRight /></a></Button>
+              </CardContent>
+            </Card>
 
             <Card className="border-primary/20 bg-primary/[0.03]">
               <CardHeader>
