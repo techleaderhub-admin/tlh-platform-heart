@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BookOpen,
@@ -256,9 +257,11 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <span className="text-xs text-muted-foreground">{module.status}</span>
                       {unlocked && module.minimumLevel === "free" ? (
-                        <Button variant="ghost" size="sm" disabled>
-                          <ArrowRight />
-                          Opening soon
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to="/dashboard/profile">
+                            <ArrowRight />
+                            Open profile
+                          </Link>
                         </Button>
                       ) : (
                         <span className="text-xs font-medium text-muted-foreground">
@@ -304,9 +307,11 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
                   ? "Your career profile is created. The next platform modules will build on this foundation."
                   : "Complete your career profile first. It will become the foundation for assessments, roadmap and career workflows."}
               </p>
-              <Button className="mt-4" variant="outline" disabled>
-                {profileComplete ? "Continue your journey" : "Build career profile"}
-                <ArrowRight />
+              <Button className="mt-4" variant="outline" asChild>
+                <Link to="/dashboard/profile">
+                  {profileComplete ? "Review career profile" : "Build career profile"}
+                  <ArrowRight />
+                </Link>
               </Button>
             </CardContent>
           </Card>
