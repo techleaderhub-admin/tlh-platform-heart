@@ -1,20 +1,11 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { BookOpen, BriefcaseBusiness, ClipboardCheck, LayoutDashboard, LogOut, MessageSquareText, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { signOutAndReturnToLogin } from "@/lib/auth-client";
 import { TLHLogo } from "@/components/brand/tlh-logo";
-
-const items = [
-  { to: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/dashboard/profile", label: "Career Profile", icon: UserRound },
-  { to: "/dashboard/learning", label: "Learning", icon: BookOpen },
-  { to: "/dashboard/interviews", label: "Interviews", icon: MessageSquareText },
-  { to: "/dashboard/jobs", label: "Jobs", icon: BriefcaseBusiness },
-  { to: "/dashboard/assessments", label: "Assessments", icon: ClipboardCheck },
-] as const;
 
 export function StudentShell({
   children,
@@ -61,17 +52,15 @@ export function StudentShell({
 
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <nav className="flex gap-1 overflow-x-auto border-b border-border py-2" aria-label="Student navigation">
-          {items.map(({ to, label, icon: Icon }) => {
-            const active = location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
-            return (
-              <Button key={to} variant={active ? "secondary" : "ghost"} size="sm" asChild>
-                <Link to={to}>
-                  <Icon aria-hidden="true" />
-                  {label}
-                </Link>
-              </Button>
-            );
-          })}
+          <Button variant={location.pathname === "/dashboard" ? "secondary" : "ghost"} size="sm" asChild>
+            <Link to="/dashboard">
+              <LayoutDashboard aria-hidden="true" />
+              Overview
+            </Link>
+          </Button>
+          <span className="px-3 py-2 text-xs font-medium text-muted-foreground">
+            Career Profile · Learning · Interviews · Jobs · Assessments — coming next
+          </span>
         </nav>
       </div>
 
