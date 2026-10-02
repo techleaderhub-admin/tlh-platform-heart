@@ -43,29 +43,29 @@ as $$
     and public.has_membership('l1'::public.membership_level);
 $$;
 
-revoke all on function public.get_l1_assessment_questions() from public;
+revoke all on function public.get_l1_assessment_questions() from anon, public;
 grant execute on function public.get_l1_assessment_questions() to authenticated;
 
 -- 2) Reduce RPC attack surface. Client-facing helpers remain authenticated-only.
-revoke all on function public.has_role(uuid, public.app_role) from public;
+revoke all on function public.has_role(uuid, public.app_role) from anon, public;
 grant execute on function public.has_role(uuid, public.app_role) to authenticated;
 
-revoke all on function public.has_membership(public.membership_level) from public;
+revoke all on function public.has_membership(public.membership_level) from anon, public;
 grant execute on function public.has_membership(public.membership_level) to authenticated;
 
-revoke all on function public.get_my_membership_level() from public;
+revoke all on function public.get_my_membership_level() from anon, public;
 grant execute on function public.get_my_membership_level() to authenticated;
 
-revoke all on function public.membership_level_rank(public.membership_level) from public;
+revoke all on function public.membership_level_rank(public.membership_level) from anon, public;
 grant execute on function public.membership_level_rank(public.membership_level) to authenticated;
 
-revoke all on function public.get_my_career_os() from public;
+revoke all on function public.get_my_career_os() from anon, public;
 grant execute on function public.get_my_career_os() to authenticated;
 
-revoke all on function public.update_my_roadmap_item_status(uuid, text) from public;
+revoke all on function public.update_my_roadmap_item_status(uuid, text) from anon, public;
 grant execute on function public.update_my_roadmap_item_status(uuid, text) to authenticated;
 
-revoke all on function public.submit_l1_assessment(uuid) from public;
+revoke all on function public.submit_l1_assessment(uuid) from anon, public;
 grant execute on function public.submit_l1_assessment(uuid) to authenticated;
 
 -- Payment event ingestion is reserved for trusted server-side/webhook execution.
