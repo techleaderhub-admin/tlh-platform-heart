@@ -222,9 +222,12 @@ const flagFor = (iso: string) =>
     .join("");
 
 function detectDefaultIso() {
+  // TLH is primarily serving Indian users, so India is the safe default.
+  // Browser locale can still select another country when it explicitly exposes a region.
   if (typeof navigator === "undefined") return "IN";
   try {
-    const region = new Intl.Locale(navigator.language).region?.toUpperCase();
+    const locale = navigator.language?.replace("_", "-");
+    const region = locale.includes("-") ? new Intl.Locale(locale).region?.toUpperCase() : undefined;
     if (region && COUNTRIES.some((country) => country.iso === region)) return region;
   } catch {
     // Fall back to India when the browser does not expose a usable region.
