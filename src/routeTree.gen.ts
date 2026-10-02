@@ -327,6 +327,7 @@ export interface FileRouteTypes {
     | '/dashboard/l1-learning'
     | '/dashboard/interview-questions'
     | '/dashboard/foundation'
+    | '/dashboard/career-os'
     | '/admin/masterclass'
     | '/admin/students'
     | '/admin/foundation'
@@ -353,6 +354,7 @@ export interface FileRouteTypes {
     | '/dashboard/profile'
     | '/admin/masterclass'
     | '/admin/students'
+    | '/admin/career-os'
   id:
     | '__root__'
     | '/'
@@ -372,9 +374,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/career-os'
     | '/_authenticated/dashboard/assessment'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/students'
+    | '/_authenticated/admin/career-os'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
