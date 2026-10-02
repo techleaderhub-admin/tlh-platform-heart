@@ -162,6 +162,16 @@ create policy "Admins manage assignment submissions" on public.l1_assignment_sub
 using (public.has_role(auth.uid(),'admin'::public.app_role))
 with check (public.has_role(auth.uid(),'admin'::public.app_role));
 
+create or replace function public.touch_updated_at()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
 -- Keep updated_at reliable for all learning records.
 drop trigger if exists touch_l1_course on public.l1_courses;
 create trigger touch_l1_course before update on public.l1_courses for each row execute function public.touch_updated_at();
