@@ -18,6 +18,5 @@ export const Route = createFileRoute("/_authenticated/dashboard/profile")({
 });
 
 function CareerProfile() {
-  const identity = Route.useRouteContext();
-  return <CareerProfilePage name={identity.profile.full_name} />;
+  return <CareerProfilePage />;
 }
