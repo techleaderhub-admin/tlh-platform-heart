@@ -80,7 +80,7 @@ export function LearningProgramAdminPage() {
     },
     {
       title: "L3 Career Track",
-      description: "Build programs, courses, modules, lessons and assignments, then review student work.",
+      description: "Build programs, courses, modules, lessons and assignments, then review Leader work.",
       icon: Layers3,
       href: "/admin/l3-course" as const,
       stats: `${counts.l3Programs} programs · ${counts.l3Courses} courses · ${counts.l3Lessons} lessons · ${counts.l3Assignments} assignments`,
@@ -103,7 +103,7 @@ export function LearningProgramAdminPage() {
               <div>
                 <p className="font-semibold">One place to manage the learning journey</p>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  Choose the membership stage you want to manage. Existing detailed admin workspaces remain the source of truth for publishing and student-submission operations.
+                  Choose the membership stage you want to manage. Existing detailed admin workspaces remain the source of truth for publishing and Leader-submission operations.
                 </p>
               </div>
             </div>
