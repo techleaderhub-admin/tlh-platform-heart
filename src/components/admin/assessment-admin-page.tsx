@@ -1,6 +1,6 @@
-import { ClipboardCheck, FileQuestion, GraduationCap, Layers3, Plus, ArrowRight } from "lucide-react";
+import { FileQuestion, GraduationCap, Layers3, Plus, ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
@@ -46,8 +46,6 @@ export function AssessmentAdminPage() {
   useEffect(() => { void load(); }, []);
 
   const questions = level === "l1" ? l1 : l2;
-  const activeCount = useMemo(() => questions.filter((q) => q.is_active).length, [questions]);
-
   const addQuestion = async () => {
     if (!form.question_text.trim() || !form.category.trim() || !form.option_a.trim() || !form.option_b.trim() || !form.option_c.trim() || !form.option_d.trim()) {
       setMessage("Question, category and all four options are required."); return;
