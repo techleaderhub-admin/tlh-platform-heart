@@ -15,6 +15,8 @@ type Module = Database["public"]["Tables"]["l1_course_modules"]["Row"];
 type Lesson = Database["public"]["Tables"]["l1_course_lessons"]["Row"];
 type Assignment = Database["public"]["Tables"]["l1_assignments"]["Row"];
 type Submission = Database["public"]["Tables"]["l1_assignment_submissions"]["Row"];
+type LessonProgress = Database["public"]["Tables"]["student_lesson_progress"]["Row"];
+type Membership = Database["public"]["Tables"]["student_memberships"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 export function L1LearningAdminPage() {
@@ -24,6 +26,8 @@ export function L1LearningAdminPage() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [profiles, setProfiles] = useState<Record<string, Profile>>({});
+  const [lessonProgress, setLessonProgress] = useState<LessonProgress[]>([]);
+  const [memberships, setMemberships] = useState<Membership[]>([]);
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedModule, setSelectedModule] = useState("");
   const [loading, setLoading] = useState(true);
@@ -45,8 +49,10 @@ export function L1LearningAdminPage() {
       supabase.from("l1_assignments").select("*").order("sort_order"),
       supabase.from("l1_assignment_submissions").select("*").order("updated_at", { ascending: false }),
       supabase.from("profiles").select("*"),
+      supabase.from("student_lesson_progress").select("*"),
+      supabase.from("student_memberships").select("*"),
     ]);
-    if (courseResult.error || moduleResult.error || lessonResult.error || assignmentResult.error || submissionResult.error || profileResult.error) {
+    if (courseResult.error || moduleResult.error || lessonResult.error || assignmentResult.error || submissionResult.error || profileResult.error || progressResult.error || membershipResult.error) {
       setError("Some L1 learning administration data could not be loaded.");
     } else {
       setCourses(courseResult.data ?? []);
@@ -55,6 +61,8 @@ export function L1LearningAdminPage() {
       setAssignments(assignmentResult.data ?? []);
       setSubmissions(submissionResult.data ?? []);
       setProfiles(Object.fromEntries((profileResult.data ?? []).map((profile) => [profile.id, profile])));
+      setLessonProgress(progressResult.data ?? []);
+      setMemberships(membershipResult.data ?? []);
       if (!selectedCourse && courseResult.data?.[0]) setSelectedCourse(courseResult.data[0].id);
       if (!selectedModule && moduleResult.data?.[0]) setSelectedModule(moduleResult.data[0].id);
     }
@@ -66,6 +74,9 @@ export function L1LearningAdminPage() {
   const visibleModules = useMemo(() => modules.filter((item) => item.course_id === selectedCourse), [modules, selectedCourse]);
   const visibleLessons = useMemo(() => lessons.filter((item) => item.module_id === selectedModule), [lessons, selectedModule]);
   const visibleAssignments = useMemo(() => assignments.filter((item) => item.module_id === selectedModule), [assignments, selectedModule]);
+  const activeL1Students = memberships.filter((membership) => membership.is_active && membership.level === "l1");
+  const totalPublishedLessons = lessons.filter((lesson) => lesson.is_active).length;
+  const requiredPublishedAssignments = assignments.filter((assignment) => assignment.is_active && assignment.is_required).length;
 
   const createCourse = async () => {
     if (!courseForm.title.trim()) return;
@@ -306,6 +317,26 @@ export function L1LearningAdminPage() {
                 </CardContent>
               </Card>
             </section>
+
+            <Card>
+              <CardHeader><CardTitle>L1 student progress</CardTitle><p className="text-sm text-muted-foreground">Lesson completion for active L1 students, plus required assignment submission counts.</p></CardHeader>
+              <CardContent className="space-y-3">
+                {activeL1Students.map((membership) => {
+                  const profile = profiles[membership.student_id];
+                  const completed = lessonProgress.filter((item) => item.student_id === membership.student_id && item.status === "completed" && lessons.some((lesson) => lesson.id === item.lesson_id && lesson.is_active)).length;
+                  const submitted = submissions.filter((item) => item.student_id === membership.student_id && assignments.some((assignment) => assignment.id === item.assignment_id && assignment.is_active && assignment.is_required)).length;
+                  const units = totalPublishedLessons + requiredPublishedAssignments;
+                  const percent = units ? Math.round(((completed + submitted) / units) * 100) : 0;
+                  return <div key={membership.student_id} className="rounded-xl border border-border p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div><p className="font-semibold">{profile?.full_name ?? membership.student_id}</p><p className="text-xs text-muted-foreground">{completed}/{totalPublishedLessons} lessons · {submitted}/{requiredPublishedAssignments} required assignments</p></div>
+                      <Badge>{percent}%</Badge>
+                    </div>
+                  </div>;
+                })}
+                {activeL1Students.length === 0 && <p className="text-sm text-muted-foreground">No active L1 students yet.</p>}
+              </CardContent>
+            </Card>
 
             <Card>
               <CardHeader><CardTitle>Student assignment submissions</CardTitle><p className="text-sm text-muted-foreground">Central review queue for every L1 assignment submission.</p></CardHeader>
