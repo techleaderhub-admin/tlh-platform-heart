@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
+  ArrowRight,
   Check,
   ChevronDown,
+  ChevronRight,
   Facebook,
   Instagram,
   Linkedin,
-  Menu,
   Play,
-  X,
   Youtube,
 } from "lucide-react";
 
@@ -24,9 +24,9 @@ import {
 } from "@/components/home/home-content";
 
 const NAV = [
-  { label: "Is it for you", href: "#recognition" },
+  { label: "Who it's for", href: "#recognition" },
   { label: "How it works", href: "#approach" },
-  { label: "Nikhil", href: "#nikhil" },
+  { label: "About Nikhil", href: "#nikhil" },
   { label: "Stories", href: "#stories" },
   { label: "FAQ", href: "#faq" },
 ];
@@ -137,7 +137,10 @@ export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showMobileBar, setShowMobileBar] = useState(false);
   const [headerCompact, setHeaderCompact] = useState(false);
-  const [activeNav, setActiveNav] = useState(NAV[0]?.href ?? "#recognition");
+  // No section is active over the hero; the nav indicator appears once a section is reached.
+  const [activeNav, setActiveNav] = useState("");
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
+  const navRef = useRef<HTMLElement>(null);
   const [picked, setPicked] = useState<number | null>(null);
   const heroRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
@@ -187,6 +190,7 @@ export function HomePage() {
     const onScroll = () => {
       if (scrollLockedRef.current) return;
       setHeaderCompact(window.scrollY > 28);
+      if (window.scrollY < window.innerHeight * 0.5) setActiveNav("");
       const line = progressRef.current;
       if (!cssProgress && line) {
         const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -262,6 +266,21 @@ export function HomePage() {
     };
   }, [menuOpen]);
 
+  // Slide the nav indicator under the active link (re-measured on resize).
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const measure = () => {
+      const link = activeNav ? nav.querySelector<HTMLElement>(`[data-href="${activeNav}"]`) : null;
+      setIndicator(
+        link ? { left: link.offsetLeft, width: link.offsetWidth } : { left: 0, width: 0 },
+      );
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [activeNav]);
+
   useReveal();
   useInViewEffects();
 
@@ -279,98 +298,116 @@ export function HomePage() {
         Skip to content
       </a>
 
-      {/* ---------- Header ---------- */}
+      {/* ---------- Header ----------
+          Top of page: a full-width transparent bar over the dark hero.
+          Scrolled (is-compact): a floating glass capsule, 64px -> 56px.
+          Menu open: a solid bar so the mobile menu attaches seamlessly below it. */}
       <header
-        className={"tlh-header fixed inset-x-0 top-0 z-50 " + (headerCompact ? "is-compact" : "")}
+        className={
+          "tlh-header" +
+          (headerCompact && !menuOpen ? " is-compact" : "") +
+          (menuOpen ? " is-menu-open" : "")
+        }
       >
-        <div
-          className={
-            "mx-auto flex " +
-            (headerCompact ? "h-14" : "h-16") +
-            " max-w-[1200px] items-center justify-between px-5 transition-[height] duration-300 sm:px-8"
-          }
-        >
-          <Link
-            to="/"
-            onClick={closeMenu}
-            className="flex min-h-10 items-center gap-2.5 rounded-md"
-            aria-label="Tech Leader Hub home"
-          >
+        <div className="tlh-header-bar">
+          <Link to="/" onClick={closeMenu} className="tlh-brand" aria-label="Tech Leader Hub home">
             <span className="tlh-logo-mark">
-              <img src={BRAND_ICON.small} alt="" width={36} height={36} className="size-9" />
+              <img src={BRAND_ICON.small} alt="" width={34} height={34} />
             </span>
-            <span className="min-w-0">
-              <span className="block whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em] text-white">
-                Tech <span className="text-[#3B8BFF]">Leader</span> Hub
-              </span>
-              <span className="hidden text-[10px] leading-4 text-white/60 sm:block">
-                Learn. Grow. Lead.
-              </span>
+            <span className="tlh-wordmark">
+              Tech <span className="tlh-wordmark-accent">Leader</span> Hub
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-2 lg:flex" aria-label="Main">
+          <nav ref={navRef} className="tlh-nav" aria-label="Main">
+            <span
+              className="tlh-nav-indicator"
+              aria-hidden="true"
+              style={{
+                width: indicator.width,
+                transform: `translateX(${indicator.left}px)`,
+                opacity: indicator.width ? 1 : 0,
+              }}
+            />
             {NAV.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                aria-current={activeNav === item.href ? "page" : undefined}
-                className={"tlh-nav-link " + (activeNav === item.href ? "is-active" : "")}
+                data-href={item.href}
+                aria-current={activeNav === item.href ? "location" : undefined}
+                className={"tlh-nav-link" + (activeNav === item.href ? " is-active" : "")}
               >
                 {item.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-            <Link to="/login" className="tlh-nav-link hidden px-2 lg:inline-block">
+          <div className="tlh-header-actions">
+            <span className="tlh-header-live">
+              <span className="tlh-live-dot" aria-hidden="true" />
+              Live every Sunday · 11 AM IST
+            </span>
+            <Link to="/login" className="tlh-signin">
               Sign in
             </Link>
-            <PrimaryCta className="tlh-btn-sm hidden lg:inline-flex">
+            <PrimaryCta className="tlh-btn-sm tlh-header-cta">
               Join the free masterclass
+              <ArrowRight className="size-4" aria-hidden="true" />
             </PrimaryCta>
-            <PrimaryCta className="tlh-btn-xs lg:hidden">Join free</PrimaryCta>
+            <PrimaryCta className="tlh-btn-xs tlh-header-cta-mobile">Join free</PrimaryCta>
             <button
               ref={menuButtonRef}
               type="button"
-              className="tlh-icon-btn lg:hidden"
+              className="tlh-burger"
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls="tlh-mobile-menu"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
             >
-              {menuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+              <span aria-hidden="true" />
+              <span aria-hidden="true" />
             </button>
           </div>
-        </div>
 
-        <div ref={progressRef} className="tlh-progress" aria-hidden="true" />
+          <div ref={progressRef} className="tlh-progress" aria-hidden="true" />
+        </div>
       </header>
       {menuOpen ? (
-        <nav
-          ref={menuRef}
-          id="tlh-mobile-menu"
-          className="tlh-mobile-menu lg:hidden"
-          style={{ top: headerCompact ? 56 : 64 }}
-          aria-label="Mobile"
-        >
+        <nav ref={menuRef} id="tlh-mobile-menu" className="tlh-mobile-menu" aria-label="Mobile">
           <div className="tlh-mobile-menu-inner">
-            {NAV.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={(event) => goToSection(event, item.href)}
-              >
-                {item.label}
-              </a>
-            ))}
-            <Link to="/login" onClick={closeMenu}>
-              Sign in
-            </Link>
-            <PrimaryCta onClick={closeMenu} className="mt-5 w-full">
-              Join the free masterclass
-            </PrimaryCta>
-            <div className="mt-8 flex gap-2 border-t border-white/10 pt-6">
+            <ol className="tlh-mobile-links">
+              {NAV.map((item, index) => (
+                <li key={item.href} style={{ "--i": index } as React.CSSProperties}>
+                  <a
+                    href={item.href}
+                    aria-current={activeNav === item.href ? "location" : undefined}
+                    onClick={(event) => goToSection(event, item.href)}
+                  >
+                    <span className="tlh-mobile-index" aria-hidden="true">
+                      0{index + 1}
+                    </span>
+                    {item.label}
+                    <ChevronRight className="tlh-mobile-chevron size-5" aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ol>
+
+            <div className="tlh-mobile-actions">
+              <PrimaryCta onClick={closeMenu} className="w-full">
+                Join the free masterclass
+                <ArrowRight className="size-5" aria-hidden="true" />
+              </PrimaryCta>
+              <Link to="/login" onClick={closeMenu} className="tlh-btn tlh-btn-ghost w-full">
+                Sign in
+              </Link>
+              <p className="tlh-mobile-session">
+                <span className="tlh-live-dot" aria-hidden="true" />
+                Free · 90 minutes · Live every Sunday, 11:00 AM IST
+              </p>
+            </div>
+
+            <div className="tlh-mobile-socials">
               {SOCIALS.map(({ label, href, Icon }) => (
                 <a
                   key={label}
