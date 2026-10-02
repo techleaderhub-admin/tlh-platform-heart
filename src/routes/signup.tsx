@@ -16,9 +16,9 @@ export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
       { title: "Create Account | Tech Leader Hub" },
-      { name: "description", content: "Create your secure Tech Leader Hub student account." },
+      { name: "description", content: "Create your secure Tech Leader Hub Leader account." },
       { property: "og:title", content: "Create Account | Tech Leader Hub" },
-      { property: "og:description", content: "Create your secure Tech Leader Hub student account." },
+      { property: "og:description", content: "Create your secure Tech Leader Hub Leader account." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -155,7 +155,7 @@ function SignupPage() {
   return (
     <AuthShell>
       <div className="mx-auto max-w-md">
-        <p className="text-sm font-bold uppercase text-accent">Student account</p>
+        <p className="text-sm font-bold uppercase text-accent">Leader account</p>
         <h1 className="mt-2 font-heading text-3xl font-bold text-foreground">Create your account</h1>
         <p className="mt-3 text-muted-foreground">Use your email, international phone number, and a strong password.</p>
         {error ? <Alert variant="destructive" className="mt-6"><AlertCircle aria-hidden="true" /><AlertDescription>{error}</AlertDescription></Alert> : null}
