@@ -1558,6 +1558,20 @@ export type Database = {
         Args: { p_event_type: string; p_payload: Json; p_payment_id?: string | null; p_provider: string; p_provider_event_id: string }
         Returns: string
       }
+      get_similar_question_bank: {
+        Args: {
+          p_limit?: number
+          p_question_id: string
+        }
+        Returns: {
+          id: string
+          question: string
+          category: string
+          difficulty: string | null
+          technology: string | null
+          similarity: number
+        }[]
+      }
       search_blog_posts: {
         Args: {
           p_limit?: number
