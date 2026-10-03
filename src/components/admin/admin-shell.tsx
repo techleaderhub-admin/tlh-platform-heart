@@ -14,6 +14,7 @@ import {
   Layers,
   LayoutDashboard,
   LogOut,
+  Mail,
   Map,
   MessageSquareText,
   Target,
@@ -78,7 +79,13 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   { label: "Growth", items: [{ to: "/admin/blog", label: "Blog & SEO", icon: FileText }] },
-  { label: "Business", items: [{ to: "/admin/payments", label: "Payments", icon: CreditCard }] },
+  {
+    label: "Business",
+    items: [
+      { to: "/admin/payments", label: "Payments", icon: CreditCard },
+      { to: "/admin/contact-messages", label: "Contact Messages", icon: Mail },
+    ],
+  },
 ];
 
 const ALL_ITEMS = NAV_GROUPS.flatMap((group) => group.items);
