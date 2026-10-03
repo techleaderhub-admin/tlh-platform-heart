@@ -23,8 +23,8 @@ type Assessment=Database["public"]["Tables"]["l1_assessment_attempts"]["Row"];
 type Submission=Database["public"]["Tables"]["l1_assignment_submissions"]["Row"];
 type Payment=Database["public"]["Tables"]["payments"]["Row"];
 
-const levels=["free","l0","l1","l2","l3","l4"] as const;
-const levelLabel=(x:string)=>({free:"Free",l0:"Bronz",l1:"Silver",l2:"Gold",l3:"Diamond",l4:"L4"} as Record<string,string>)[x] ?? x;
+const levels=["free","l0","l1","l2","l3"] as const;
+const levelLabel=(x:string)=>({free:"Free",l0:"Bronz",l1:"Silver",l2:"Gold",l3:"Diamond",l4:"Reserved"} as Record<string,string>)[x] ?? x;
 const statusLabel=(x:string)=>x.replaceAll("_"," ");
 
 export function Admin360Page(){
