@@ -6,12 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type Job = Database["public"]["Tables"]["jobs"]["Row"];
 
-const emptyForm = { company_name: "", job_title: "", job_url: "", location: "", employment_type: "", source: "" };
+const emptyForm = {
+  company_name: "",
+  job_title: "",
+  job_url: "",
+  location: "",
+  employment_type: "",
+  source: "",
+  minimum_membership: "free" as Database["public"]["Enums"]["membership_level"],
+  status: "published",
+};
 
 export function JobsAdminPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -41,6 +51,8 @@ export function JobsAdminPage() {
       location: form.location.trim() || null,
       employment_type: form.employment_type.trim() || null,
       source: form.source.trim() || null,
+      minimum_membership: form.minimum_membership,
+      status: form.status,
     };
     const result = editingId
       ? await supabase.from("jobs").update(payload).eq("id", editingId)
@@ -64,6 +76,8 @@ export function JobsAdminPage() {
       location: job.location ?? "",
       employment_type: job.employment_type ?? "",
       source: job.source ?? "",
+      minimum_membership: job.minimum_membership,
+      status: job.status,
     });
   };
 
@@ -93,6 +107,24 @@ export function JobsAdminPage() {
             <Input placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
             <Input placeholder="Employment type, e.g. Full-time" value={form.employment_type} onChange={(e) => setForm({ ...form, employment_type: e.target.value })} />
             <Input placeholder="Source" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} />
+            <Select value={form.minimum_membership} onValueChange={(value) => setForm({ ...form, minimum_membership: value as Database["public"]["Enums"]["membership_level"] })}>
+              <SelectTrigger><SelectValue placeholder="Minimum membership" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="l0">Bronz</SelectItem>
+                <SelectItem value="l1">Silver</SelectItem>
+                <SelectItem value="l2">Gold</SelectItem>
+                <SelectItem value="l3">Diamond</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={form.status} onValueChange={(value) => setForm({ ...form, status: value })}>
+              <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
             <div className="flex gap-2 md:col-span-2">
               <Button onClick={() => void save()} disabled={busy}>{editingId ? "Update job" : "Publish job"}</Button>
               {editingId && <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Cancel</Button>}
@@ -101,11 +133,11 @@ export function JobsAdminPage() {
         </Card>
 
         <Card>
-          <CardHeader><div className="flex items-center justify-between gap-3"><CardTitle className="flex items-center gap-2"><BriefcaseBusiness className="size-5 text-primary" /> Published jobs</CardTitle><Badge variant="outline">{jobs.length}</Badge></div></CardHeader>
+          <CardHeader><div className="flex items-center justify-between gap-3"><CardTitle className="flex items-center gap-2"><BriefcaseBusiness className="size-5 text-primary" /> Jobs</CardTitle><Badge variant="outline">{jobs.length}</Badge></div></CardHeader>
           <CardContent className="space-y-3">
             {jobs.map((job) => (
               <div key={job.id} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-4">
-                <div><p className="font-semibold">{job.job_title}</p><p className="mt-1 text-sm text-muted-foreground">{job.company_name} · {job.location ?? "Location not specified"} · {job.employment_type ?? "Type not specified"}</p><p className="mt-1 text-xs text-muted-foreground">{job.source ?? "TLH"}{job.job_url ? " · External posting linked" : ""}</p></div>
+                <div><p className="font-semibold">{job.job_title}</p><p className="mt-1 text-sm text-muted-foreground">{job.company_name} · {job.location ?? "Location not specified"} · {job.employment_type ?? "Type not specified"}</p><p className="mt-1 text-xs text-muted-foreground">{job.source ?? "TLH"} · {job.minimum_membership === "free" ? "Free+" : job.minimum_membership === "l0" ? "Bronz+" : job.minimum_membership === "l1" ? "Silver+" : job.minimum_membership === "l2" ? "Gold+" : "Diamond"} · {job.status}{job.job_url ? " · External posting linked" : ""}</p></div>
                 <div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => edit(job)}><Pencil /> Edit</Button><Button size="sm" variant="outline" onClick={() => void remove(job)} disabled={busy}><Trash2 /> Delete</Button></div>
               </div>
             ))}
