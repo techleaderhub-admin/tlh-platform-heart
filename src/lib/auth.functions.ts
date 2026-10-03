@@ -54,7 +54,9 @@ export const signInWithIdentifier = createServerFn({ method: "POST" })
         .maybeSingle();
 
       if (profileError || !profile) throw new Error(GENERIC_AUTH_ERROR);
-      const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(profile.id);
+      const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
+        profile.id,
+      );
       if (userError || !userData.user.email) throw new Error(GENERIC_AUTH_ERROR);
       email = userData.user.email;
     }
@@ -73,10 +75,14 @@ export const signInWithIdentifier = createServerFn({ method: "POST" })
   });
 
 export const requestPasswordReset = createServerFn({ method: "POST" })
-  .validator((input: unknown) => z.object({
-    identifier: z.string().trim().min(1),
-    redirectTo: z.string().url(),
-  }).parse(input))
+  .validator((input: unknown) =>
+    z
+      .object({
+        identifier: z.string().trim().min(1),
+        redirectTo: z.string().url(),
+      })
+      .parse(input),
+  )
   .handler(async ({ data }) => {
     const identifier = data.identifier.trim();
     const parsedEmail = z.string().email().safeParse(identifier);
@@ -117,33 +123,33 @@ export const getMyIdentity = createServerFn({ method: "GET" })
         .select("id, full_name, phone, is_blocked, deleted_at")
         .eq("id", context.userId)
         .single(),
-      context.supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", context.userId),
+      context.supabase.from("user_roles").select("role").eq("user_id", context.userId),
     ]);
 
     if (profileResult.error || roleResult.error || !roleResult.data?.length) {
       throw new Error("Your account could not be loaded. Please sign in again.");
     }
     if (profileResult.data.is_blocked || profileResult.data.deleted_at) {
-      throw new Error(profileResult.data.deleted_at
-        ? "This account has been removed."
-        : "This account is blocked.");
+      throw new Error(
+        profileResult.data.deleted_at
+          ? "This account has been removed."
+          : "This account is blocked.",
+      );
     }
 
     // A user may hold multiple roles. Prefer admin when present so an admin
     // account can also retain the default student role created at signup.
-    const role = (roleResult.data.some((entry) => entry.role === "admin")
-      ? "admin"
-      : roleResult.data[0].role) as AppRole;
+    const role = (
+      roleResult.data.some((entry) => entry.role === "admin")
+        ? "admin"
+        : (roleResult.data[0]?.role ?? "student")
+    ) as AppRole;
 
     return {
       profile: profileResult.data,
       role,
     };
   });
-
 
 export const getLeaderEmail = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -159,7 +165,9 @@ export const getLeaderEmail = createServerFn({ method: "GET" })
     if (roleError || !adminRole) throw new Error("Admin access required.");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(data.userId);
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserById(
+      data.userId,
+    );
     if (userError || !userData.user) throw new Error("Leader account could not be loaded.");
 
     return { email: userData.user.email ?? "" };
@@ -167,10 +175,14 @@ export const getLeaderEmail = createServerFn({ method: "GET" })
 
 export const updateLeaderEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((input: unknown) => z.object({
-    userId: z.string().uuid(),
-    email: z.string().trim().email(),
-  }).parse(input))
+  .validator((input: unknown) =>
+    z
+      .object({
+        userId: z.string().uuid(),
+        email: z.string().trim().email(),
+      })
+      .parse(input),
+  )
   .handler(async ({ data, context }) => {
     const { data: adminRole, error: roleError } = await context.supabase
       .from("user_roles")
@@ -183,14 +195,51 @@ export const updateLeaderEmail = createServerFn({ method: "POST" })
 
     const email = data.email.toLowerCase();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
-      email,
-      email_confirm: true,
-    });
+    const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      data.userId,
+      {
+        email,
+        email_confirm: true,
+      },
+    );
 
     if (updateError || !updatedUser.user) {
       throw new Error(updateError?.message ?? "Could not update the Leader email.");
     }
 
     return { email: updatedUser.user.email ?? email };
+  });
+
+/** Admin only: emails for the given Leaders, read server-side from Supabase Auth. */
+export const listLeaderEmails = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((input: unknown) =>
+    z.object({ userIds: z.array(z.string().uuid()).max(500) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    const { data: adminRole, error: roleError } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError || !adminRole) throw new Error("Admin access required.");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const wanted = new Set(data.userIds);
+    const emails: Record<string, string> = {};
+    // Page through Auth users; stop once every requested Leader is found.
+    for (let page = 1; page <= 50 && Object.keys(emails).length < wanted.size; page += 1) {
+      const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({
+        page,
+        perPage: 1000,
+      });
+      if (error) throw new Error("Leader emails could not be loaded.");
+      for (const user of list.users) {
+        if (wanted.has(user.id) && user.email) emails[user.id] = user.email;
+      }
+      if (list.users.length < 1000) break;
+    }
+    return { emails };
   });
