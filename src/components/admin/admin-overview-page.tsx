@@ -34,7 +34,7 @@ const TIERS: Array<{ level: MembershipLevel; label: string }> = [
   { level: "l1", label: "Silver" },
   { level: "l2", label: "Gold" },
   { level: "l3", label: "Diamond" },
-  { level: "l4", label: "L4" },
+  { level: "l4", label: "Reserved" },
 ];
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -153,7 +153,7 @@ async function loadOverview(): Promise<Overview> {
       .length,
   }))
     // L4 has no public tier name yet; only show it if someone is on it.
-    .filter((tier) => tier.level !== "l4" || tier.count > 0)
+    .filter((tier) => tier.level !== "l4")
     .map(({ label, count }) => ({ label, count }));
 
   const missingProfiles = careerProfilesResult.error
