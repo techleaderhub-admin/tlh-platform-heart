@@ -16,6 +16,18 @@ export function PublicPageShell({
 }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Tech Leader Hub",
+            url: "https://techleaderhub.com",
+            email: "techleaderhub@gmail.com",
+          }),
+        }}
+      />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link to="/" className="flex items-center gap-3">
