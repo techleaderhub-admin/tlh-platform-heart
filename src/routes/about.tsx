@@ -5,7 +5,15 @@ export const Route = createFileRoute("/about")({
   head: () => ({ meta: [
     { title: "About Tech Leader Hub | Career Acceleration" },
     { name: "description", content: "Learn what Tech Leader Hub is and how its career acceleration approach connects direction, capability, credibility, and leadership." },
-  ]}),
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Tech Leader Hub" },
+    { property: "og:url", content: "https://techleaderhub.com/about" },
+    { property: "og:title", content: "About Tech Leader Hub | Career Acceleration" },
+    { property: "og:description", content: "Learn what Tech Leader Hub is and how its career acceleration approach connects direction, capability, credibility, and leadership." },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "About Tech Leader Hub | Career Acceleration" },
+    { name: "twitter:description", content: "Learn what Tech Leader Hub is and how its career acceleration approach connects direction, capability, credibility, and leadership." },
+  ], links: [{ rel: "canonical", href: "https://techleaderhub.com/about" }] }),
   component: AboutPage,
 });
 
