@@ -22,7 +22,7 @@ export function initAnalytics() {
       window.dataLayer?.push(args);
     };
     window.gtag("js", new Date());
-    window.gtag("config", gaId);
+    window.gtag("config", gaId, { send_page_view: false });
 
     if (!document.querySelector(`script[data-tlh-ga="${gaId}"]`)) {
       const script = document.createElement("script");
