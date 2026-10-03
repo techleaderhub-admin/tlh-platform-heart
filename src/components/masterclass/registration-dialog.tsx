@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, CalendarPlus, Check, Lock, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarPlus, Check, GraduationCap, Lock, X } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { trackMetaCustom, trackMetaStandard } from "@/lib/meta-tracking";
@@ -7,8 +7,10 @@ import {
   CHALLENGE_OPTIONS,
   COMPANY_OPTIONS,
   CTC_OPTIONS,
+  DROID_SKOOL_MASTERCLASS_URL,
   EVENT,
   EXPERIENCE_OPTIONS,
+  STUDENT_OR_FRESHER_EXPERIENCE,
   TIMELINE_OPTIONS,
   type Option,
 } from "@/components/masterclass/masterclass-content";
@@ -139,6 +141,7 @@ export function RegistrationDialog({
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [registeredFor, setRegisteredFor] = useState<number | null>(null);
+  const [showDroidSkoolPrompt, setShowDroidSkoolPrompt] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const headingId = useId();
   const nameId = useId();
@@ -158,6 +161,7 @@ export function RegistrationDialog({
     setError("");
     setSaving(false);
     setRegisteredFor(null);
+    setShowDroidSkoolPrompt(false);
     trackMetaCustom("MasterclassOptInStart", { source });
 
     const { body, documentElement: html } = document;
@@ -209,7 +213,7 @@ export function RegistrationDialog({
       panelRef.current?.querySelector<HTMLElement>("input, button.mc-btn")?.focus();
     });
     return () => window.cancelAnimationFrame(frame);
-  }, [open, step, registeredFor]);
+  }, [open, step, registeredFor, showDroidSkoolPrompt]);
 
   if (!open) return null;
 
@@ -225,6 +229,11 @@ export function RegistrationDialog({
         experience: answers.experience,
         company_type: answers.company,
       });
+      if (answers.experience === STUDENT_OR_FRESHER_EXPERIENCE) {
+        trackMetaCustom("MasterclassDroidSkoolRedirect", { source });
+        setShowDroidSkoolPrompt(true);
+        return;
+      }
     }
     if (step === 1) {
       if (!answers.ctc || !answers.challenge || !answers.timeline) {
@@ -310,7 +319,40 @@ export function RegistrationDialog({
           <span style={{ width: `${progress}%` }} />
         </div>
 
-        {registeredFor ? (
+        {showDroidSkoolPrompt ? (
+          <div className="mc-success">
+            <div className="mc-success-icon">
+              <GraduationCap className="size-7" aria-hidden="true" />
+            </div>
+            <h2 id={headingId} className="mc-dialog-title">
+              This masterclass is built for working engineers.
+            </h2>
+            <p className="mc-success-text">
+              It goes deep on system design and interview strategy for people already writing
+              production Android code. For an engineering student or fresher, Droid Skool's free
+              masterclass is the better starting point: it takes you from the basics to job-ready
+              Android + Kotlin in 90 days.
+            </p>
+            <a
+              className="mc-btn mc-btn-primary mc-btn-block"
+              href={DROID_SKOOL_MASTERCLASS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+            >
+              Okay, take me there
+              <ArrowRight className="size-5" aria-hidden="true" />
+            </a>
+            <button
+              type="button"
+              className="mc-btn mc-btn-ghost mc-btn-block"
+              onClick={() => setShowDroidSkoolPrompt(false)}
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              Back
+            </button>
+          </div>
+        ) : registeredFor ? (
           <div className="mc-success">
             <div className="mc-success-icon">
               <Check className="size-7" aria-hidden="true" />

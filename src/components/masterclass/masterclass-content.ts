@@ -332,13 +332,27 @@ export type Option = { value: string; label: string };
 /**
  * Experience values must stay exactly as they are: they are saved to
  * masterclass_registrations.experience_range, which the admin dashboard reads.
+ *
+ * STUDENT_OR_FRESHER_EXPERIENCE is not a fit for this masterclass (it's for working
+ * Android engineers); picking it routes to the Droid Skool redirect prompt instead
+ * of continuing the TLH registration flow.
  */
+export const STUDENT_OR_FRESHER_EXPERIENCE = "Engineering student / fresher";
+
 export const EXPERIENCE_OPTIONS: Option[] = [
+  {
+    value: STUDENT_OR_FRESHER_EXPERIENCE,
+    label: "Engineering student / fresher, no professional experience",
+  },
   { value: "2–3 years", label: "2–3 years" },
   { value: "3–5 years", label: "3–5 years" },
   { value: "5–8 years", label: "5–8 years" },
   { value: "8+ years", label: "8+ years" },
 ];
+
+/** Free beginner-friendly masterclass for Droid Skool mentees who aren't yet experienced engineers. */
+export const DROID_SKOOL_MASTERCLASS_URL =
+  "https://www.droidskool.com/free-masterclass-job-ready-android-developer-90-days?utm_source=TLH_REGISTRATION";
 
 export const COMPANY_OPTIONS: Option[] = [
   { value: "Service company", label: "IT service company (TCS, Infosys, Wipro…)" },
