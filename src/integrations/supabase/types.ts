@@ -1165,7 +1165,9 @@ export type Database = {
           job_title: string
           job_url: string | null
           location: string | null
+          minimum_membership: Database["public"]["Enums"]["membership_level"]
           source: string | null
+          status: string
           updated_at: string
         }
         Insert: {
@@ -1176,7 +1178,9 @@ export type Database = {
           job_title: string
           job_url?: string | null
           location?: string | null
+          minimum_membership?: Database["public"]["Enums"]["membership_level"]
           source?: string | null
+          status?: string
           updated_at?: string
         }
         Update: {
@@ -1187,7 +1191,9 @@ export type Database = {
           job_title?: string
           job_url?: string | null
           location?: string | null
+          minimum_membership?: Database["public"]["Enums"]["membership_level"]
           source?: string | null
+          status?: string
           updated_at?: string
         }
         Relationships: []
