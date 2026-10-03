@@ -17,7 +17,15 @@ export const Route = createFileRoute("/framework")({
   head: () => ({ meta: [
     { title: "TLH Framework | 9-Stage Career Acceleration Framework" },
     { name: "description", content: "Explore the nine-stage Tech Leader Hub career acceleration framework: Diagnose, Position, Upgrade, Prove, Prepare, Activate, Convert, Negotiate, Advance." },
-  ]}),
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Tech Leader Hub" },
+    { property: "og:url", content: "https://techleaderhub.com/framework" },
+    { property: "og:title", content: "TLH Framework | 9-Stage Career Acceleration Framework" },
+    { property: "og:description", content: "Explore the nine-stage Tech Leader Hub career acceleration framework: Diagnose, Position, Upgrade, Prove, Prepare, Activate, Convert, Negotiate, Advance." },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "TLH Framework | 9-Stage Career Acceleration Framework" },
+    { name: "twitter:description", content: "Explore the nine-stage Tech Leader Hub career acceleration framework: Diagnose, Position, Upgrade, Prove, Prepare, Activate, Convert, Negotiate, Advance." },
+  ], links: [{ rel: "canonical", href: "https://techleaderhub.com/framework" }] }),
   component: FrameworkPage,
 });
 
