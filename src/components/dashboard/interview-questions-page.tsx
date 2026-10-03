@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { membershipLabel } from "@/lib/membership-access";
 
 type Interview = Database["public"]["Tables"]["interviews"]["Row"];
 type InterviewQuestion = Database["public"]["Tables"]["interview_questions"]["Row"];
@@ -35,16 +36,19 @@ export function InterviewQuestionsPage() {
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   const [editingQuestion, setEditingQuestion] = useState({ text: "", category: "Android", difficulty: "medium" });
   const [message, setMessage] = useState<string | null>(null);
+  const [membership, setMembership] = useState<Database["public"]["Enums"]["membership_level"]>("free");
   const [interviewForm, setInterviewForm] = useState({ company_name: "", job_title: "", interview_type: "technical", interview_round: "", interview_date: "" });
 
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
-    const [interviewResult, questionResult, bankResult] = await Promise.all([
+    const [{ data: membershipData }, interviewResult, questionResult, bankResult] = await Promise.all([
+      supabase.from("student_memberships").select("level,is_active").eq("student_id", userData.user.id).maybeSingle(),
       supabase.from("interviews").select("*").eq("student_id", userData.user.id).order("interview_date", { ascending: false }),
       supabase.from("interview_questions").select("*"),
       supabase.from("question_bank").select("*").eq("is_active", true).order("created_at", { ascending: false }),
     ]);
+    setMembership(membershipData?.is_active === false ? "free" : (membershipData?.level ?? "free"));
     if (interviewResult.error || questionResult.error || bankResult.error) {
       setMessage("Interview data could not be loaded. Please refresh.");
       return;
@@ -251,7 +255,7 @@ export function InterviewQuestionsPage() {
     <StudentShell
       title="Interview Experience & Question Bank"
       subtitle="Record the questions you actually faced. TLH keeps your interview experience connected to the central question bank so admins can review and curate it."
-      membershipLabel="Interview workspace"
+      membershipLabel={membershipLabel(membership)}
     >
       <div className="space-y-6">
         {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
