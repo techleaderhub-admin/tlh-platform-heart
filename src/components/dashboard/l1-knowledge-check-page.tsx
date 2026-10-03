@@ -183,7 +183,7 @@ export function L1KnowledgeCheckPage() {
     : "";
 
   if (loading) {
-    return <StudentShell title="L1 Knowledge Check" subtitle="Loading your assessment…" membershipLabel="L1 Silver Membership"><Card><CardContent className="p-6 text-sm text-muted-foreground">Loading questions and saved progress…</CardContent></Card></StudentShell>;
+    return <StudentShell title="L1 Knowledge Check" subtitle="Loading your assessment…" membershipLabel="Silver Membership"><Card><CardContent className="p-6 text-sm text-muted-foreground">Loading questions and saved progress…</CardContent></Card></StudentShell>;
   }
 
   return (
