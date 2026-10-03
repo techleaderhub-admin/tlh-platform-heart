@@ -172,7 +172,7 @@ export function L2KnowledgeCheckPage() {
     : "";
 
   if (loading) {
-    return <StudentShell title="L2 Knowledge Check" subtitle="Loading your assessment…" membershipLabel="L2 Advanced Membership"><Card><CardContent className="p-6 text-sm text-muted-foreground">Loading questions and saved progress…</CardContent></Card></StudentShell>;
+    return <StudentShell title="L2 Knowledge Check" subtitle="Loading your assessment…" membershipLabel="Gold Membership"><Card><CardContent className="p-6 text-sm text-muted-foreground">Loading questions and saved progress…</CardContent></Card></StudentShell>;
   }
 
   return (
