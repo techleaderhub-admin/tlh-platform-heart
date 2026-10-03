@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Mail, ArrowRight, CheckCircle2, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { PublicPageShell, ContentSection } from "@/components/public-site/public-page-shell";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setBusy(true);
     setSubmitted(false);
