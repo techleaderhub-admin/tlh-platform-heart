@@ -96,7 +96,7 @@ export function StudentsPage() {
       { data: roles, error: roleError },
       { data: membershipRows, error: membershipError },
     ] = await Promise.all([
-      supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(500),
+      supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(1000),
       supabase.from("user_roles").select("user_id, role"),
       supabase.from("student_memberships").select("*"),
     ]);
@@ -142,11 +142,11 @@ export function StudentsPage() {
     const term = search.trim().toLowerCase();
     if (!term) return students;
     return students.filter((student) =>
-      [student.full_name ?? "", student.phone ?? ""].some((value) =>
+      [student.full_name ?? "", student.phone ?? "", emails[student.id] ?? ""].some((value) =>
         value.toLowerCase().includes(term),
       ),
     );
-  }, [search, students]);
+  }, [emails, search, students]);
 
   const openEdit = async (student: Profile) => {
     setEditingStudent(student);
@@ -363,7 +363,7 @@ export function StudentsPage() {
               <Input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search by name or phone..."
+                placeholder="Search by name, email or phone..."
                 className="pl-9"
               />
             </div>
