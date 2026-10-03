@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Search, ArrowRight, CalendarDays } from "lucide-react";
 import { PublicPageShell } from "@/components/public-site/public-page-shell";
@@ -16,6 +16,7 @@ export function BlogIndexPage() {
   const [query, setQuery] = useState("");
   const [posts, setPosts] = useState<BlogResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tag, setTag] = useState("all");
 
   const load = async (q = "") => {
     setLoading(true);
@@ -25,6 +26,15 @@ export function BlogIndexPage() {
   };
 
   useEffect(() => { void load(); }, []);
+
+  const tags = useMemo(
+    () => Array.from(new Set(posts.flatMap((post) => post.tags))).filter(Boolean).sort().slice(0, 12),
+    [posts],
+  );
+  const visiblePosts = useMemo(
+    () => tag === "all" ? posts : posts.filter((post) => post.tags.includes(tag)),
+    [posts, tag],
+  );
 
   return (
     <PublicPageShell
@@ -51,12 +61,22 @@ export function BlogIndexPage() {
 
       <section className="py-14 sm:py-18">
         <div className="mx-auto max-w-5xl px-5 sm:px-8 lg:px-10">
+          {tags.length > 0 && (
+            <div className="mb-6 flex flex-wrap gap-2">
+              <Button size="sm" variant={tag === "all" ? "secondary" : "outline"} onClick={() => setTag("all")}>All</Button>
+              {tags.map((item) => (
+                <Button key={item} size="sm" variant={tag === item ? "secondary" : "outline"} onClick={() => setTag(item)}>
+                  {item}
+                </Button>
+              ))}
+            </div>
+          )}
           {loading ? <p className="text-muted-foreground">Loading articles…</p> :
-            posts.length === 0 ? <Card><CardContent className="p-10 text-center"><h2 className="font-heading text-xl font-bold">No published articles yet</h2><p className="mt-2 text-sm text-muted-foreground">The TLH content library will appear here as articles are published.</p></CardContent></Card> :
+            visiblePosts.length === 0 ? <Card><CardContent className="p-10 text-center"><h2 className="font-heading text-xl font-bold">No published articles yet</h2><p className="mt-2 text-sm text-muted-foreground">The TLH content library will appear here as articles are published.</p></CardContent></Card> :
             <div className="grid gap-5 md:grid-cols-2">
-              {posts.map((post) => (
+              {visiblePosts.map((post) => (
                 <Card key={post.id} className="overflow-hidden border-border/80 bg-card/70">
-                  {post.cover_image_url && <img src={post.cover_image_url} alt="" className="aspect-[16/9] w-full object-cover" loading="lazy" />}
+                  {post.cover_image_url && <img src={post.cover_image_url} alt={post.title} className="aspect-[16/9] w-full object-cover" loading="lazy" />}
                   <CardContent className="p-6">
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       {post.category && <span className="rounded-full border px-2 py-1">{post.category}</span>}
