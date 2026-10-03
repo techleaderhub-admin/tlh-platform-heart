@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { membershipLabel } from "@/lib/membership-access";
+import { membershipLabel as getMembershipLabel } from "@/lib/membership-access";
 import type { Database } from "@/integrations/supabase/types";
 
 type CareerProfile = Database["public"]["Tables"]["career_profiles"]["Row"];
@@ -98,7 +98,7 @@ export function CareerProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [membershipLabel, setMembershipLabel] = useState("Free Membership");
+  const [membershipDisplayLabel, setMembershipDisplayLabel] = useState("Free Membership");
   const [accountName, setAccountName] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
   const [accountPhone, setAccountPhone] = useState("");
@@ -129,7 +129,7 @@ export function CareerProfilePage() {
     }
 
     if (membership?.is_active !== false && membership?.level) {
-      setMembershipLabel(membershipLabel(membership.level));
+      setMembershipDisplayLabel(getMembershipLabel(membership.level));
     }
 
     if (profileError) {
