@@ -34,6 +34,7 @@ import { Route as AuthenticatedAdminAssessmentAdminRouteImport } from './routes/
 import { Route as AuthenticatedAdminAssessmentsRouteImport } from './routes/_authenticated/admin/assessments'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminCareerOsRouteImport } from './routes/_authenticated/admin/career-os'
+import { Route as AuthenticatedAdminContactMessagesRouteImport } from './routes/_authenticated/admin/contact-messages'
 import { Route as AuthenticatedAdminFoundationRouteImport } from './routes/_authenticated/admin/foundation'
 import { Route as AuthenticatedAdminInterviewQuestionsRouteImport } from './routes/_authenticated/admin/interview-questions'
 import { Route as AuthenticatedAdminJobsRouteImport } from './routes/_authenticated/admin/jobs'
@@ -43,11 +44,10 @@ import { Route as AuthenticatedAdminL3LiveSessionsRouteImport } from './routes/_
 import { Route as AuthenticatedAdminLearningProgramsRouteImport } from './routes/_authenticated/admin/learning-programs'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
-import { Route as AuthenticatedAdminContactMessagesRouteImport } from './routes/_authenticated/admin/contact-messages'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
-import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
 import { Route as AuthenticatedDashboardAccessDeniedRouteImport } from './routes/_authenticated/dashboard/access-denied'
+import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
 import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
 import { Route as AuthenticatedDashboardCareerOsRouteImport } from './routes/_authenticated/dashboard/career-os'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
@@ -189,6 +189,12 @@ const AuthenticatedAdminCareerOsRoute =
     path: '/career-os',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminContactMessagesRoute =
+  AuthenticatedAdminContactMessagesRouteImport.update({
+    id: '/contact-messages',
+    path: '/contact-messages',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminFoundationRoute =
   AuthenticatedAdminFoundationRouteImport.update({
     id: '/foundation',
@@ -240,12 +246,6 @@ const AuthenticatedAdminPaymentsRoute =
   AuthenticatedAdminPaymentsRouteImport.update({
     id: '/payments',
     path: '/payments',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminContactMessagesRoute =
-  AuthenticatedAdminContactMessagesRouteImport.update({
-    id: '/contact-messages',
-    path: '/contact-messages',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminStudentsRoute =
@@ -363,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
   '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -372,9 +373,7 @@ export interface FileRoutesByFullPath {
   '/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
-  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
-  '/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
@@ -413,6 +412,7 @@ export interface FileRoutesByTo {
   '/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/foundation': typeof AuthenticatedAdminFoundationRoute
   '/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
   '/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -422,8 +422,8 @@ export interface FileRoutesByTo {
   '/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
-  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
   '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
@@ -465,6 +465,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/assessments': typeof AuthenticatedAdminAssessmentsRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/career-os': typeof AuthenticatedAdminCareerOsRoute
+  '/_authenticated/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/_authenticated/admin/foundation': typeof AuthenticatedAdminFoundationRoute
   '/_authenticated/admin/interview-questions': typeof AuthenticatedAdminInterviewQuestionsRoute
   '/_authenticated/admin/jobs': typeof AuthenticatedAdminJobsRoute
@@ -474,7 +475,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
-  '/_authenticated/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/_authenticated/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
@@ -518,6 +518,7 @@ export interface FileRouteTypes {
     | '/admin/assessments'
     | '/admin/blog'
     | '/admin/career-os'
+    | '/admin/contact-messages'
     | '/admin/foundation'
     | '/admin/interview-questions'
     | '/admin/jobs'
@@ -527,7 +528,6 @@ export interface FileRouteTypes {
     | '/admin/learning-programs'
     | '/admin/masterclass'
     | '/admin/payments'
-    | '/admin/contact-messages'
     | '/admin/students'
     | '/dashboard/access-denied'
     | '/dashboard/applications'
@@ -567,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/assessments'
     | '/admin/blog'
     | '/admin/career-os'
+    | '/admin/contact-messages'
     | '/admin/foundation'
     | '/admin/interview-questions'
     | '/admin/jobs'
@@ -577,6 +578,7 @@ export interface FileRouteTypes {
     | '/admin/masterclass'
     | '/admin/payments'
     | '/admin/students'
+    | '/dashboard/access-denied'
     | '/dashboard/applications'
     | '/dashboard/assessment'
     | '/dashboard/career-os'
@@ -617,6 +619,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/assessments'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/career-os'
+    | '/_authenticated/admin/contact-messages'
     | '/_authenticated/admin/foundation'
     | '/_authenticated/admin/interview-questions'
     | '/_authenticated/admin/jobs'
@@ -626,7 +629,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/learning-programs'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/payments'
-    | '/_authenticated/admin/contact-messages'
     | '/_authenticated/admin/students'
     | '/_authenticated/dashboard/access-denied'
     | '/_authenticated/dashboard/applications'
@@ -840,6 +842,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCareerOsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/contact-messages': {
+      id: '/_authenticated/admin/contact-messages'
+      path: '/contact-messages'
+      fullPath: '/admin/contact-messages'
+      preLoaderRoute: typeof AuthenticatedAdminContactMessagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/foundation': {
       id: '/_authenticated/admin/foundation'
       path: '/foundation'
@@ -896,13 +905,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMasterclassRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/contact-messages': {
-      id: '/_authenticated/admin/contact-messages'
-      path: '/contact-messages'
-      fullPath: '/admin/contact-messages'
-      preLoaderRoute: typeof AuthenticatedAdminContactMessagesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteImport
-    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/payments'
@@ -929,7 +931,7 @@ declare module '@tanstack/react-router' {
       path: '/access-denied'
       fullPath: '/dashboard/access-denied'
       preLoaderRoute: typeof AuthenticatedDashboardAccessDeniedRouteImport
-      parentRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/applications': {
       id: '/_authenticated/dashboard/applications'
@@ -1025,6 +1027,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAssessmentsRoute: typeof AuthenticatedAdminAssessmentsRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCareerOsRoute: typeof AuthenticatedAdminCareerOsRoute
+  AuthenticatedAdminContactMessagesRoute: typeof AuthenticatedAdminContactMessagesRoute
   AuthenticatedAdminFoundationRoute: typeof AuthenticatedAdminFoundationRoute
   AuthenticatedAdminInterviewQuestionsRoute: typeof AuthenticatedAdminInterviewQuestionsRoute
   AuthenticatedAdminJobsRoute: typeof AuthenticatedAdminJobsRoute
@@ -1034,7 +1037,6 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminLearningProgramsRoute: typeof AuthenticatedAdminLearningProgramsRoute
   AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
-  AuthenticatedAdminContactMessagesRoute: typeof AuthenticatedAdminContactMessagesRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -1047,6 +1049,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAssessmentsRoute: AuthenticatedAdminAssessmentsRoute,
   AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
   AuthenticatedAdminCareerOsRoute: AuthenticatedAdminCareerOsRoute,
+  AuthenticatedAdminContactMessagesRoute:
+    AuthenticatedAdminContactMessagesRoute,
   AuthenticatedAdminFoundationRoute: AuthenticatedAdminFoundationRoute,
   AuthenticatedAdminInterviewQuestionsRoute:
     AuthenticatedAdminInterviewQuestionsRoute,
@@ -1058,7 +1062,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminLearningProgramsRoute,
   AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
-  AuthenticatedAdminContactMessagesRoute: AuthenticatedAdminContactMessagesRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -1085,7 +1088,8 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
-    AuthenticatedDashboardAccessDeniedRoute: AuthenticatedDashboardAccessDeniedRoute,
+    AuthenticatedDashboardAccessDeniedRoute:
+      AuthenticatedDashboardAccessDeniedRoute,
     AuthenticatedDashboardApplicationsRoute:
       AuthenticatedDashboardApplicationsRoute,
     AuthenticatedDashboardAssessmentRoute:
