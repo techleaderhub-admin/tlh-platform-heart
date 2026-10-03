@@ -1,6 +1,18 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { BookOpen, LayoutDashboard, LogOut, MessageSquareText, UserRound } from "lucide-react";
+import {
+  BookOpen,
+  BriefcaseBusiness,
+  CheckCircle2,
+  ClipboardCheck,
+  GraduationCap,
+  LayoutDashboard,
+  LockKeyhole,
+  LogOut,
+  Map,
+  MessageSquareText,
+  UserRound,
+} from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +20,57 @@ import { signOutAndReturnToLogin } from "@/lib/auth-client";
 import { TLHLogo } from "@/components/brand/tlh-logo";
 
 const COURSES_URL = "https://app.techleaderhub.com/web/courses";
+
+type PublicMembership = "free" | "bronz" | "silver" | "gold" | "diamond";
+
+const RANK: Record<PublicMembership, number> = {
+  free: 0,
+  bronz: 1,
+  silver: 2,
+  gold: 3,
+  diamond: 4,
+};
+
+function publicMembershipFromLabel(label: string): PublicMembership {
+  const value = label.toLowerCase();
+  if (value.includes("diamond")) return "diamond";
+  if (value.includes("gold")) return "gold";
+  if (value.includes("silver")) return "silver";
+  if (value.includes("bronz")) return "bronz";
+  return "free";
+}
+
+function NavItem({
+  href,
+  label,
+  icon,
+  active,
+  locked,
+}: {
+  href: string;
+  label: string;
+  icon: ReactNode;
+  active: boolean;
+  locked?: boolean;
+}) {
+  if (locked) {
+    return (
+      <Button variant="ghost" size="sm" disabled title={label + " requires a higher membership"}>
+        <LockKeyhole className="size-4" />
+        {label}
+      </Button>
+    );
+  }
+
+  return (
+    <Button variant={active ? "secondary" : "ghost"} size="sm" asChild>
+      <Link to={href as never}>
+        {icon}
+        {label}
+      </Link>
+    </Button>
+  );
+}
 
 export function StudentShell({
   children,
@@ -23,6 +86,8 @@ export function StudentShell({
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const membership = publicMembershipFromLabel(membershipLabel);
+  const rank = RANK[membership];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -62,45 +127,85 @@ export function StudentShell({
           className="flex gap-1 overflow-x-auto border-b border-border py-2"
           aria-label="Leader navigation"
         >
-          <Button variant={location.pathname === "/dashboard" ? "secondary" : "ghost"} size="sm" asChild>
-            <Link to="/dashboard">
-              <LayoutDashboard />
-              Journey
-            </Link>
-          </Button>
-          <Button
-            variant={location.pathname === "/dashboard/profile" ? "secondary" : "ghost"}
-            size="sm"
-            asChild
-          >
-            <Link to="/dashboard/profile">
-              <UserRound />
-              Profile
-            </Link>
-          </Button>
-          {membershipLabel.toLowerCase().includes("free") ? (
-            <Button variant="ghost" size="sm" disabled title="Courses are available from Bronz membership onward">
-              <BookOpen />
-              Courses
-            </Button>
-          ) : (
-            <Button variant="ghost" size="sm" asChild>
-              <a href={COURSES_URL} target="_blank" rel="noopener noreferrer">
-                <BookOpen />
-                Courses
-              </a>
-            </Button>
-          )}
-          <Button
-            variant={location.pathname.startsWith("/dashboard/interview-questions") ? "secondary" : "ghost"}
-            size="sm"
-            asChild
-          >
-            <Link to="/dashboard/interview-questions">
-              <MessageSquareText />
-              Interview Questions
-            </Link>
-          </Button>
+          <NavItem
+            href="/dashboard"
+            label="Journey"
+            icon={<LayoutDashboard />}
+            active={location.pathname === "/dashboard"}
+          />
+          <NavItem
+            href="/dashboard/profile"
+            label="Profile"
+            icon={<UserRound />}
+            active={location.pathname === "/dashboard/profile"}
+          />
+          <NavItem
+            href={COURSES_URL}
+            label="Courses"
+            icon={<BookOpen />}
+            active={false}
+            locked={rank < 1}
+          />
+          <NavItem
+            href="/dashboard/foundation"
+            label="Foundation"
+            icon={<BookOpen />}
+            active={location.pathname.startsWith("/dashboard/foundation")}
+          />
+          <NavItem
+            href="/dashboard/l1-learning"
+            label="Silver Learning"
+            icon={<GraduationCap />}
+            active={location.pathname.startsWith("/dashboard/l1-learning")}
+            locked={rank < 2}
+          />
+          <NavItem
+            href="/dashboard/assessment"
+            label="Assessment"
+            icon={<ClipboardCheck />}
+            active={location.pathname.startsWith("/dashboard/assessment")}
+            locked={rank < 2}
+          />
+          <NavItem
+            href="/dashboard/l2-knowledge-check"
+            label="Gold Check"
+            icon={<CheckCircle2 />}
+            active={location.pathname.startsWith("/dashboard/l2-knowledge-check")}
+            locked={rank < 3}
+          />
+          <NavItem
+            href="/dashboard/l3-course"
+            label="Diamond Track"
+            icon={<GraduationCap />}
+            active={location.pathname.startsWith("/dashboard/l3-course")}
+            locked={rank < 4}
+          />
+          <NavItem
+            href="/dashboard/l3-live-sessions"
+            label="Live Sessions"
+            icon={<MessageSquareText />}
+            active={location.pathname.startsWith("/dashboard/l3-live-sessions")}
+            locked={rank < 4}
+          />
+          <NavItem
+            href="/dashboard/career-os"
+            label="Career OS"
+            icon={<Map />}
+            active={location.pathname.startsWith("/dashboard/career-os")}
+            locked={rank < 4}
+          />
+          <NavItem
+            href="/dashboard/jobs"
+            label="Jobs"
+            icon={<BriefcaseBusiness />}
+            active={location.pathname.startsWith("/dashboard/jobs")}
+          />
+          <NavItem
+            href="/dashboard/interview-questions"
+            label="Interview Questions"
+            icon={<MessageSquareText />}
+            active={location.pathname.startsWith("/dashboard/interview-questions")}
+          />
         </nav>
       </div>
 
