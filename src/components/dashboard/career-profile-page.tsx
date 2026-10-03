@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { membershipLabel } from "@/lib/membership-access";
 import type { Database } from "@/integrations/supabase/types";
 
 type CareerProfile = Database["public"]["Tables"]["career_profiles"]["Row"];
@@ -128,7 +129,7 @@ export function CareerProfilePage() {
     }
 
     if (membership?.is_active !== false && membership?.level) {
-      setMembershipLabel(membership.level === "free" ? "Free Membership" : membership.level.toUpperCase() + " Membership");
+      setMembershipLabel(membershipLabel(membership.level));
     }
 
     if (profileError) {
@@ -292,7 +293,7 @@ export function CareerProfilePage() {
     <StudentShell
       title="Career Profile"
       subtitle="Create the career profile that TLH will use as the foundation for assessments, roadmap planning, learning and job workflows."
-      membershipLabel={membershipLabel}
+      membershipLabel={membershipDisplayLabel}
     >
       <form onSubmit={save} className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
