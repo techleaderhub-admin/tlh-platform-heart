@@ -33,6 +33,7 @@ export function L1LearningAdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
+  const [feedbackDrafts, setFeedbackDrafts] = useState<Record<string, string>>({});
 
   const [courseForm, setCourseForm] = useState({ title: "", description: "", sort_order: "1" });
   const [moduleForm, setModuleForm] = useState({ title: "", description: "", sort_order: "1" });
@@ -254,7 +255,7 @@ export function L1LearningAdminPage() {
     setBusy(null);
   };
 
-  const reviewSubmission = async (submission: Submission, status: Submission["status"]) => {
+  const reviewSubmission = async (submission: Submission, status: Submission["status"], feedback: string) => {
     setBusy(submission.id);
     // reviewer_id is stamped by the database (stamp_submission_reviewer) from the signed-in admin.
     const { error: updateError } = await supabase
@@ -263,6 +264,7 @@ export function L1LearningAdminPage() {
         status,
         reviewed_at:
           status === "reviewed" || status === "needs_revision" ? new Date().toISOString() : null,
+        feedback: feedback.trim() || null,
       })
       .eq("id", submission.id);
     if (updateError) setError(updateError.message);
@@ -773,19 +775,31 @@ export function L1LearningAdminPage() {
                           {submission.submission_url}
                         </p>
                       )}
+                      <Textarea
+                        className="mt-4 min-h-24"
+                        placeholder="Write feedback for the Leader…"
+                        value={feedbackDrafts[submission.id] ?? submission.feedback ?? ""}
+                        onChange={(event) =>
+                          setFeedbackDrafts((current) => ({
+                            ...current,
+                            [submission.id]: event.target.value,
+                          }))
+                        }
+                        disabled={busy === submission.id}
+                      />
                       <div className="mt-4 flex flex-wrap gap-2">
                         <Button
                           size="sm"
                           variant="outline"
                           disabled={busy === submission.id}
-                          onClick={() => void reviewSubmission(submission, "under_review")}
+                          onClick={() => void reviewSubmission(submission, "under_review", feedbackDrafts[submission.id] ?? submission.feedback ?? "")}
                         >
                           <Save /> Mark under review
                         </Button>
                         <Button
                           size="sm"
                           disabled={busy === submission.id}
-                          onClick={() => void reviewSubmission(submission, "reviewed")}
+                          onClick={() => void reviewSubmission(submission, "reviewed", feedbackDrafts[submission.id] ?? submission.feedback ?? "")}
                         >
                           <CheckCircle2 /> Mark reviewed
                         </Button>
@@ -793,7 +807,7 @@ export function L1LearningAdminPage() {
                           size="sm"
                           variant="outline"
                           disabled={busy === submission.id}
-                          onClick={() => void reviewSubmission(submission, "needs_revision")}
+                          onClick={() => void reviewSubmission(submission, "needs_revision", feedbackDrafts[submission.id] ?? submission.feedback ?? "")}
                         >
                           Needs revision
                         </Button>
