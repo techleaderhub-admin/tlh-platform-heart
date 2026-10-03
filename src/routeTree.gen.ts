@@ -43,9 +43,11 @@ import { Route as AuthenticatedAdminL3LiveSessionsRouteImport } from './routes/_
 import { Route as AuthenticatedAdminLearningProgramsRouteImport } from './routes/_authenticated/admin/learning-programs'
 import { Route as AuthenticatedAdminMasterclassRouteImport } from './routes/_authenticated/admin/masterclass'
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin/payments'
+import { Route as AuthenticatedAdminContactMessagesRouteImport } from './routes/_authenticated/admin/contact-messages'
 import { Route as AuthenticatedAdminStudentsRouteImport } from './routes/_authenticated/admin/students'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard/applications'
+import { Route as AuthenticatedDashboardAccessDeniedRouteImport } from './routes/_authenticated/dashboard/access-denied'
 import { Route as AuthenticatedDashboardAssessmentRouteImport } from './routes/_authenticated/dashboard/assessment'
 import { Route as AuthenticatedDashboardCareerOsRouteImport } from './routes/_authenticated/dashboard/career-os'
 import { Route as AuthenticatedDashboardFoundationRouteImport } from './routes/_authenticated/dashboard/foundation'
@@ -240,6 +242,12 @@ const AuthenticatedAdminPaymentsRoute =
     path: '/payments',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminContactMessagesRoute =
+  AuthenticatedAdminContactMessagesRouteImport.update({
+    id: '/contact-messages',
+    path: '/contact-messages',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminStudentsRoute =
   AuthenticatedAdminStudentsRouteImport.update({
     id: '/students',
@@ -250,6 +258,12 @@ const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardAccessDeniedRoute =
+  AuthenticatedDashboardAccessDeniedRouteImport.update({
+    id: '/access-denied',
+    path: '/access-denied',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedDashboardApplicationsRoute =
@@ -996,6 +1010,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminLearningProgramsRoute: typeof AuthenticatedAdminLearningProgramsRoute
   AuthenticatedAdminMasterclassRoute: typeof AuthenticatedAdminMasterclassRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminContactMessagesRoute: typeof AuthenticatedAdminContactMessagesRoute
   AuthenticatedAdminStudentsRoute: typeof AuthenticatedAdminStudentsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -1019,6 +1034,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminLearningProgramsRoute,
   AuthenticatedAdminMasterclassRoute: AuthenticatedAdminMasterclassRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminContactMessagesRoute: AuthenticatedAdminContactMessagesRoute,
   AuthenticatedAdminStudentsRoute: AuthenticatedAdminStudentsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -1027,6 +1043,7 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardAccessDeniedRoute: typeof AuthenticatedDashboardAccessDeniedRoute
   AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
   AuthenticatedDashboardAssessmentRoute: typeof AuthenticatedDashboardAssessmentRoute
   AuthenticatedDashboardCareerOsRoute: typeof AuthenticatedDashboardCareerOsRoute
@@ -1044,6 +1061,7 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardAccessDeniedRoute: AuthenticatedDashboardAccessDeniedRoute,
     AuthenticatedDashboardApplicationsRoute:
       AuthenticatedDashboardApplicationsRoute,
     AuthenticatedDashboardAssessmentRoute:
