@@ -12,7 +12,15 @@ export const Route = createFileRoute("/contact")({
   head: () => ({ meta: [
     { title: "Contact Tech Leader Hub" },
     { name: "description", content: "Contact Tech Leader Hub about career acceleration, masterclasses, programs, and the TLH platform." },
-  ]}),
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Tech Leader Hub" },
+    { property: "og:url", content: "https://techleaderhub.com/contact" },
+    { property: "og:title", content: "Contact Tech Leader Hub" },
+    { property: "og:description", content: "Contact Tech Leader Hub about career acceleration, masterclasses, programs, and the TLH platform." },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "Contact Tech Leader Hub" },
+    { name: "twitter:description", content: "Contact Tech Leader Hub about career acceleration, masterclasses, programs, and the TLH platform." },
+  ], links: [{ rel: "canonical", href: "https://techleaderhub.com/contact" }] }),
   component: ContactPage,
 });
 
