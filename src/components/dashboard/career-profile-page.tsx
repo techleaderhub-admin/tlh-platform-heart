@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { ArrowLeft, CheckCircle2, FileText, Plus, Save, X } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, FileText, Plus, Save, Trash2, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 import { StudentShell } from "@/components/dashboard/student-shell";
@@ -102,6 +102,8 @@ export function CareerProfilePage() {
   const [accountName, setAccountName] = useState("");
   const [accountEmail, setAccountEmail] = useState("");
   const [accountPhone, setAccountPhone] = useState("");
+  const [resumePreviewUrl, setResumePreviewUrl] = useState<string | null>(null);
+  const [resumeBusy, setResumeBusy] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -136,6 +138,18 @@ export function CareerProfilePage() {
       setError("We could not load your career profile. Please refresh and try again.");
     } else if (data) {
       const profile: CareerProfile = data;
+      if (profile.resume_url) {
+        if (profile.resume_url.startsWith(userData.user.id + "/")) {
+          const { data: signed } = await supabase.storage
+            .from("leader-resumes")
+            .createSignedUrl(profile.resume_url, 300);
+          setResumePreviewUrl(signed?.signedUrl ?? null);
+        } else {
+          setResumePreviewUrl(profile.resume_url);
+        }
+      } else {
+        setResumePreviewUrl(null);
+      }
       setForm({
         current_company: profile.current_company ?? "",
         current_job_role: profile.current_job_role ?? "",
@@ -161,6 +175,84 @@ export function CareerProfilePage() {
   const update = <K extends keyof typeof DEFAULT_FORM>(key: K, value: (typeof DEFAULT_FORM)[K]) => {
     setSaved(false);
     setForm((current) => ({ ...current, [key]: value }));
+  };
+
+  const uploadResume = async (file: File) => {
+    setResumeBusy(true);
+    setError(null);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      setError("Your session has expired. Please sign in again.");
+      setResumeBusy(false);
+      return;
+    }
+    if (file.type !== "application/pdf") {
+      setError("Please upload your resume as a PDF file.");
+      setResumeBusy(false);
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Resume PDF must be 10 MB or smaller.");
+      setResumeBusy(false);
+      return;
+    }
+
+    const oldPath = form.resume_url.startsWith(userData.user.id + "/") ? form.resume_url : null;
+    if (oldPath) await supabase.storage.from("leader-resumes").remove([oldPath]);
+
+    const path = userData.user.id + "/" + crypto.randomUUID() + ".pdf";
+    const { error: uploadError } = await supabase.storage
+      .from("leader-resumes")
+      .upload(path, file, { contentType: "application/pdf", upsert: false });
+    if (uploadError) {
+      setError("Could not upload your resume. " + uploadError.message);
+      setResumeBusy(false);
+      return;
+    }
+
+    const { error: saveError } = await supabase
+      .from("career_profiles")
+      .update({ resume_url: path, updated_at: new Date().toISOString() })
+      .eq("student_id", userData.user.id);
+    if (saveError) {
+      await supabase.storage.from("leader-resumes").remove([path]);
+      setError("Resume uploaded but could not be linked to your profile. " + saveError.message);
+      setResumeBusy(false);
+      return;
+    }
+
+    const { data: signed } = await supabase.storage.from("leader-resumes").createSignedUrl(path, 300);
+    setForm((current) => ({ ...current, resume_url: path }));
+    setResumePreviewUrl(signed?.signedUrl ?? null);
+    setSaved(true);
+    setResumeBusy(false);
+  };
+
+  const removeResume = async () => {
+    setResumeBusy(true);
+    setError(null);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData.user) {
+      setError("Your session has expired. Please sign in again.");
+      setResumeBusy(false);
+      return;
+    }
+    const currentPath = form.resume_url;
+    if (currentPath.startsWith(userData.user.id + "/")) {
+      await supabase.storage.from("leader-resumes").remove([currentPath]);
+    }
+    const { error: saveError } = await supabase
+      .from("career_profiles")
+      .update({ resume_url: null, updated_at: new Date().toISOString() })
+      .eq("student_id", userData.user.id);
+    if (saveError) {
+      setError("Could not remove your resume. " + saveError.message);
+    } else {
+      setForm((current) => ({ ...current, resume_url: "" }));
+      setResumePreviewUrl(null);
+      setSaved(true);
+    }
+    setResumeBusy(false);
   };
 
   const save = async (event: FormEvent<HTMLFormElement>) => {
@@ -441,12 +533,40 @@ export function CareerProfilePage() {
           <CardContent>
             <div className="flex items-start gap-3 rounded-xl border border-dashed border-border bg-muted/20 p-4">
               <FileText className="mt-0.5 size-5 text-primary" />
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="resume">Resume URL</Label>
-                <Input id="resume" type="url" value={form.resume_url} onChange={(e) => update("resume_url", e.target.value)} placeholder="https://..." />
-                <p className="text-xs text-muted-foreground">
-                  Resume upload/storage will be connected in the dedicated resume workflow. For now, you can store a secure file URL.
-                </p>
+              <div className="flex-1 space-y-3">
+                <div>
+                  <Label htmlFor="resume-upload">Upload resume</Label>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Private PDF storage. Maximum 10 MB. Only you and authorized TLH admins can access the file.
+                  </p>
+                </div>
+                <Input
+                  id="resume-upload"
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  disabled={resumeBusy}
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void uploadResume(file);
+                    event.currentTarget.value = "";
+                  }}
+                />
+                {resumePreviewUrl && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button type="button" variant="outline" size="sm" asChild>
+                      <a href={resumePreviewUrl} target="_blank" rel="noreferrer">
+                        <ExternalLink /> Open current resume
+                      </a>
+                    </Button>
+                    <Button type="button" variant="ghost" size="sm" onClick={() => void removeResume()} disabled={resumeBusy}>
+                      <Trash2 /> Remove
+                    </Button>
+                  </div>
+                )}
+                {resumeBusy && <p className="text-xs font-medium text-primary">Updating resume…</p>}
+                {form.resume_url && !resumePreviewUrl && (
+                  <p className="text-xs text-muted-foreground">A resume is linked, but a preview link could not be created. Refresh and try again.</p>
+                )}
               </div>
             </div>
           </CardContent>
