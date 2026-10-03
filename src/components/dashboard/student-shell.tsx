@@ -62,6 +62,17 @@ function NavItem({
     );
   }
 
+  if (href.startsWith("http")) {
+    return (
+      <Button variant="ghost" size="sm" asChild>
+        <a href={href} target="_blank" rel="noopener noreferrer">
+          {icon}
+          {label}
+        </a>
+      </Button>
+    );
+  }
+
   return (
     <Button variant={active ? "secondary" : "ghost"} size="sm" asChild>
       <Link to={href as never}>
