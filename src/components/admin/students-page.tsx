@@ -40,7 +40,7 @@ const MEMBERSHIP_LABELS: Record<MembershipLevel, string> = {
   l1: "Silver",
   l2: "Gold",
   l3: "Diamond",
-  l4: "L4",
+  l4: "Reserved",
 };
 
 const MEMBERSHIP_DESCRIPTIONS: Record<MembershipLevel, string> = {
@@ -49,7 +49,7 @@ const MEMBERSHIP_DESCRIPTIONS: Record<MembershipLevel, string> = {
   l1: "Silver access",
   l2: "Gold access",
   l3: "Diamond access",
-  l4: "L4 access",
+  l4: "Reserved tier",
 };
 
 function membershipBadgeClass(level: MembershipLevel) {
