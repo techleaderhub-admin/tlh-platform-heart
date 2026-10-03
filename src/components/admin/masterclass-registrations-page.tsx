@@ -150,6 +150,8 @@ export function MasterclassRegistrationsPage() {
   const todayCount = registrations.filter((row) => isToday(row.created_at)).length;
   const interviewCount = registrations.filter((row) => row.roadblock === "Failing interviews").length;
   const experiencedCount = registrations.filter((row) => row.experience_range === "6+ years").length;
+  const attendedCount = registrations.filter((row) => row.attendance_status === "attended").length;
+  const conversionCount = registrations.filter((row) => row.conversion_status === "converted").length;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -206,9 +208,11 @@ export function MasterclassRegistrationsPage() {
           </Button>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           <StatCard label="Total registrations" value={registrations.length} />
           <StatCard label="Registered today" value={todayCount} />
+          <StatCard label="Attended" value={attendedCount} />
+          <StatCard label="Converted" value={conversionCount} />
           <StatCard label="6+ years experience" value={experiencedCount} />
           <StatCard label="Interview roadblock" value={interviewCount} />
         </div>
