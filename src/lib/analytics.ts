@@ -35,7 +35,12 @@ export function initAnalytics() {
 
   const pixelId = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
   if (pixelId && !window.fbq) {
-    type Fbq = ((...args: unknown[]) => void) & { callMethod?: (...args: unknown[]) => void; queue: unknown[][]; loaded?: boolean; version?: string };
+    type Fbq = ((...args: unknown[]) => void) & {
+      callMethod?: (...args: unknown[]) => void;
+      queue: unknown[][];
+      loaded?: boolean;
+      version?: string;
+    };
     const fbq = ((...args: unknown[]) => {
       if (fbq.callMethod) {
         fbq.callMethod(...args);
@@ -58,7 +63,7 @@ export function initAnalytics() {
       script.dataset.tlhFbpixel = pixelId;
       document.head.appendChild(script);
     }
-  }  }
+  }
 }
 
 export function trackAnalyticsEvent(name: string, params: Record<string, unknown> = {}) {
