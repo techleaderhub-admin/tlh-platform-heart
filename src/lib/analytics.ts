@@ -35,11 +35,21 @@ export function initAnalytics() {
 
   const pixelId = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
   if (pixelId && !window.fbq) {
-    const fbq = (...args: unknown[]) => {
-      (fbq as unknown as { callMethod?: (...values: unknown[]) => void }).callMethod?.(...args);
-      if (!window.dataLayer) window.dataLayer = [];
-      window.dataLayer.push(["fbq", ...args]);
+    const fbq = ((...args: unknown[]) => {
+      if (fbq.callMethod) {
+        fbq.callMethod(...args);
+      } else {
+        fbq.queue.push(args);
+      }
+    }) as typeof window.fbq & {
+      callMethod?: (...args: unknown[]) => void;
+      queue: unknown[][];
+      loaded?: boolean;
+      version?: string;
     };
+    fbq.queue = [];
+    fbq.loaded = true;
+    fbq.version = "2.0";
     window.fbq = fbq;
     window._fbq = fbq;
     window.fbq("init", pixelId);
@@ -52,7 +62,7 @@ export function initAnalytics() {
       script.dataset.tlhFbpixel = pixelId;
       document.head.appendChild(script);
     }
-  }
+  }  }
 }
 
 export function trackAnalyticsEvent(name: string, params: Record<string, unknown> = {}) {
