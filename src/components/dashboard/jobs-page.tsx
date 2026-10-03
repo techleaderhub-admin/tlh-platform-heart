@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { hasMembership, membershipLabel } from "@/lib/membership-access";
 
 type Job = Database["public"]["Tables"]["jobs"]["Row"];
 type Application = Database["public"]["Tables"]["job_applications"]["Row"];
@@ -21,13 +22,15 @@ export function JobsPage() {
   const [notes, setNotes] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [membership, setMembership] = useState<Database["public"]["Enums"]["membership_level"]>("free");
 
   const load = async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
-    const [jobResult, applicationResult] = await Promise.all([
+    const [jobResult, applicationResult, membershipResult] = await Promise.all([
       supabase.from("jobs").select("*").order("created_at", { ascending: false }),
       supabase.from("job_applications").select("*").eq("student_id", userData.user.id).order("updated_at", { ascending: false }),
+      supabase.from("student_memberships").select("level,is_active").eq("student_id", userData.user.id).maybeSingle(),
     ]);
     if (jobResult.error || applicationResult.error) {
       setMessage("Jobs could not be loaded. Please refresh.");
@@ -35,6 +38,7 @@ export function JobsPage() {
     }
     setJobs(jobResult.data ?? []);
     setApplications(applicationResult.data ?? []);
+    setMembership(membershipResult.data?.is_active === false ? "free" : (membershipResult.data?.level ?? "free"));
     if (!selectedJobId && jobResult.data?.[0]) setSelectedJobId(jobResult.data[0].id);
   };
 
@@ -50,6 +54,7 @@ export function JobsPage() {
 
   const selectedJob = jobs.find((job) => job.id === selectedJobId) ?? null;
   const selectedApplication = applications.find((item) => item.job_id === selectedJobId) ?? null;
+  const selectedJobUnlocked = selectedJob ? hasMembership(membership, selectedJob.minimum_membership) : false;
 
   const saveOrApply = async (status: "saved" | "applied") => {
     if (!selectedJob) return;
@@ -101,8 +106,8 @@ export function JobsPage() {
   return (
     <StudentShell
       title="Jobs & Applications"
-      subtitle="Discover TLH-managed opportunities, save roles you want to pursue and keep your application status connected to your interview journey."
-      membershipLabel="Jobs workspace"
+      subtitle="All Leaders see the same TLH job board. Individual opportunities can require Silver, Gold or Diamond membership before you can apply."
+      membershipLabel={membershipLabel(membership)}
     >
       <div className="space-y-6">
         {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
@@ -131,6 +136,13 @@ export function JobsPage() {
                       {application && <Badge variant={application.status === "applied" ? "default" : "outline"}>{application.status}</Badge>}
                     </div>
                     <p className="mt-2 text-xs text-muted-foreground">{job.location ?? "Location flexible"} · {job.employment_type ?? "Type not specified"}</p>
+                    {job.minimum_membership !== "free" && (
+                      <Badge variant={hasMembership(membership, job.minimum_membership) ? "outline" : "secondary"} className="mt-2">
+                        {hasMembership(membership, job.minimum_membership)
+                          ? "Eligible"
+                          : `${job.minimum_membership === "l0" ? "Bronz" : job.minimum_membership === "l1" ? "Silver" : job.minimum_membership === "l2" ? "Gold" : "Diamond"} membership required`}
+                      </Badge>
+                    )}
                   </button>
                 );
               })}
@@ -147,6 +159,9 @@ export function JobsPage() {
                 <div className="space-y-5">
                   <div>
                     <Badge variant="outline" className="border-primary/30 text-primary">Opportunity</Badge>
+                    <Badge variant={selectedJobUnlocked ? "outline" : "secondary"} className="ml-2">
+                      {selectedJobUnlocked ? "Eligible for your membership" : `${selectedJob.minimum_membership === "l0" ? "Bronz" : selectedJob.minimum_membership === "l1" ? "Silver" : selectedJob.minimum_membership === "l2" ? "Gold" : "Diamond"} membership required`}
+                    </Badge>
                     <h2 className="mt-3 font-heading text-2xl font-bold">{selectedJob.job_title}</h2>
                     <p className="mt-1 text-lg text-muted-foreground">{selectedJob.company_name}</p>
                   </div>
@@ -156,8 +171,8 @@ export function JobsPage() {
                     <div className="rounded-xl border p-4 sm:col-span-2"><p className="text-xs text-muted-foreground">Source</p><p className="mt-1 font-medium">{selectedJob.source ?? "TLH"}</p></div>
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <Button onClick={() => void saveOrApply("applied")} disabled={busy || selectedApplication?.status === "applied"}><CheckCircle2 /> {selectedApplication?.status === "applied" ? "Applied" : "Mark as applied"}</Button>
-                    <Button variant="outline" onClick={() => void saveOrApply("saved")} disabled={busy || Boolean(selectedApplication)}><Bookmark /> {selectedApplication ? "Saved in tracker" : "Save job"}</Button>
+                    <Button onClick={() => void saveOrApply("applied")} disabled={busy || !selectedJobUnlocked || selectedApplication?.status === "applied"}><CheckCircle2 /> {selectedApplication?.status === "applied" ? "Applied" : "Mark as applied"}</Button>
+                    <Button variant="outline" onClick={() => void saveOrApply("saved")} disabled={busy || !selectedJobUnlocked || Boolean(selectedApplication)}><Bookmark /> {selectedApplication ? "Saved in tracker" : "Save job"}</Button>
                     {selectedJob.job_url && <Button variant="ghost" asChild><a href={selectedJob.job_url} target="_blank" rel="noreferrer">Open posting <ExternalLink /></a></Button>}
                   </div>
                   {selectedApplication && (
