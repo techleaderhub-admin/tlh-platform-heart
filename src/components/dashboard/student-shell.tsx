@@ -175,7 +175,7 @@ export function StudentShell({
             label="Assessment"
             icon={<ClipboardCheck />}
             active={location.pathname.startsWith("/dashboard/assessment")}
-            locked={rank < 2}
+            locked={false}
           />
           <NavItem
             href="/dashboard/l2-knowledge-check"
@@ -203,7 +203,7 @@ export function StudentShell({
             label="Career OS"
             icon={<Map />}
             active={location.pathname.startsWith("/dashboard/career-os")}
-            locked={rank < 4}
+            locked={rank < 2}
           />
           <NavItem
             href="/dashboard/jobs"
