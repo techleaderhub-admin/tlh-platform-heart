@@ -200,7 +200,7 @@ export function L1LearningPage() {
     <StudentShell
       title="L1 Silver Learning"
       subtitle="Complete the video lessons, mark each lesson done, submit the assignments, and keep your learning progress visible in one place."
-      membershipLabel="L1 Silver Membership"
+      membershipLabel="Silver Membership"
     >
       <div className="space-y-6">
         {error && (
