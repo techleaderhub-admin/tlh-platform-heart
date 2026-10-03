@@ -68,14 +68,21 @@ export function StudentShell({
     { href: "/dashboard", label: "Journey", icon: <LayoutDashboard /> },
     { href: "/dashboard/profile", label: "Profile", icon: <UserRound /> },
     { href: COURSES_URL, label: "Courses", icon: <BookOpen />, locked: rank < 1 },
+    { href: "/dashboard/jobs", label: "Jobs", icon: <BriefcaseBusiness /> },
+    {
+      href: "/dashboard/interview-questions",
+      label: "Interview Questions",
+      icon: <MessageSquareText />,
+    },
     { href: "/dashboard/foundation", label: "Foundation", icon: <BookOpen /> },
+    { href: "/dashboard/assessment", label: "Assessment", icon: <ClipboardCheck /> },
+    { href: "/dashboard/career-os", label: "Career OS", icon: <Map />, locked: rank < 2 },
     {
       href: "/dashboard/l1-learning",
       label: "Silver Learning",
       icon: <GraduationCap />,
       locked: rank < 2,
     },
-    { href: "/dashboard/assessment", label: "Assessment", icon: <ClipboardCheck /> },
     {
       href: "/dashboard/l2-knowledge-check",
       label: "Gold Check",
@@ -93,13 +100,6 @@ export function StudentShell({
       label: "Live Sessions",
       icon: <MessageSquareText />,
       locked: rank < 4,
-    },
-    { href: "/dashboard/career-os", label: "Career OS", icon: <Map />, locked: rank < 2 },
-    { href: "/dashboard/jobs", label: "Jobs", icon: <BriefcaseBusiness /> },
-    {
-      href: "/dashboard/interview-questions",
-      label: "Interview Questions",
-      icon: <MessageSquareText />,
     },
   ];
 
