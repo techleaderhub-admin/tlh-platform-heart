@@ -145,11 +145,11 @@ function assessmentSummary(answers: Record<string, number>) {
 export function CareerAssessmentPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [membershipDisplayLabel, setMembershipDisplayLabel] = useState("Free Membership");
-  const [previousAssessment, setPreviousAssessment] = useState<{
+  const [assessmentHistory, setAssessmentHistory] = useState<Array<{
     id: string;
     score: number | null;
     created_at: string;
-  } | null>(null);
+  }>>([]);
   const [skillGaps, setSkillGaps] = useState<SkillGap[]>([]);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -179,9 +179,7 @@ export function CareerAssessmentPage() {
         .from("career_assessments")
         .select("id, score, created_at")
         .eq("student_id", userData.user.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
+        .order("created_at", { ascending: false }),
       supabase
         .from("career_skill_gaps")
         .select("id, domain, score, status, recommendation, last_assessed_at")
@@ -194,7 +192,7 @@ export function CareerAssessmentPage() {
       setError(
         "We could not load your previous assessment data. You can still complete a new assessment.",
       );
-    setPreviousAssessment(latest ?? null);
+    setAssessmentHistory(latest ?? []);
     setSkillGaps(gaps ?? []);
     setLoading(false);
   };
@@ -251,7 +249,7 @@ export function CareerAssessmentPage() {
       setError("Could not save your assessment. " + (saveError?.message ?? "Unknown error"));
     } else {
       setSaved(true);
-      setPreviousAssessment(assessment);
+      setAssessmentHistory((current) => [assessment, ...current.filter((item) => item.id !== assessment.id)]);
       await load();
     }
     setSaving(false);
@@ -370,14 +368,26 @@ export function CareerAssessmentPage() {
                 </p>
               </div>
             )}
-            {previousAssessment && (
-              <p className="text-sm text-muted-foreground">
-                Previous saved assessment: {previousAssessment.score ?? 0}% ·{" "}
-                {new Intl.DateTimeFormat("en-IN", {
-                  dateStyle: "medium",
-                  timeZone: "Asia/Kolkata",
-                }).format(new Date(previousAssessment.created_at))}
-              </p>
+            {assessmentHistory.length > 0 && (
+              <Card className="border-border/80 bg-muted/10">
+                <CardHeader>
+                  <CardTitle className="text-base">Assessment history</CardTitle>
+                  <p className="text-sm text-muted-foreground">Every submitted baseline is retained for progress tracking.</p>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {assessmentHistory.map((attempt, index) => (
+                    <div key={attempt.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-background p-3">
+                      <div>
+                        <p className="text-sm font-semibold">{index === 0 ? "Latest attempt" : `Attempt ${assessmentHistory.length - index}`}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(attempt.created_at))}
+                        </p>
+                      </div>
+                      <Badge variant="outline">{attempt.score ?? 0}%</Badge>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
             )}
             <div className="flex flex-wrap items-center gap-3">
               <Button
