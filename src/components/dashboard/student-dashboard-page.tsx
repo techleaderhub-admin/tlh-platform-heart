@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { MEMBERSHIP_LABEL } from "@/lib/membership-access";
 
 type MembershipLevel = Database["public"]["Enums"]["membership_level"];
 
@@ -57,14 +58,7 @@ type DashboardData = {
   skillGaps: number;
 };
 
-const LEVEL_LABEL: Record<MembershipLevel, string> = {
-  free: "Free",
-  l0: "Bronz",
-  l1: "Silver",
-  l2: "Gold",
-  l3: "Diamond",
-  l4: "L4",
-};
+const LEVEL_LABEL = MEMBERSHIP_LABEL;
 
 const LEVEL_RANK: Record<MembershipLevel, number> = {
   free: 0,
@@ -134,11 +128,11 @@ function stageFor(level: MembershipLevel) {
     };
   }
   return {
-    eyebrow: "L4",
+    eyebrow: "Diamond",
     title: "Continue your advanced journey",
-    description: "Your L4 journey will appear here as L4 content is published.",
-    href: null,
-    cta: "L4 content pending",
+    description: "Your advanced journey will appear here as current Diamond content is published.",
+    href: "/dashboard/career-os",
+    cta: "Open Career OS",
   };
 }
 
@@ -506,7 +500,7 @@ export function StudentDashboardPage({ name }: { name: string | null }) {
 
     return {
       title: "Continue your advanced journey",
-      description: "Your next L4 modules will appear here as they are published.",
+      description: "Continue your current advanced journey through the available Diamond workspaces.",
       href: null,
       label: "Content pending",
     };
