@@ -89,6 +89,11 @@ export function BlogIndexPage() {
                 </Card>
               ))}
             </div>}
+          <section className="mt-10 rounded-2xl border border-primary/20 bg-primary/[0.04] p-6 sm:p-8">
+            <h2 className="font-heading text-2xl font-bold">Want a structured path, not random advice?</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">Join the free TLH masterclass to understand the career acceleration framework and the next steps available to experienced Android engineers.</p>
+            <Button asChild className="mt-5"><Link to="/masterclass">Join the Masterclass <ArrowRight /></Link></Button>
+          </section>
         </div>
       </section>
     </PublicPageShell>
