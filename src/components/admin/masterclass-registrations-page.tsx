@@ -5,7 +5,13 @@ import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -30,42 +36,50 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function istDateKey(value: string | Date) {
+  const date = typeof value === "string" ? new Date(value) : value;
+  return date.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
+}
+
 function isToday(value: string) {
-  const date = new Date(value);
-  const now = new Date();
-  return (
-    date.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" }) ===
-    now.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })
-  );
+  return istDateKey(value) === istDateKey(new Date());
+}
+
+const DATE_FILTER_OPTIONS = [
+  { value: "today", label: "Today" },
+  { value: "yesterday", label: "Yesterday" },
+  { value: "7d", label: "Last 7 days" },
+  { value: "10d", label: "Last 10 days" },
+  { value: "30d", label: "Last 1 month" },
+] as const;
+
+type DateFilter = "all" | (typeof DATE_FILTER_OPTIONS)[number]["value"];
+
+function matchesDateFilter(createdAt: string, filter: DateFilter) {
+  if (filter === "all") return true;
+  if (filter === "today") return isToday(createdAt);
+  if (filter === "yesterday") {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return istDateKey(createdAt) === istDateKey(yesterday);
+  }
+  const days = filter === "7d" ? 7 : filter === "10d" ? 10 : 30;
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+  return new Date(createdAt).getTime() >= cutoff;
 }
 
 function escapeCsv(value: string) {
   return `"${value.replaceAll('"', '""')}"`;
 }
 
+// Matches the Systeme.io contact import format: Email, First name, Last name,
+// Phone number. We only store one full_name field, so the whole name goes in
+// "First name" and "Last name" is always left empty rather than guessed at.
 function downloadCsv(rows: Registration[]) {
-  const headers = [
-    "Full Name",
-    "Email",
-    "Phone",
-    "Experience",
-    "Roadblock",
-    "Session",
-    "Registered At",
-  ];
+  const headers = ["Email", "First name", "Last name", "Phone number"];
 
   const body = rows.map((row) =>
-    [
-      row.full_name,
-      row.email,
-      row.phone,
-      row.experience_range,
-      row.roadblock,
-      row.session_label,
-      formatDate(row.created_at),
-    ]
-      .map(escapeCsv)
-      .join(","),
+    [row.email, row.full_name, "", row.phone].map(escapeCsv).join(","),
   );
 
   const csv = [headers.map(escapeCsv).join(","), ...body].join("\n");
@@ -83,6 +97,7 @@ export function MasterclassRegistrationsPage() {
   const [search, setSearch] = useState("");
   const [experience, setExperience] = useState("all");
   const [roadblock, setRoadblock] = useState("all");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [selected, setSelected] = useState<Registration | null>(null);
   const [savingStatus, setSavingStatus] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -124,10 +139,11 @@ export function MasterclassRegistrationsPage() {
 
       const matchesExperience = experience === "all" || row.experience_range === experience;
       const matchesRoadblock = roadblock === "all" || row.roadblock === roadblock;
+      const matchesDate = matchesDateFilter(row.created_at, dateFilter);
 
-      return matchesSearch && matchesExperience && matchesRoadblock;
+      return matchesSearch && matchesExperience && matchesRoadblock && matchesDate;
     });
-  }, [experience, registrations, roadblock, search]);
+  }, [dateFilter, experience, registrations, roadblock, search]);
 
   const updateSelected = async (patch: Partial<Registration>) => {
     if (!selected) return;
@@ -148,10 +164,16 @@ export function MasterclassRegistrationsPage() {
   };
 
   const todayCount = registrations.filter((row) => isToday(row.created_at)).length;
-  const interviewCount = registrations.filter((row) => row.roadblock === "Failing interviews").length;
-  const experiencedCount = registrations.filter((row) => row.experience_range === "6+ years").length;
+  const interviewCount = registrations.filter(
+    (row) => row.roadblock === "Failing interviews",
+  ).length;
+  const experiencedCount = registrations.filter(
+    (row) => row.experience_range === "6+ years",
+  ).length;
   const attendedCount = registrations.filter((row) => row.attendance_status === "attended").length;
-  const conversionCount = registrations.filter((row) => row.conversion_status === "converted").length;
+  const conversionCount = registrations.filter(
+    (row) => row.conversion_status === "converted",
+  ).length;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -193,7 +215,9 @@ export function MasterclassRegistrationsPage() {
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
         <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">Lead management</p>
+            <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">
+              Lead management
+            </p>
             <h1 className="mt-2 font-heading text-3xl font-bold tracking-tight sm:text-4xl">
               Masterclass Registrations
             </h1>
@@ -219,7 +243,7 @@ export function MasterclassRegistrationsPage() {
 
         <Card className="mt-8 border-border/80 bg-card/80">
           <CardContent className="p-4 sm:p-5">
-            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_190px_220px]">
+            <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_190px_190px_220px]">
               <div className="relative">
                 <Search
                   aria-hidden="true"
@@ -232,6 +256,23 @@ export function MasterclassRegistrationsPage() {
                   className="pl-9"
                 />
               </div>
+
+              <Select
+                value={dateFilter}
+                onValueChange={(value) => setDateFilter(value as DateFilter)}
+              >
+                <SelectTrigger aria-label="Filter by date">
+                  <SelectValue placeholder="Date" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All time</SelectItem>
+                  {DATE_FILTER_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               <Select value={experience} onValueChange={setExperience}>
                 <SelectTrigger aria-label="Filter by experience">
@@ -267,7 +308,7 @@ export function MasterclassRegistrationsPage() {
                 Showing <strong className="text-foreground">{filtered.length}</strong> of{" "}
                 <strong className="text-foreground">{registrations.length}</strong> registrations
               </span>
-              {(search || experience !== "all" || roadblock !== "all") && (
+              {(search || experience !== "all" || roadblock !== "all" || dateFilter !== "all") && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -275,6 +316,7 @@ export function MasterclassRegistrationsPage() {
                     setSearch("");
                     setExperience("all");
                     setRoadblock("all");
+                    setDateFilter("all");
                   }}
                 >
                   <X aria-hidden="true" />
@@ -330,7 +372,9 @@ export function MasterclassRegistrationsPage() {
                           className="text-left"
                           onClick={() => setSelected(row)}
                         >
-                          <p className="font-semibold text-foreground hover:text-primary">{row.full_name}</p>
+                          <p className="font-semibold text-foreground hover:text-primary">
+                            {row.full_name}
+                          </p>
                           <p className="mt-0.5 text-xs text-muted-foreground">{row.email}</p>
                         </button>
                       </td>
@@ -339,8 +383,26 @@ export function MasterclassRegistrationsPage() {
                         <Badge variant="outline">{row.experience_range}</Badge>
                       </td>
                       <td className="px-5 py-4 text-muted-foreground">{row.roadblock}</td>
-                      <td className="px-5 py-4"><Badge variant={row.attendance_status === "attended" ? "default" : row.attendance_status === "no_show" ? "secondary" : "outline"}>{row.attendance_status === "no_show" ? "No-show" : row.attendance_status === "attended" ? "Attended" : "Registered"}</Badge></td>
-                      <td className="px-5 py-4 text-muted-foreground">{formatDate(row.created_at)}</td>
+                      <td className="px-5 py-4">
+                        <Badge
+                          variant={
+                            row.attendance_status === "attended"
+                              ? "default"
+                              : row.attendance_status === "no_show"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {row.attendance_status === "no_show"
+                            ? "No-show"
+                            : row.attendance_status === "attended"
+                              ? "Attended"
+                              : "Registered"}
+                        </Badge>
+                      </td>
+                      <td className="px-5 py-4 text-muted-foreground">
+                        {formatDate(row.created_at)}
+                      </td>
                       <td className="px-5 py-4 text-right">
                         <Button variant="ghost" size="sm" onClick={() => setSelected(row)}>
                           View
@@ -366,7 +428,10 @@ export function MasterclassRegistrationsPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <Detail label="Email">
-                  <a className="break-all text-primary hover:underline" href={`mailto:${selected.email}`}>
+                  <a
+                    className="break-all text-primary hover:underline"
+                    href={`mailto:${selected.email}`}
+                  >
                     {selected.email}
                   </a>
                 </Detail>
@@ -380,16 +445,23 @@ export function MasterclassRegistrationsPage() {
                 <Detail label="Session">{selected.session_label}</Detail>
                 <Detail label="Registered at">{formatDate(selected.created_at)}</Detail>
                 <div className="rounded-lg border border-border bg-muted/20 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zoom attendance</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Zoom attendance
+                  </p>
                   <Select
                     value={selected.attendance_status}
-                    onValueChange={(value) => void updateSelected({
-                      attendance_status: value,
-                      attendance_marked_at: value === "registered" ? null : new Date().toISOString(),
-                    })}
+                    onValueChange={(value) =>
+                      void updateSelected({
+                        attendance_status: value,
+                        attendance_marked_at:
+                          value === "registered" ? null : new Date().toISOString(),
+                      })
+                    }
                     disabled={savingStatus}
                   >
-                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="registered">Registered</SelectItem>
                       <SelectItem value="attended">Attended</SelectItem>
@@ -398,13 +470,17 @@ export function MasterclassRegistrationsPage() {
                   </Select>
                 </div>
                 <div className="rounded-lg border border-border bg-muted/20 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Conversion</p>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Conversion
+                  </p>
                   <Select
                     value={selected.conversion_status}
                     onValueChange={(value) => void updateSelected({ conversion_status: value })}
                     disabled={savingStatus}
                   >
-                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">No action</SelectItem>
                       <SelectItem value="follow_up">Follow-up</SelectItem>
@@ -450,7 +526,9 @@ function StatCard({ label, value }: { label: string; value: number }) {
 function Detail({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="rounded-lg border border-border bg-muted/20 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {label}
+      </p>
       <div className="mt-1.5 text-sm font-medium text-foreground">{children}</div>
     </div>
   );
