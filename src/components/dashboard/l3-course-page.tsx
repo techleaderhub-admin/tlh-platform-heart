@@ -78,7 +78,7 @@ export function L3CoursePage(){
  const required=assignments.filter(a=>a.is_required);const submitted=required.filter(a=>!!submissions[a.id]).length;
  const total=lessons.length+required.length;const percent=total?Math.round(((completed+submitted)/total)*100):0;
 
- return <StudentShell title="L3 Career Track" subtitle="Course → Assignments → Weekly Live Session → Interview Experience" membershipLabel="L3 Career Track">
+ return <StudentShell title="L3 Career Track" subtitle="Course → Assignments → Weekly Live Session → Interview Experience" membershipLabel="Diamond Membership">
   <div className="space-y-6">
    {error&&<Card className="border-destructive/30 bg-destructive/5"><CardContent className="p-4 text-sm text-destructive">{error}</CardContent></Card>}
    {loading?<Card><CardContent className="p-8 text-center text-muted-foreground">Loading your L3 career track…</CardContent></Card>:
