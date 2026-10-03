@@ -84,6 +84,7 @@ export function MasterclassRegistrationsPage() {
   const [experience, setExperience] = useState("all");
   const [roadblock, setRoadblock] = useState("all");
   const [selected, setSelected] = useState<Registration | null>(null);
+  const [savingStatus, setSavingStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,6 +128,24 @@ export function MasterclassRegistrationsPage() {
       return matchesSearch && matchesExperience && matchesRoadblock;
     });
   }, [experience, registrations, roadblock, search]);
+
+  const updateSelected = async (patch: Partial<Registration>) => {
+    if (!selected) return;
+    setSavingStatus(true);
+    const { data, error: updateError } = await supabase
+      .from("masterclass_registrations")
+      .update(patch)
+      .eq("id", selected.id)
+      .select("*")
+      .single();
+    if (updateError || !data) {
+      setError(updateError?.message ?? "Could not update the registration.");
+    } else {
+      setSelected(data);
+      setRegistrations((rows) => rows.map((row) => (row.id === data.id ? data : row)));
+    }
+    setSavingStatus(false);
+  };
 
   const todayCount = registrations.filter((row) => isToday(row.created_at)).length;
   const interviewCount = registrations.filter((row) => row.roadblock === "Failing interviews").length;
@@ -293,6 +312,7 @@ export function MasterclassRegistrationsPage() {
                     <th className="px-5 py-3 font-semibold">Phone</th>
                     <th className="px-5 py-3 font-semibold">Experience</th>
                     <th className="px-5 py-3 font-semibold">Roadblock</th>
+                    <th className="px-5 py-3 font-semibold">Attendance</th>
                     <th className="px-5 py-3 font-semibold">Registered</th>
                     <th className="px-5 py-3 text-right font-semibold">Details</th>
                   </tr>
@@ -315,6 +335,7 @@ export function MasterclassRegistrationsPage() {
                         <Badge variant="outline">{row.experience_range}</Badge>
                       </td>
                       <td className="px-5 py-4 text-muted-foreground">{row.roadblock}</td>
+                      <td className="px-5 py-4"><Badge variant={row.attendance_status === "attended" ? "default" : row.attendance_status === "no_show" ? "secondary" : "outline"}>{row.attendance_status === "no_show" ? "No-show" : row.attendance_status === "attended" ? "Attended" : "Registered"}</Badge></td>
                       <td className="px-5 py-4 text-muted-foreground">{formatDate(row.created_at)}</td>
                       <td className="px-5 py-4 text-right">
                         <Button variant="ghost" size="sm" onClick={() => setSelected(row)}>
@@ -354,6 +375,39 @@ export function MasterclassRegistrationsPage() {
                 <Detail label="Primary roadblock">{selected.roadblock}</Detail>
                 <Detail label="Session">{selected.session_label}</Detail>
                 <Detail label="Registered at">{formatDate(selected.created_at)}</Detail>
+                <div className="rounded-lg border border-border bg-muted/20 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Zoom attendance</p>
+                  <Select
+                    value={selected.attendance_status}
+                    onValueChange={(value) => void updateSelected({
+                      attendance_status: value,
+                      attendance_marked_at: value === "registered" ? null : new Date().toISOString(),
+                    })}
+                    disabled={savingStatus}
+                  >
+                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="registered">Registered</SelectItem>
+                      <SelectItem value="attended">Attended</SelectItem>
+                      <SelectItem value="no_show">No-show</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="rounded-lg border border-border bg-muted/20 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Conversion</p>
+                  <Select
+                    value={selected.conversion_status}
+                    onValueChange={(value) => void updateSelected({ conversion_status: value })}
+                    disabled={savingStatus}
+                  >
+                    <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No action</SelectItem>
+                      <SelectItem value="follow_up">Follow-up</SelectItem>
+                      <SelectItem value="converted">Converted</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-2 border-t border-border pt-4">
