@@ -35,18 +35,14 @@ export function initAnalytics() {
 
   const pixelId = import.meta.env.VITE_META_PIXEL_ID as string | undefined;
   if (pixelId && !window.fbq) {
+    type Fbq = ((...args: unknown[]) => void) & { callMethod?: (...args: unknown[]) => void; queue: unknown[][]; loaded?: boolean; version?: string };
     const fbq = ((...args: unknown[]) => {
       if (fbq.callMethod) {
         fbq.callMethod(...args);
       } else {
         fbq.queue.push(args);
       }
-    }) as typeof window.fbq & {
-      callMethod?: (...args: unknown[]) => void;
-      queue: unknown[][];
-      loaded?: boolean;
-      version?: string;
-    };
+    }) as Fbq;
     fbq.queue = [];
     fbq.loaded = true;
     fbq.version = "2.0";
