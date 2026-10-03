@@ -128,7 +128,7 @@ export function L3LiveSessionsPage() {
     <StudentShell
       title="Weekly Live Sessions"
       subtitle="Your scheduled L3 live sessions and attendance responses."
-      membershipLabel="L3 Career Track"
+      membershipLabel="Diamond Membership"
     >
       <div className="space-y-4">
         {error ? (
