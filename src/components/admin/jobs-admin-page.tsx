@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Pencil, Plus, Trash2 } from "lucide-react";
+import { BriefcaseBusiness, Check, Clock3, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -6,57 +6,104 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
 
-type Job = Database["public"]["Tables"]["jobs"]["Row"];
-
-const emptyForm = {
-  company_name: "",
-  job_title: "",
-  job_url: "",
-  location: "",
-  employment_type: "",
-  source: "",
-  minimum_membership: "free" as Database["public"]["Enums"]["membership_level"],
-  status: "published",
+/**
+ * Job Title, Company Name and the posting link are all optional — a post only
+ * needs at least one of them. created_by and published_at are new columns the
+ * generated Supabase types don't know about yet, so reads and writes on this
+ * table go through this local type instead of the stale generated Row/Insert.
+ */
+type Job = {
+  id: string;
+  job_title: string | null;
+  company_name: string | null;
+  job_url: string | null;
+  status: string;
+  created_by: string | null;
+  published_at: string | null;
+  created_at: string;
 };
+
+type Submitter = { id: string; full_name: string | null };
+
+function jobsTable() {
+  // Cast at the query boundary only: the real schema already has these columns
+  // (migration 20261003170000); the generated types.ts just hasn't caught up.
+  return supabase.from("jobs") as unknown as {
+    select: (
+      columns: string,
+    ) => PromiseLike<{ data: Job[] | null; error: { message: string } | null }>;
+    insert: (row: Partial<Job>) => PromiseLike<{ error: { message: string } | null }>;
+    update: (row: Partial<Job>) => {
+      eq: (column: string, value: string) => PromiseLike<{ error: { message: string } | null }>;
+    };
+    delete: () => {
+      eq: (column: string, value: string) => PromiseLike<{ error: { message: string } | null }>;
+    };
+  };
+}
+
+const emptyForm = { company_name: "", job_title: "", job_url: "" };
 
 export function JobsAdminPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [submitters, setSubmitters] = useState<Record<string, Submitter>>({});
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
-    const { data, error } = await supabase.from("jobs").select("*").order("created_at", { ascending: false });
-    if (error) setMessage(error.message);
-    else setJobs(data ?? []);
+    const { data, error } = await jobsTable().select("*");
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+    const all = (data ?? []).slice().sort((a, b) => b.created_at.localeCompare(a.created_at));
+    setJobs(all);
+
+    const submitterIds = Array.from(
+      new Set(all.map((job) => job.created_by).filter((id): id is string => Boolean(id))),
+    );
+    if (submitterIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id,full_name")
+        .in("id", submitterIds);
+      const byId: Record<string, Submitter> = {};
+      for (const profile of profiles ?? []) byId[profile.id] = profile;
+      setSubmitters(byId);
+    } else {
+      setSubmitters({});
+    }
   };
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const pending = jobs.filter((job) => job.status === "pending");
+  const posted = jobs.filter((job) => job.status !== "pending");
 
   const save = async () => {
-    if (!form.company_name.trim() || !form.job_title.trim()) {
-      setMessage("Company name and job title are required.");
+    const company_name = form.company_name.trim();
+    const job_title = form.job_title.trim();
+    const job_url = form.job_url.trim();
+    if (!company_name && !job_title && !job_url) {
+      setMessage("Add at least a job title, a company name or a link.");
       return;
     }
     setBusy(true);
     const payload = {
-      company_name: form.company_name.trim(),
-      job_title: form.job_title.trim(),
-      job_url: form.job_url.trim() || null,
-      location: form.location.trim() || null,
-      employment_type: form.employment_type.trim() || null,
-      source: form.source.trim() || null,
-      minimum_membership: form.minimum_membership,
-      status: form.status,
+      company_name: company_name || null,
+      job_title: job_title || null,
+      job_url: job_url || null,
+      status: "published",
     };
     const result = editingId
-      ? await supabase.from("jobs").update(payload).eq("id", editingId)
-      : await supabase.from("jobs").insert(payload);
+      ? await jobsTable().update(payload).eq("id", editingId)
+      : await jobsTable().insert(payload);
     if (result.error) setMessage(result.error.message);
     else {
       setMessage(editingId ? "Job updated." : "Job published to the Leader job board.");
@@ -70,21 +117,16 @@ export function JobsAdminPage() {
   const edit = (job: Job) => {
     setEditingId(job.id);
     setForm({
-      company_name: job.company_name,
-      job_title: job.job_title,
+      company_name: job.company_name ?? "",
+      job_title: job.job_title ?? "",
       job_url: job.job_url ?? "",
-      location: job.location ?? "",
-      employment_type: job.employment_type ?? "",
-      source: job.source ?? "",
-      minimum_membership: job.minimum_membership,
-      status: job.status,
     });
   };
 
   const remove = async (job: Job) => {
-    if (!window.confirm(`Delete ${job.job_title} at ${job.company_name}?`)) return;
+    if (!window.confirm(`Delete ${job.job_title ?? job.company_name ?? "this job"}?`)) return;
     setBusy(true);
-    const { error } = await supabase.from("jobs").delete().eq("id", job.id);
+    const { error } = await jobsTable().delete().eq("id", job.id);
     if (error) setMessage(error.message);
     else {
       setMessage("Job removed.");
@@ -93,55 +135,168 @@ export function JobsAdminPage() {
     setBusy(false);
   };
 
+  const review = async (job: Job, decision: "published" | "rejected") => {
+    setBusy(true);
+    const { error } = await jobsTable().update({ status: decision }).eq("id", job.id);
+    if (error) setMessage(error.message);
+    else {
+      setMessage(
+        decision === "published" ? "Submission approved and published." : "Submission rejected.",
+      );
+      await load();
+    }
+    setBusy(false);
+  };
+
   return (
-    <AdminShell title="Jobs Management" subtitle="Create and maintain the roles that appear in the TLH Leader job board. No external jobs are invented or imported automatically.">
+    <AdminShell
+      title="Jobs Management"
+      subtitle="Publish roles directly, or review the ones Leaders submit before they go live."
+    >
       <div className="space-y-6">
-        {message && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="p-4 text-sm">{message}</CardContent></Card>}
+        {message && (
+          <Card className="border-primary/20 bg-primary/[0.03]">
+            <CardContent className="p-4 text-sm">{message}</CardContent>
+          </Card>
+        )}
 
         <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><Plus className="size-5 text-primary" /> {editingId ? "Edit job" : "Publish a job"}</CardTitle></CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <Input placeholder="Company name *" value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} />
-            <Input placeholder="Job title *" value={form.job_title} onChange={(e) => setForm({ ...form, job_title: e.target.value })} />
-            <Input placeholder="Job posting URL" value={form.job_url} onChange={(e) => setForm({ ...form, job_url: e.target.value })} />
-            <Input placeholder="Location" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} />
-            <Input placeholder="Employment type, e.g. Full-time" value={form.employment_type} onChange={(e) => setForm({ ...form, employment_type: e.target.value })} />
-            <Input placeholder="Source" value={form.source} onChange={(e) => setForm({ ...form, source: e.target.value })} />
-            <Select value={form.minimum_membership} onValueChange={(value) => setForm({ ...form, minimum_membership: value as Database["public"]["Enums"]["membership_level"] })}>
-              <SelectTrigger><SelectValue placeholder="Minimum membership" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="l0">Bronz</SelectItem>
-                <SelectItem value="l1">Silver</SelectItem>
-                <SelectItem value="l2">Gold</SelectItem>
-                <SelectItem value="l3">Diamond</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={form.status} onValueChange={(value) => setForm({ ...form, status: value })}>
-              <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="draft">Draft</SelectItem>
-                <SelectItem value="published">Published</SelectItem>
-                <SelectItem value="archived">Archived</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex gap-2 md:col-span-2">
-              <Button onClick={() => void save()} disabled={busy}>{editingId ? "Update job" : "Publish job"}</Button>
-              {editingId && <Button variant="outline" onClick={() => { setEditingId(null); setForm(emptyForm); }}>Cancel</Button>}
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="size-5 text-primary" /> {editingId ? "Edit job" : "Publish a job"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <Input
+                placeholder="Job title (optional)"
+                value={form.job_title}
+                onChange={(e) => setForm({ ...form, job_title: e.target.value })}
+              />
+              <Input
+                placeholder="Company name (optional)"
+                value={form.company_name}
+                onChange={(e) => setForm({ ...form, company_name: e.target.value })}
+              />
+              <Input
+                placeholder="Job posting link (optional)"
+                value={form.job_url}
+                onChange={(e) => setForm({ ...form, job_url: e.target.value })}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => void save()} disabled={busy}>
+                {editingId ? "Update job" : "Publish job"}
+              </Button>
+              {editingId && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setEditingId(null);
+                    setForm(emptyForm);
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><div className="flex items-center justify-between gap-3"><CardTitle className="flex items-center gap-2"><BriefcaseBusiness className="size-5 text-primary" /> Jobs</CardTitle><Badge variant="outline">{jobs.length}</Badge></div></CardHeader>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="flex items-center gap-2">
+                <Clock3 className="size-5 text-primary" /> Pending approval
+              </CardTitle>
+              <Badge variant="outline">{pending.length}</Badge>
+            </div>
+          </CardHeader>
           <CardContent className="space-y-3">
-            {jobs.map((job) => (
-              <div key={job.id} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-4">
-                <div><p className="font-semibold">{job.job_title}</p><p className="mt-1 text-sm text-muted-foreground">{job.company_name} · {job.location ?? "Location not specified"} · {job.employment_type ?? "Type not specified"}</p><p className="mt-1 text-xs text-muted-foreground">{job.source ?? "TLH"} · {job.minimum_membership === "free" ? "Free+" : job.minimum_membership === "l0" ? "Bronz+" : job.minimum_membership === "l1" ? "Silver+" : job.minimum_membership === "l2" ? "Gold+" : "Diamond"} · {job.status}{job.job_url ? " · External posting linked" : ""}</p></div>
-                <div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => edit(job)}><Pencil /> Edit</Button><Button size="sm" variant="outline" onClick={() => void remove(job)} disabled={busy}><Trash2 /> Delete</Button></div>
+            {pending.map((job) => (
+              <div
+                key={job.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-4"
+              >
+                <div>
+                  <p className="font-semibold">{job.job_title ?? "Role not specified"}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {job.company_name ?? "Company not specified"}
+                    {job.job_url ? " · Link included" : ""}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Submitted by{" "}
+                    {job.created_by
+                      ? (submitters[job.created_by]?.full_name ?? "a Leader")
+                      : "a Leader"}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => void review(job, "published")} disabled={busy}>
+                    <Check /> Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void review(job, "rejected")}
+                    disabled={busy}
+                  >
+                    <X /> Reject
+                  </Button>
+                </div>
               </div>
             ))}
-            {jobs.length === 0 && <p className="p-5 text-sm text-muted-foreground">No jobs published yet. Add the first verified opportunity above.</p>}
+            {pending.length === 0 && (
+              <p className="p-5 text-sm text-muted-foreground">
+                No submissions waiting for review.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <CardTitle className="flex items-center gap-2">
+                <BriefcaseBusiness className="size-5 text-primary" /> Jobs
+              </CardTitle>
+              <Badge variant="outline">{posted.length}</Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {posted.map((job) => (
+              <div
+                key={job.id}
+                className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-4"
+              >
+                <div>
+                  <p className="font-semibold">{job.job_title ?? "Role not specified"}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {job.company_name ?? "Company not specified"}
+                    {job.job_url ? " · External posting linked" : ""}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{job.status}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => edit(job)}>
+                    <Pencil /> Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => void remove(job)}
+                    disabled={busy}
+                  >
+                    <Trash2 /> Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {posted.length === 0 && (
+              <p className="p-5 text-sm text-muted-foreground">
+                No jobs published yet. Add the first verified opportunity above.
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
