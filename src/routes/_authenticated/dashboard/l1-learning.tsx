@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { L1LearningPage } from "@/components/dashboard/l1-learning-page";
-import { requireRole } from "@/lib/route-auth";
+import { requireMembership } from "@/lib/membership-access";
 
 export const Route = createFileRoute("/_authenticated/dashboard/l1-learning")({
-  beforeLoad: () => requireRole("student"),
+  beforeLoad: () => requireMembership("l1", "Silver Learning"),
   head: () => ({
     meta: [
       { title: "L1 Silver Learning | Tech Leader Hub" },
