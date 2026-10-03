@@ -372,7 +372,10 @@ export interface FileRoutesByFullPath {
   '/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
+  '/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
   '/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
@@ -419,6 +422,7 @@ export interface FileRoutesByTo {
   '/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/admin/students': typeof AuthenticatedAdminStudentsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
@@ -470,7 +474,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/learning-programs': typeof AuthenticatedAdminLearningProgramsRoute
   '/_authenticated/admin/masterclass': typeof AuthenticatedAdminMasterclassRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/contact-messages': typeof AuthenticatedAdminContactMessagesRoute
   '/_authenticated/admin/students': typeof AuthenticatedAdminStudentsRoute
+  '/_authenticated/dashboard/access-denied': typeof AuthenticatedDashboardAccessDeniedRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/_authenticated/dashboard/assessment': typeof AuthenticatedDashboardAssessmentRoute
   '/_authenticated/dashboard/career-os': typeof AuthenticatedDashboardCareerOsRoute
@@ -521,7 +527,9 @@ export interface FileRouteTypes {
     | '/admin/learning-programs'
     | '/admin/masterclass'
     | '/admin/payments'
+    | '/admin/contact-messages'
     | '/admin/students'
+    | '/dashboard/access-denied'
     | '/dashboard/applications'
     | '/dashboard/assessment'
     | '/dashboard/career-os'
@@ -618,7 +626,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/learning-programs'
     | '/_authenticated/admin/masterclass'
     | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/contact-messages'
     | '/_authenticated/admin/students'
+    | '/_authenticated/dashboard/access-denied'
     | '/_authenticated/dashboard/applications'
     | '/_authenticated/dashboard/assessment'
     | '/_authenticated/dashboard/career-os'
@@ -886,6 +896,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMasterclassRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/contact-messages': {
+      id: '/_authenticated/admin/contact-messages'
+      path: '/contact-messages'
+      fullPath: '/admin/contact-messages'
+      preLoaderRoute: typeof AuthenticatedAdminContactMessagesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteImport
+    }
     '/_authenticated/admin/payments': {
       id: '/_authenticated/admin/payments'
       path: '/payments'
@@ -906,6 +923,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/access-denied': {
+      id: '/_authenticated/dashboard/access-denied'
+      path: '/access-denied'
+      fullPath: '/dashboard/access-denied'
+      preLoaderRoute: typeof AuthenticatedDashboardAccessDeniedRouteImport
+      parentRoute: typeof AuthenticatedDashboardRouteImport
     }
     '/_authenticated/dashboard/applications': {
       id: '/_authenticated/dashboard/applications'
