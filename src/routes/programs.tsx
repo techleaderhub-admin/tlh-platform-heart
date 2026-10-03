@@ -7,7 +7,15 @@ export const Route = createFileRoute("/programs")({
   head: () => ({ meta: [
     { title: "TLH Programs | Tech Leader Hub" },
     { name: "description", content: "Explore the Tech Leader Hub career acceleration journey and upcoming programs for technology professionals." },
-  ]}),
+    { property: "og:type", content: "website" },
+    { property: "og:site_name", content: "Tech Leader Hub" },
+    { property: "og:url", content: "https://techleaderhub.com/programs" },
+    { property: "og:title", content: "TLH Programs | Tech Leader Hub" },
+    { property: "og:description", content: "Explore the Tech Leader Hub career acceleration journey and upcoming programs for technology professionals." },
+    { name: "twitter:card", content: "summary" },
+    { name: "twitter:title", content: "TLH Programs | Tech Leader Hub" },
+    { name: "twitter:description", content: "Explore the Tech Leader Hub career acceleration journey and upcoming programs for technology professionals." },
+  ], links: [{ rel: "canonical", href: "https://techleaderhub.com/programs" }] }),
   component: ProgramsPage,
 });
 
