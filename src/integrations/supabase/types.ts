@@ -1200,6 +1200,10 @@ export type Database = {
       }
       masterclass_registrations: {
         Row: {
+          attendance_marked_at: string | null
+          attendance_status: string
+          conversion_notes: string | null
+          conversion_status: string
           created_at: string
           email: string
           experience_range: string
@@ -1210,6 +1214,10 @@ export type Database = {
           session_label: string
         }
         Insert: {
+          attendance_marked_at?: string | null
+          attendance_status?: string
+          conversion_notes?: string | null
+          conversion_status?: string
           created_at?: string
           email: string
           experience_range: string
@@ -1220,6 +1228,10 @@ export type Database = {
           session_label?: string
         }
         Update: {
+          attendance_marked_at?: string | null
+          attendance_status?: string
+          conversion_notes?: string | null
+          conversion_status?: string
           created_at?: string
           email?: string
           experience_range?: string
