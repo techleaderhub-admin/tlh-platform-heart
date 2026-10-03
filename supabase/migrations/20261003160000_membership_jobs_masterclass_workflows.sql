@@ -36,7 +36,6 @@ FOR SELECT
 TO authenticated
 USING (
   status = 'published'
-  AND public.has_membership(minimum_membership)
 );
 
 DROP POLICY IF EXISTS "Students create own applications" ON public.job_applications;
