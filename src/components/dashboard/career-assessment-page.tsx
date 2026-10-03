@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { membershipLabel } from "@/lib/membership-access";
 
 type Category = "Architecture" | "Kotlin & Concurrency" | "Mobile System Design" | "Leadership";
 type AssessmentQuestion = { id: string; category: Category; question: string };
@@ -189,9 +190,7 @@ export function CareerAssessmentPage() {
     ]);
     if (membership?.is_active !== false && membership?.level)
       setMembershipLabel(
-        membership.level === "free"
-          ? "Free Membership"
-          : membership.level.toUpperCase() + " Membership",
+        membershipLabel(membership.level),
       );
     if (assessmentError || gapsError)
       setError(
@@ -264,7 +263,7 @@ export function CareerAssessmentPage() {
     <StudentShell
       title="Career Assessment"
       subtitle="Measure your current readiness across Android architecture, Kotlin concurrency, mobile system design and technical leadership."
-      membershipLabel={membershipLabel}
+      membershipLabel={membershipDisplayLabel}
     >
       <div className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
