@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { membershipLabel } from "@/lib/membership-access";
 import type { Database } from "@/integrations/supabase/types";
 
 type MembershipLevel = Database["public"]["Enums"]["membership_level"];
@@ -52,8 +53,8 @@ export function CareerOsPage() {
     setBusy(null);
   };
 
-  const membershipLabel = membership==="free" ? "Free Membership" : membership.toUpperCase()+" Membership";
-  return <StudentShell title="Career OS" subtitle="Your personalized career workspace connects your profile, current skill gaps and the roadmap your TLH team has prepared for you." membershipLabel={membershipLabel}>
+  const membershipDisplayLabel = membershipLabel(membership);
+  return <StudentShell title="Career OS" subtitle="Your personalized career workspace connects your profile, current skill gaps and the roadmap your TLH team has prepared for you." membershipLabel={membershipDisplayLabel}>
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Button variant="ghost" asChild><Link to="/dashboard"><ArrowLeft/>Back to dashboard</Link></Button>
