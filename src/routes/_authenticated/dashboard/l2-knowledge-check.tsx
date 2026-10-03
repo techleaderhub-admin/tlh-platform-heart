@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { L2KnowledgeCheckPage } from "@/components/dashboard/l2-knowledge-check-page";
-import { requireRole } from "@/lib/route-auth";
+import { requireMembership } from "@/lib/membership-access";
 
 export const Route = createFileRoute("/_authenticated/dashboard/l2-knowledge-check")({
-  beforeLoad: () => requireRole("student"),
+  beforeLoad: () => requireMembership("l2", "Gold Knowledge Check"),
   head: () => ({
     meta: [
       { title: "L2 Knowledge Check | Tech Leader Hub" },
