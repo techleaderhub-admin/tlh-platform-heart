@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
-import { membershipLabel } from "@/lib/membership-access";
+import { membershipLabel as getMembershipLabel } from "@/lib/membership-access";
 
 type Category = "Architecture" | "Kotlin & Concurrency" | "Mobile System Design" | "Leadership";
 type AssessmentQuestion = { id: string; category: Category; question: string };
@@ -144,7 +144,7 @@ function assessmentSummary(answers: Record<string, number>) {
 
 export function CareerAssessmentPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [membershipLabel, setMembershipLabel] = useState("Free Membership");
+  const [membershipDisplayLabel, setMembershipDisplayLabel] = useState("Free Membership");
   const [previousAssessment, setPreviousAssessment] = useState<{
     id: string;
     score: number | null;
@@ -189,9 +189,7 @@ export function CareerAssessmentPage() {
         .order("domain"),
     ]);
     if (membership?.is_active !== false && membership?.level)
-      setMembershipLabel(
-        membershipLabel(membership.level),
-      );
+      setMembershipDisplayLabel(getMembershipLabel(membership.level));
     if (assessmentError || gapsError)
       setError(
         "We could not load your previous assessment data. You can still complete a new assessment.",
